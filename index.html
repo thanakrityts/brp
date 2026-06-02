@@ -29,6 +29,7 @@
                             purple: '#9D00FF',
                             pink: '#FF007A',
                             green: '#39FF14',
+                            yellow: '#FFD700',
                             card: 'rgba(11, 17, 30, 0.8)'
                         }
                     },
@@ -36,6 +37,8 @@
                         'neon-blue': '0 0 15px rgba(0, 240, 255, 0.5), 0 0 30px rgba(0, 240, 255, 0.2)',
                         'neon-purple': '0 0 15px rgba(157, 0, 255, 0.5), 0 0 30px rgba(157, 0, 255, 0.2)',
                         'neon-pink': '0 0 15px rgba(255, 0, 122, 0.5), 0 0 30px rgba(255, 0, 122, 0.2)',
+                        'neon-green': '0 0 15px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2)',
+                        'neon-yellow': '0 0 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.2)',
                     }
                 }
             }
@@ -203,7 +206,7 @@
                 <!-- Key stats -->
                 <div class="grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 pt-4">
                     <div class="glass-panel p-4 rounded-xl text-center border-cyber-blue/20">
-                        <span class="block font-tech text-2xl lg:text-3xl font-bold text-cyber-blue text-glow-blue">2+</span>
+                        <span class="block font-tech text-2xl lg:text-3xl font-bold text-cyber-blue text-glow-blue">4+</span>
                         <span class="text-xs text-gray-400">วิชาเฉพาะทาง</span>
                     </div>
                     <div class="glass-panel p-4 rounded-xl text-center border-cyber-purple/20">
@@ -227,12 +230,12 @@
                 </div>
             </div>
 
-            <!-- Right Visual 3D Space (Futuristic AI Image Asset with HUD - profile-01.png) -->
+            <!-- Right Visual 3D Space (Hero Profile Image 01 resized smaller to max-w-[340px]) -->
             <div class="lg:col-span-5 flex justify-center relative mt-8 lg:mt-0">
                 <!-- Floating Hologram Container -->
-                <div class="relative w-full max-w-[420px] aspect-[16/9] sm:aspect-[4/3] md:aspect-[4/5] rounded-3xl overflow-hidden animated-border border-2 flex items-center justify-center bg-gradient-to-b from-cyber-dark/40 to-cyber-darker/90 backdrop-blur shadow-2xl group">
+                <div class="relative w-full max-w-[300px] sm:max-w-[340px] aspect-[16/9] sm:aspect-[4/3] md:aspect-[4/5] rounded-3xl overflow-hidden animated-border border-2 flex items-center justify-center bg-gradient-to-b from-cyber-dark/40 to-cyber-darker/90 backdrop-blur shadow-2xl group">
                     
-                    <!-- Main Beautiful AI Image Asset (Updated to profile-01.png) -->
+                    <!-- profile-01.png -->
                     <img src="profile-01.png" alt="คุณครูธนกฤชช์ในรูปแบบ 3D AI สื่อการสอนดิจิทัล" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'">
                     
                     <!-- Futuristic overlays inside the image frame -->
@@ -250,29 +253,29 @@
 
                     <!-- Glowing Circle Overlays -->
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-64 h-64 rounded-full border border-cyber-blue/20 animate-spin opacity-40" style="animation-duration: 20s;"></div>
-                        <div class="w-56 h-56 rounded-full border-dashed border-cyber-purple/25 animate-spin opacity-30" style="animation-duration: 10s; animation-direction: reverse;"></div>
+                        <div class="w-52 h-52 rounded-full border border-cyber-blue/20 animate-spin opacity-40" style="animation-duration: 20s;"></div>
+                        <div class="w-44 h-44 rounded-full border-dashed border-cyber-purple/25 animate-spin opacity-30" style="animation-duration: 10s; animation-direction: reverse;"></div>
                     </div>
                 </div>
 
                 <!-- Floating micro-cards -->
-                <div class="absolute -top-4 -right-4 glass-panel p-3 rounded-2xl float-animation shadow-neon-blue border-cyber-blue/30 hidden sm:flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-lg bg-cyber-blue/15 flex items-center justify-center text-cyber-blue">
+                <div class="absolute -top-4 -right-2 glass-panel p-2.5 rounded-2xl float-animation shadow-neon-blue border-cyber-blue/30 hidden sm:flex items-center space-x-2">
+                    <div class="w-7 h-7 rounded-lg bg-cyber-blue/15 flex items-center justify-center text-cyber-blue text-sm">
                         <i class="fa-solid fa-cube animate-spin"></i>
                     </div>
                     <div class="text-left">
-                        <div class="text-[10px] text-cyber-blue font-tech">HOLOGRAPHIC</div>
-                        <div class="text-xs font-semibold">Active Portal</div>
+                        <div class="text-[9px] text-cyber-blue font-tech">HOLOGRAPHIC</div>
+                        <div class="text-[11px] font-semibold">Active Portal</div>
                     </div>
                 </div>
 
-                <div class="absolute -bottom-4 -left-4 glass-panel p-3 rounded-2xl float-animation shadow-neon-purple border-cyber-purple/30 hidden sm:flex items-center space-x-2" style="animation-delay: 2s;">
-                    <div class="w-8 h-8 rounded-lg bg-cyber-purple/15 flex items-center justify-center text-cyber-purple">
+                <div class="absolute -bottom-4 -left-2 glass-panel p-2.5 rounded-2xl float-animation shadow-neon-purple border-cyber-purple/30 hidden sm:flex items-center space-x-2" style="animation-delay: 2s;">
+                    <div class="w-7 h-7 rounded-lg bg-cyber-purple/15 flex items-center justify-center text-cyber-purple text-sm">
                         <i class="fa-solid fa-microchip"></i>
                     </div>
                     <div class="text-left">
-                        <div class="text-[10px] text-cyber-purple font-tech">CORE LOGIC</div>
-                        <div class="text-xs font-semibold">COMPUTER AND TECHNOLOGY</div>
+                        <div class="text-[9px] text-cyber-purple font-tech">CORE LOGIC</div>
+                        <div class="text-[11px] font-semibold">COMPUTER & TECH</div>
                     </div>
                 </div>
             </div>
@@ -286,10 +289,10 @@
             <div class="absolute top-0 right-0 w-80 h-80 bg-cyan-500/5 rounded-full filter blur-3xl pointer-events-none"></div>
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                <!-- Real Portrait Image Side (Updated to profile-02.png) -->
+                <!-- Real Portrait Image Side (profile-02.png resized smaller to max-w-[240px]) -->
                 <div class="lg:col-span-5 flex flex-col items-center text-center space-y-4">
-                    <div class="relative w-full max-w-[300px] aspect-square rounded-2xl overflow-hidden border-2 border-cyber-blue/40 shadow-neon-blue group">
-                        <!-- Teacher Photo (Updated to profile-02.png) -->
+                    <div class="relative w-full max-w-[220px] sm:max-w-[240px] aspect-square rounded-2xl overflow-hidden border-2 border-cyber-blue/40 shadow-neon-blue group">
+                        <!-- Teacher Photo (profile-02.png) -->
                         <img src="profile-02.png" alt="นายธนกฤชช์ โยมไธสง" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=500&q=80'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                         <div class="absolute bottom-3 left-3 text-left">
@@ -297,7 +300,7 @@
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-white font-tech">นายธนกฤชช์ โยมไธสง</h3>
+                        <h3 class="text-lg font-bold text-white font-tech">นายธนกฤชช์ โยมไธสง</h3>
                         <p class="text-xs text-cyber-blue">ครูผู้สอน เทคโนโลยี กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</p>
                     </div>
                 </div>
@@ -328,7 +331,7 @@
         </div>
     </section>
 
-    <!-- COURSES SECTION -->
+    <!-- COURSES SECTION (Updated to 4 courses in total) -->
     <section id="courses" class="py-24 relative z-10 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center space-y-4 mb-16">
@@ -339,21 +342,19 @@
                     รายวิชาที่เปิดรับผิดชอบการสอน
                 </h2>
                 <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
-                    โครงสร้างรายวิชาด้านเทคโนโลยีดิจิทัล มุ่งเน้นกระบวนการแบบสืบเสาะ การออกแบบ และโครงงานเชิงปฏิบัติ
+                    โครงสร้างรายวิชาเทคโนโลยีคอมพิวเตอร์และดิจิทัล มุ่งเน้นการลงมือปฏิบัติ โค้ดดิ้ง และการสืบเสาะหาความรู้จริง
                 </p>
             </div>
 
-            <!-- Two Main Courses -->
+            <!-- Courses Grid (4 Cards in total) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                 
                 <!-- Card 1: Computing Science & Design (SC31181) -->
                 <div class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-2 border-t-4 border-t-cyber-blue">
-                    <!-- Tech background decor -->
                     <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyber-blue/5 rounded-full filter blur-2xl group-hover:bg-cyber-blue/10 transition-colors"></div>
-                    <div class="absolute top-4 right-4 font-tech text-cyber-blue/30 text-5xl font-extrabold select-none">SC31181</div>
+                    <div class="absolute top-4 right-4 font-tech text-cyber-blue/30 text-4xl font-extrabold select-none">SC31181</div>
                     
                     <div class="space-y-6">
-                        <!-- Icon & Code -->
                         <div class="flex items-center space-x-4">
                             <div class="w-14 h-14 rounded-2xl bg-cyber-blue/10 border border-cyber-blue/30 flex items-center justify-center text-2xl text-cyber-blue shadow-neon-blue">
                                 <i class="fa-solid fa-code"></i>
@@ -364,7 +365,6 @@
                             </div>
                         </div>
 
-                        <!-- Course Title -->
                         <div>
                             <h4 class="text-xl sm:text-2xl font-bold text-white tracking-wide group-hover:text-cyber-blue transition-colors">
                                 วิทยาการคำนวณและการออกแบบ ฯ
@@ -374,7 +374,6 @@
                             </p>
                         </div>
 
-                        <!-- Highlights -->
                         <div class="space-y-2">
                             <span class="text-xs font-semibold text-gray-300 block">องค์ความรู้หลักประจำรายวิชา:</span>
                             <div class="grid grid-cols-2 gap-2 text-xs text-gray-400">
@@ -386,19 +385,10 @@
                                     <i class="fa-solid fa-angles-right text-cyber-blue text-[10px]"></i>
                                     <span>คิดแก้ปัญหาเชิงวิศวกรรม</span>
                                 </div>
-                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-angles-right text-cyber-blue text-[10px]"></i>
-                                    <span>พื้นฐานโครงสร้าง Coding</span>
-                                </div>
-                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-angles-right text-cyber-blue text-[10px]"></i>
-                                    <span>พลเมืองดิจิทัลและกฎหมาย</span>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Button to open course outline modal -->
                     <div class="pt-8">
                         <button onclick="openCourseModal('course1')" class="w-full py-3.5 rounded-xl bg-cyber-blue/10 hover:bg-cyber-blue/20 border border-cyber-blue/30 text-cyber-blue text-xs font-semibold tracking-wider font-tech uppercase transition-all flex items-center justify-center space-x-2">
                             <span>EXPLORE INTERFACES</span>
@@ -407,14 +397,12 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Digital Media Production (SC30289, M.4-6) -->
+                <!-- Card 2: Digital Media Production (SC30289) -->
                 <div class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-2 border-t-4 border-t-cyber-purple">
-                    <!-- Tech background decor -->
                     <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyber-purple/5 rounded-full filter blur-2xl group-hover:bg-cyber-purple/10 transition-colors"></div>
-                    <div class="absolute top-4 right-4 font-tech text-cyber-purple/30 text-5xl font-extrabold select-none">SC30289</div>
+                    <div class="absolute top-4 right-4 font-tech text-cyber-purple/30 text-4xl font-extrabold select-none">SC30289</div>
                     
                     <div class="space-y-6">
-                        <!-- Icon & Code -->
                         <div class="flex items-center space-x-4">
                             <div class="w-14 h-14 rounded-2xl bg-cyber-purple/10 border border-cyber-purple/30 flex items-center justify-center text-2xl text-cyber-purple shadow-neon-purple">
                                 <i class="fa-solid fa-palette"></i>
@@ -425,7 +413,6 @@
                             </div>
                         </div>
 
-                        <!-- Course Title -->
                         <div>
                             <h4 class="text-xl sm:text-2xl font-bold text-white tracking-wide group-hover:text-cyber-purple transition-colors">
                                 โปรแกรมผลิตสื่อดิจิตอล
@@ -435,33 +422,119 @@
                             </p>
                         </div>
 
-                        <!-- Highlights -->
                         <div class="space-y-2">
                             <span class="text-xs font-semibold text-gray-300 block">องค์ความรู้หลักประจำรายวิชา:</span>
                             <div class="grid grid-cols-2 gap-2 text-xs text-gray-400">
                                 <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
                                     <i class="fa-solid fa-angles-right text-cyber-purple text-[10px]"></i>
-                                    <span>ทฤษฎีการสื่อสารและการออกแบบ</span>
+                                    <span>ทฤษฎีออกแบบสื่อสาร</span>
                                 </div>
                                 <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
                                     <i class="fa-solid fa-angles-right text-cyber-purple text-[10px]"></i>
-                                    <span>เครื่องมือตกแต่งภาพนิ่ง/เคลื่อนไหว</span>
-                                </div>
-                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-angles-right text-cyber-purple text-[10px]"></i>
-                                    <span>เทคโนโลยีสร้างผลงาน AI Generative</span>
-                                </div>
-                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-angles-right text-cyber-purple text-[10px]"></i>
-                                    <span>การผลิตสื่อระดับมืออาชีพ</span>
+                                    <span>ตกแต่งและผลิตมัลติมีเดีย</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Button to open course outline modal -->
                     <div class="pt-8">
                         <button onclick="openCourseModal('course2')" class="w-full py-3.5 rounded-xl bg-cyber-purple/10 hover:bg-cyber-purple/20 border border-cyber-purple/30 text-cyber-purple text-xs font-semibold tracking-wider font-tech uppercase transition-all flex items-center justify-center space-x-2">
+                            <span>EXPLORE INTERFACES</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Scientific Practice Techniques (ว31271) -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-2 border-t-4 border-t-cyber-green">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyber-green/5 rounded-full filter blur-2xl group-hover:bg-cyber-green/10 transition-colors"></div>
+                    <div class="absolute top-4 right-4 font-tech text-cyber-green/30 text-4xl font-extrabold select-none">SC31271</div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 rounded-2xl bg-cyber-green/10 border border-cyber-green/30 flex items-center justify-center text-2xl text-cyber-green shadow-neon-green">
+                                <i class="fa-solid fa-microchip animate-pulse"></i>
+                            </div>
+                            <div>
+                                <span class="text-cyber-green font-tech tracking-wider text-xs block">M.4/1 (SMTE) / SPECIAL</span>
+                                <h3 class="text-lg font-bold text-white">รหัสวิชา ว31271</h3>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xl sm:text-2xl font-bold text-white tracking-wide group-hover:text-cyber-green transition-colors">
+                                เทคนิคปฏิบัติการทางวิทยาศาสตร์
+                            </h4>
+                            <p class="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">
+                                ศึกษาการเขียนโปรแกรมควบคุมกล่องสมองกล Arduino เพื่อตรวจจับ ประมวลผล และสั่งการผ่านทางเซนเซอร์ ต่อยอดโครงงานวิทยาศาสตร์เข้าสู่ระบบนิเวศ Internet of Things (IoT) 
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <span class="text-xs font-semibold text-gray-300 block">องค์ความรู้หลักประจำรายวิชา:</span>
+                            <div class="grid grid-cols-2 gap-2 text-xs text-gray-400">
+                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-angles-right text-cyber-green text-[10px]"></i>
+                                    <span>เขียนโปรแกรมภาษา C/C++</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-angles-right text-cyber-green text-[10px]"></i>
+                                    <span>พัฒนาอุปกรณ์ IoT & Sensor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <button onclick="openCourseModal('course3')" class="w-full py-3.5 rounded-xl bg-cyber-green/10 hover:bg-cyber-green/20 border border-cyber-green/30 text-cyber-green text-xs font-semibold tracking-wider font-tech uppercase transition-all flex items-center justify-center space-x-2">
+                            <span>EXPLORE INTERFACES</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 4: Basic Problem Solving (ว31283) - Updated description text -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-2 border-t-4 border-t-cyber-yellow">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyber-yellow/5 rounded-full filter blur-2xl group-hover:bg-cyber-yellow/10 transition-colors"></div>
+                    <div class="absolute top-4 right-4 font-tech text-cyber-yellow/30 text-4xl font-extrabold select-none">SC31283</div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 rounded-2xl bg-cyber-yellow/10 border border-cyber-yellow/30 flex items-center justify-center text-2xl text-cyber-yellow shadow-neon-yellow">
+                                <i class="fa-brands fa-python"></i>
+                            </div>
+                            <div>
+                                <span class="text-cyber-yellow font-tech tracking-wider text-xs block">M.4/1 (SMTE) / SPECIAL</span>
+                                <h3 class="text-lg font-bold text-white">รหัสวิชา ว31283</h3>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xl sm:text-2xl font-bold text-white tracking-wide group-hover:text-cyber-yellow transition-colors">
+                                การแก้ปัญหาเบื้องต้น
+                            </h4>
+                            <p class="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">
+                                มุ่งเน้นกระบวนการคิดวิเคราะห์ อัลกอริทึม และการแก้ปัญหาอย่างมีลำดับวิธีผ่านการใช้เครื่องมือเขียนโปรแกรมด้วยภาษา Python การแก้ปัญหาด้วยเทคโนโลยีอย่างเป็นระบบ
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <span class="text-xs font-semibold text-gray-300 block">องค์ความรู้หลักประจำรายวิชา:</span>
+                            <div class="grid grid-cols-2 gap-2 text-xs text-gray-400">
+                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-angles-right text-cyber-yellow text-[10px]"></i>
+                                    <span>กระบวนการคิดเชิงตรรกะ</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-angles-right text-cyber-yellow text-[10px]"></i>
+                                    <span>เขียนโปรแกรม Python</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <button onclick="openCourseModal('course4')" class="w-full py-3.5 rounded-xl bg-cyber-yellow/10 hover:bg-cyber-yellow/20 border border-cyber-yellow/30 text-cyber-yellow text-xs font-semibold tracking-wider font-tech uppercase transition-all flex items-center justify-center space-x-2">
                             <span>EXPLORE INTERFACES</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
@@ -532,7 +605,7 @@
                 </p>
             </div>
 
-            <!-- 6-Grid Items for Responsibilities (Shortened descriptions) -->
+            <!-- 6-Grid Items for Responsibilities -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 
                 <!-- Card 1 -->
@@ -886,6 +959,36 @@
                     { name: "หน่วยที่ 4: การนำเสนอผลงานพอร์ตและประเมินเชิงรุก", details: "ทดลองสร้างสรรค์คลิปวิดีโอสั้น นำเสนอผ่านสื่อมีเดียโรงเรียนพร้อมวัดประสิทธิภาพการเข้าถึง" }
                 ],
                 downloadLink: "#"
+            },
+            course3: {
+                title: "เทคนิคปฏิบัติการทางวิทยาศาสตร์",
+                subtitle: "รหัสวิชา ว31271 // ม.4/1 (SMTE)",
+                icon: '<i class="fa-solid fa-microchip text-cyber-green"></i>',
+                iconBg: 'bg-cyber-green/15 border border-cyber-green/30',
+                btnColor: 'bg-cyber-green hover:bg-cyber-green/90 text-black shadow-neon-green',
+                desc: "เรียนรู้กระบวนการพัฒนาและเชื่อมโยงเครือข่ายอุปกรณ์ตรวจวัด เพื่อใช้ในการแก้ปัญหาโจทย์วิจัยและปฏิบัติการทางวิทยาศาสตร์ ผ่านการลงมือปฏิบัติเขียนโปรแกรมควบคุมไมโครคอนโทรลเลอร์ Arduino และเชื่อมต่อเครือข่ายระบบนิเวศ IoT",
+                chapters: [
+                    { name: "หน่วยที่ 1: พื้นฐานวงจรอิเล็กทรอนิกส์และไมโครคอนโทรลเลอร์", details: "การใช้งานบอร์ด Arduino, ชนิดของพอร์ตรับส่งข้อมูลแบบ Digital และ Analog, โครงสร้างภาษา C/C++" },
+                    { name: "หน่วยที่ 2: การพัฒนาคำสั่งควบคุม Sensor และ Actuator", details: "การเขียนโค้ดอ่านค่าอุณหภูมิ ความชื้น แสง และการเขียนควบคุมมอเตอร์ขับเคลื่อน, จอแสดงผล OLED/LCD" },
+                    { name: "หน่วยที่ 3: เทคโนโลยี Internet of Things (IoT)", details: "การเชื่อมต่อบอร์ดสมองกลผ่าน Wi-Fi เพื่อส่งข้อมูลขึ้น Cloud Platform (เช่น Blynk, NETPIE, ThingSpeak)" },
+                    { name: "หน่วยที่ 4: การพัฒนาโครงงานสิ่งประดิษฐ์และระบบอัตโนมัติ", details: "ประยุกต์ใช้ความรู้สร้างสรรค์โครงงานปฏิบัติการวิทยาศาสตร์อัตโนมัติสำหรับการใช้งานจริง" }
+                ],
+                downloadLink: "#"
+            },
+            course4: {
+                title: "การแก้ปัญหาเบื้องต้น",
+                subtitle: "รหัสวิชา ว31283 // ม.4/1 (SMTE)",
+                icon: '<i class="fa-brands fa-python text-cyber-yellow"></i>',
+                iconBg: 'bg-cyber-yellow/15 border border-cyber-yellow/30',
+                btnColor: 'bg-cyber-yellow hover:bg-cyber-yellow/90 text-black shadow-neon-yellow',
+                desc: "เน้นการพัฒนาทักษะกระบวนการคิดแก้ปัญหาทีละขั้นตอนอย่างเป็นระบบ (Algorithmic Problem Solving) ปูพื้นฐานไวยากรณ์ การควบคุมเงื่อนไข โครงสร้างข้อมูล และการเขียนโค้ดด้วยภาษา Python เพื่อพัฒนาโปรแกรมประยุกต์ใช้งานเชิงคำนวณ",
+                chapters: [
+                    { name: "หน่วยที่ 1: แนวคิดอัลกอริทึมและตรรกศาสตร์การแก้ปัญหา", details: "การใช้รหัสลำลอง (Pseudocode) และผังงาน (Flowchart) เพื่ออธิบายลำดับวิธีแก้ปัญหาอย่างมีตรรกะ" },
+                    { name: "หน่วยที่ 2: พื้นฐานไวยากรณ์และโครงสร้างควบคุมภาษา Python", details: "ชนิดตัวแปร การคำนวณทางคณิตศาสตร์, การใช้เงื่อนไขตรวจสอบ (If-Else), และการวนรอบทำงานซ้ำ (For / While Loop)" },
+                    { name: "หน่วยที่ 3: โครงสร้างข้อมูลและการสร้างฟังก์ชันย่อย (Functions)", details: "การใช้งาน List, Tuple, Dictionary และการแยกคำสั่งเป็นโมดูลฟังก์ชันเพื่อการเรียกใช้งานซ้ำ" },
+                    { name: "หน่วยที่ 4: การพัฒนาโปรแกรมเพื่อคำนวณทางวิทยาศาสตร์เบื้องต้น", details: "การดึงใช้ไลบรารีสถิติและการประมวลผลข้อมูล เพื่อช่วยวิเคราะห์ผลการวิจัยปัญหาเบื้องต้น" }
+                ],
+                downloadLink: "#"
             }
         };
 
@@ -947,14 +1050,16 @@
         });
 
 
-        // 3. AI INTERACTIVE CHAT SIMULATOR
+        // 3. AI INTERACTIVE CHAT SIMULATOR (Updated with SMTE courses)
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
 
         const botReplies = {
-            "วิชาที่ครูธนกฤชช์สอนคืออะไรบ้าง?": "คุณครูธนกฤชช์ รับผิดชอบการสอน 2 วิชาหลักครับ คือ: 1) ว31181 วิทยาการคำนวณและการออกแบบ ฯ สำหรับ ม.4 และ 2) ว30289 โปรแกรมผลิตสื่อดิจิตอล สำหรับนักเรียน ม.4-ม.6 ครับ!",
+            "วิชาที่ครูธนกฤชช์สอนคืออะไรบ้าง?": "คุณครูธนกฤชช์ รับผิดชอบการสอน 4 วิชาครับ คือ: 1) ว31181 วิทยาการคำนวณ (ม.4), 2) ว30289 โปรแกรมผลิตสื่อดิจิตอล (ม.4-6), 3) ว31271 เทคนิคปฏิบัติการทางวิทยาศาสตร์ ม.4/1 (SMTE), และ 4) ว31283 การแก้ปัญหาเบื้องต้น ม.4/1 (SMTE) ครับ!",
             "ว31181 วิทยาการคำนวณเรียนยังไง?": "วิชานี้เน้นกระบวนการคิดเชิงคำนวณอย่างมีขั้นตอน ฝึกฝนหลักอัลกอริทึม การคิดเชิงวิศวกรรมเพื่อแก้ไขปัญหาจริง และความรู้เรื่องระบบความปลอดภัยสารสนเทศยุคใหม่ครับ!",
             "โปรแกรมผลิตสื่อดิจิตอล ว30289 เน้นทำอะไร?": "เน้นทักษะโปรดักชันอย่างสมบูรณ์แบบครับ ทั้งความรู้ศิลปะคอมพิวเตอร์ การตัดต่อภาพ/วิดีโอ และที่พิเศษสุดคือการประยุกต์ใช้งาน AI ในฐานะเครื่องมือช่วยกระตุ้นไอเดียสร้างชิ้นงานดีไซน์ครับ!",
+            "ว31271 เทคนิคปฏิบัติการทางวิทยาศาสตร์": "วิชานี้เรียนเกี่ยวกับการเขียนโปรแกรมภาษา C/C++ ควบคุมกล่องสมองกล Arduino ควบคุม Sensor ต่าง ๆ และเชื่อมต่อข้อมูลส่งสัญญาณผ่านเครือข่ายระบบนิเวศ IoT ครับ!",
+            "ว31283 การแก้ปัญหาเบื้องต้น": "วิชานี้เน้นกระบวนการคิดแก้ปัญหาอย่างมีระบบและมีตรรกะ ผ่านการเรียนรู้เขียนโค้ดและพัฒนาโครงงานด้วยภาษา Python ครับ!",
             "เกณฑ์ส่งงาน": "สำหรับการส่งงานในรายวิชาเทคโนโลยี คุณครูจะเน้นการส่งโปรเจกต์งานผ่านช่องทางคลาวด์หรือระบบจัดเก็บข้อมูลหลักที่แจกแจงไว้ในห้องเรียนครับ!",
             "default": "ยินดีให้บริการประมวลคำถามครับ! คุณสามารถพิมพ์เรื่องเกี่ยวกับ 'วิชาเรียน' 'ช่องทางติดต่อ' หรือลองกดปุ่มไกด์ด้านล่างเพื่อสืบค้นข้อมูลเพิ่มเติมได้อย่างรวดเร็วครับ!"
         };
@@ -978,6 +1083,10 @@
                     matchedReply = botReplies["ว31181 วิทยาการคำนวณเรียนยังไง?"];
                 } else if (text.includes('สื่อดิจิตอล') || text.includes('ผลิตสื่อ') || text.includes('ว30289')) {
                     matchedReply = botReplies["โปรแกรมผลิตสื่อดิจิตอล ว30289 เน้นทำอะไร?"];
+                } else if (text.includes('เทคนิคปฏิบัติการ') || text.includes('ว31271') || text.includes('Arduino') || text.includes('IoT')) {
+                    matchedReply = botReplies["ว31271 เทคนิคปฏิบัติการทางวิทยาศาสตร์"];
+                } else if (text.includes('การแก้ปัญหา') || text.includes('ว31283') || text.includes('Python')) {
+                    matchedReply = botReplies["ว31283 การแก้ปัญหาเบื้องต้น"];
                 } else if (text.includes('งาน') || text.includes('ส่งงาน') || text.includes('คะแนน')) {
                     matchedReply = botReplies["เกณฑ์ส่งงาน"];
                 } else if (botReplies[text]) {
