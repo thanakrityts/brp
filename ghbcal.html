@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>คำนวณความสามารถกู้บ้าน ธอส.</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8f7;
+      --surface: #ffffff;
+      --text: #17201c;
+      --muted: #5c6963;
+      --line: #d9e1dd;
+      --green: #f97316;
+      --green-dark: #c2410c;
+      --mint: #fff3e8;
+      --red: #b42318;
+      --amber: #b76e00;
+      --blue: #1769aa;
+      --shadow: 0 8px 24px rgba(23, 32, 28, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 32px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: clamp(24px, 5vw, 38px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      min-height: 42px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: var(--surface);
+      color: var(--green-dark);
+      border: 1px solid var(--line);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .app-grid > * {
+      min-width: 0;
+    }
+
+    section,
+    .result-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    section {
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 12px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      min-height: 44px;
+      padding: 9px 11px;
+      font: inherit;
+      font-size: 16px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(249, 115, 22, 0.18);
+      border-color: var(--green);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 0;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .income-method {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      background: #fff;
+      min-height: 78px;
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 1px;
+      min-height: 1px;
+    }
+
+    .option strong {
+      display: block;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .option span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .option:has(input:checked) {
+      border-color: var(--green);
+      background: var(--mint);
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 14px;
+      overflow: hidden;
+    }
+
+    .result-head {
+      background: var(--green);
+      color: #fff;
+      padding: 16px;
+    }
+
+    .result-head p,
+    .result-head h2 {
+      margin: 0;
+    }
+
+    .result-head h2 {
+      font-size: 16px;
+      opacity: 0.92;
+    }
+
+    .big-number {
+      font-size: clamp(34px, 9vw, 52px);
+      line-height: 1.05;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .result-body {
+      padding: 16px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      background: #f7faf8;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 18px;
+    }
+
+    .limit-list {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0;
+    }
+
+    .limit-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--line);
+      align-items: center;
+    }
+
+    .limit-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .limit-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .limit-row strong {
+      font-size: 15px;
+      text-align: right;
+    }
+
+    .notice {
+      border-left: 4px solid var(--blue);
+      background: #eef7ff;
+      color: #113b5f;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .notice.warn {
+      border-left-color: var(--amber);
+      background: #fff8e8;
+      color: #553a00;
+    }
+
+    .notice.bad {
+      border-left-color: var(--red);
+      background: #fff1f0;
+      color: #6a1b14;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      background: #f7faf8;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        width: min(calc(100% - 20px), 620px);
+        padding-top: 12px;
+      }
+
+      header {
+        display: block;
+      }
+
+      .toolbar {
+        justify-content: stretch;
+        margin-top: 12px;
+      }
+
+      .toolbar button {
+        flex: 1 1 140px;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: static;
+        order: -1;
+      }
+
+      .field-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .segmented {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 14px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      button,
+      .toolbar {
+        display: none;
+      }
+
+      main {
+        width: 100%;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>คำนวณความสามารถกู้บ้าน ธอส.</h1>
+        <p class="subtitle">เทียบสูตรล้านละ 4,200, สูตรระวังล้านละ 7,000, และค่างวดจากดอกเบี้ยจริง</p>
+      </div>
+      <div class="toolbar">
+        <button type="button" id="resetBtn" class="secondary">ล้างค่า</button>
+        <button type="button" id="printBtn">พิมพ์/บันทึก PDF</button>
+      </div>
+    </header>
+
+    <div class="app-grid">
+      <div>
+        <section>
+          <h2>1. รายได้และหนี้เดิม</h2>
+          <div class="field-grid">
+            <label>
+              รายได้ต่อเดือน
+              <input id="income" data-money type="text" inputmode="numeric" value="50000">
+            </label>
+            <label>
+              รายได้ที่ธนาคารนับได้
+              <input id="incomeWeight" type="number" inputmode="decimal" min="0" max="100" step="5" value="100">
+            </label>
+            <label>
+              ภาระหนี้เดิมต่อเดือน
+              <input id="debt" data-money type="text" inputmode="numeric" value="0">
+            </label>
+            <label>
+              DSR ที่ใช้คำนวณ
+              <input id="dsr" type="number" inputmode="decimal" min="1" max="80" step="1" value="40">
+            </label>
+          </div>
+          <div class="segmented income-method" style="margin-top:12px">
+            <label class="option">
+              <input name="incomeCase" type="radio" value="gross" checked>
+              <strong>คิดจากรายได้ตามช่อง</strong>
+              <span>รายได้ที่นับได้ x DSR - หนี้เดิม</span>
+            </label>
+            <label class="option">
+              <input name="incomeCase" type="radio" value="minus2000">
+              <strong>หักค่าใช้จ่าย 2,000</strong>
+              <span>(รายได้ที่นับได้ - 2,000) - หนี้เดิม</span>
+            </label>
+          </div>
+          <p class="hint">สูตรปกติใช้ ฐานรายได้ x DSR - หนี้เดิม ส่วนเคสหัก 2,000 จะไม่คูณ DSR</p>
+        </section>
+
+        <section>
+          <h2>2. เลือกวิธีคิดค่างวดต่อ 1 ล้านบาท</h2>
+          <div class="segmented">
+            <label class="option">
+              <input name="mode" type="radio" value="sem" checked>
+              <strong>ธอส. S-em</strong>
+              <span>ล้านละ 4,200 บาท จำกัด 3 ล้าน</span>
+            </label>
+            <label class="option">
+              <input name="mode" type="radio" value="safe">
+              <strong>สูตรระวัง</strong>
+              <span>ล้านละ 7,000 บาท ตามบทความ ธอส.</span>
+            </label>
+            <label class="option">
+              <input name="mode" type="radio" value="custom">
+              <strong>คำนวณเอง</strong>
+              <span>ใช้ดอกเบี้ยและระยะเวลากู้</span>
+            </label>
+          </div>
+
+          <div class="field-grid" style="margin-top:12px">
+            <label>
+              ดอกเบี้ยต่อปี สำหรับโหมดคำนวณเอง
+              <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" value="6.145">
+            </label>
+            <label>
+              ระยะเวลากู้สูงสุดของโครงการ
+              <input id="years" type="number" inputmode="numeric" min="1" max="50" step="1" value="40">
+            </label>
+            <label>
+              อายุผู้กู้
+              <input id="age" type="number" inputmode="numeric" min="18" max="80" step="1" value="35">
+            </label>
+            <label>
+              อายุสูงสุดตามเกณฑ์
+              <input id="maxAge" type="number" inputmode="numeric" min="50" max="85" step="1" value="70">
+            </label>
+            <label>
+              ระยะเวลากู้ที่คำนวณได้
+              <input id="computedYears" type="text" value="35 ปี" readonly>
+            </label>
+          </div>
+          <p class="hint">แอพคำนวณระยะเวลากู้ให้อัตโนมัติจาก อายุสูงสุดตามเกณฑ์ - อายุผู้กู้ แล้วชนกับระยะเวลากู้สูงสุดของโครงการ</p>
+        </section>
+
+        <section>
+          <h2>3. หลักประกันและเพดานวงเงิน</h2>
+          <div class="field-grid">
+            <label>
+              ราคาซื้อขายบ้าน
+              <input id="price" data-money type="text" inputmode="numeric" value="3000000">
+            </label>
+            <label>
+              LTV ที่ธนาคารให้
+              <input id="ltv" type="number" inputmode="decimal" min="0" max="120" step="1" value="100">
+            </label>
+            <label>
+              เพดานวงเงินโครงการ
+              <input id="productCap" data-money type="text" inputmode="numeric" value="3000000">
+            </label>
+          </div>
+          <p class="hint">S-em ปี 2569 จำกัดวงเงิน 3 ล้านบาทต่อรายต่อหลักประกัน ถ้าเปลี่ยนโครงการให้ปรับเพดานเองได้</p>
+        </section>
+
+        <section>
+          <h2>เทียบหลายสูตร</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>สูตร</th>
+                  <th>บาท/ล้าน/เดือน</th>
+                  <th>วงเงินจากรายได้</th>
+                  <th>วงเงินหลังชนเพดาน</th>
+                </tr>
+              </thead>
+              <tbody id="compareRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-head">
+          <h2>วงเงินกู้เบื้องต้น</h2>
+          <div class="big-number" id="finalLoan">0 บาท</div>
+          <p id="modeLabel">ธอส. S-em ล้านละ 4,200</p>
+        </div>
+        <div class="result-body">
+          <div class="metric-grid">
+            <div class="metric">
+              <span>ค่างวดบ้านที่ผ่อนได้</span>
+              <strong id="affordablePayment">0</strong>
+            </div>
+            <div class="metric">
+              <span>ฐานรายได้ที่ใช้</span>
+              <strong id="incomeBase">0</strong>
+            </div>
+            <div class="metric">
+              <span>ค่างวดประมาณ</span>
+              <strong id="estimatedInstallment">0</strong>
+            </div>
+            <div class="metric">
+              <span>ค่างวดต่อ 1 ล้าน</span>
+              <strong id="paymentPerMillion">0</strong>
+            </div>
+            <div class="metric">
+              <span>ระยะเวลากู้ที่ใช้</span>
+              <strong id="effectiveYears">0 ปี</strong>
+            </div>
+          </div>
+
+          <div class="limit-list">
+            <div class="limit-row">
+              <span>วงเงินจากรายได้</span>
+              <strong id="incomeLimit">0</strong>
+            </div>
+            <div class="limit-row">
+              <span>วงเงินจาก LTV</span>
+              <strong id="ltvLimit">0</strong>
+            </div>
+            <div class="limit-row">
+              <span>เพดานโครงการ</span>
+              <strong id="capLimit">0</strong>
+            </div>
+            <div class="limit-row">
+              <span>เงินดาวน์/ส่วนต่างที่ควรเตรียม</span>
+              <strong id="downPayment">0</strong>
+            </div>
+          </div>
+
+          <div id="messages"></div>
+          <p class="footer-note">ผลลัพธ์เป็นการประเมินเบื้องต้น ธนาคารยังพิจารณาเครดิตบูโร เอกสารรายได้ ราคาหลักประกัน ผู้กู้ร่วม และเงื่อนไขผลิตภัณฑ์จริง ณ วันยื่นกู้</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const els = {
+      income: document.querySelector("#income"),
+      incomeWeight: document.querySelector("#incomeWeight"),
+      debt: document.querySelector("#debt"),
+      dsr: document.querySelector("#dsr"),
+      rate: document.querySelector("#rate"),
+      years: document.querySelector("#years"),
+      age: document.querySelector("#age"),
+      maxAge: document.querySelector("#maxAge"),
+      computedYears: document.querySelector("#computedYears"),
+      price: document.querySelector("#price"),
+      ltv: document.querySelector("#ltv"),
+      productCap: document.querySelector("#productCap"),
+      finalLoan: document.querySelector("#finalLoan"),
+      modeLabel: document.querySelector("#modeLabel"),
+      affordablePayment: document.querySelector("#affordablePayment"),
+      incomeBase: document.querySelector("#incomeBase"),
+      estimatedInstallment: document.querySelector("#estimatedInstallment"),
+      paymentPerMillion: document.querySelector("#paymentPerMillion"),
+      effectiveYears: document.querySelector("#effectiveYears"),
+      incomeLimit: document.querySelector("#incomeLimit"),
+      ltvLimit: document.querySelector("#ltvLimit"),
+      capLimit: document.querySelector("#capLimit"),
+      downPayment: document.querySelector("#downPayment"),
+      messages: document.querySelector("#messages"),
+      compareRows: document.querySelector("#compareRows"),
+      resetBtn: document.querySelector("#resetBtn"),
+      printBtn: document.querySelector("#printBtn")
+    };
+
+    const defaults = {
+      income: 50000,
+      incomeWeight: 100,
+      debt: 0,
+      dsr: 40,
+      rate: 6.145,
+      years: 40,
+      age: 35,
+      maxAge: 70,
+      price: 3000000,
+      ltv: 100,
+      productCap: 3000000
+    };
+
+    const money = new Intl.NumberFormat("th-TH", {
+      style: "currency",
+      currency: "THB",
+      maximumFractionDigits: 0
+    });
+
+    function n(input) {
+      return Number(String(input.value || "0").replace(/,/g, "")) || 0;
+    }
+
+    function formatMoneyField(input) {
+      const digits = String(input.value || "").replace(/[^\d]/g, "");
+      input.value = digits ? Number(digits).toLocaleString("en-US") : "";
+    }
+
+    function formatMoneyFields() {
+      document.querySelectorAll("input[data-money]").forEach(formatMoneyField);
+    }
+
+    function selectedMode() {
+      return document.querySelector("input[name='mode']:checked").value;
+    }
+
+    function selectedIncomeCase() {
+      return document.querySelector("input[name='incomeCase']:checked").value;
+    }
+
+    function incomeBaseValue() {
+      const recognizedIncome = n(els.income) * n(els.incomeWeight) / 100;
+      const expenseDeduction = selectedIncomeCase() === "minus2000" ? 2000 : 0;
+      return Math.max(0, recognizedIncome - expenseDeduction);
+    }
+
+    function affordablePaymentValue() {
+      const debt = n(els.debt);
+      if (selectedIncomeCase() === "minus2000") {
+        return Math.max(0, incomeBaseValue() - debt);
+      }
+      return Math.max(0, incomeBaseValue() * n(els.dsr) / 100 - debt);
+    }
+
+    function paymentPerMillionFromRate(rate, years) {
+      if (years <= 0) return 0;
+      if (rate <= 0) return 1000000 / (years * 12);
+      const monthlyRate = rate / 100 / 12;
+      const months = years * 12;
+      return 1000000 * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+    }
+
+    function activePaymentPerMillion(mode, effectiveYears) {
+      if (mode === "sem") return 4200;
+      if (mode === "safe") return 7000;
+      return paymentPerMillionFromRate(n(els.rate), effectiveYears);
+    }
+
+    function activeLabel(mode) {
+      if (mode === "sem") return "ธอส. S-em ล้านละ 4,200";
+      if (mode === "safe") return "สูตรระวังล้านละ 7,000";
+      return `คำนวณเอง ${n(els.rate).toFixed(3)}% ต่อปี`;
+    }
+
+    function usableYears() {
+      const requested = Math.max(1, n(els.years));
+      const age = n(els.age);
+      const maxAge = n(els.maxAge);
+      const ageLimited = Math.max(1, maxAge - age);
+      return Math.min(requested, ageLimited);
+    }
+
+    function syncAutoYears(mode) {
+      if (mode === "sem") {
+        els.years.value = 40;
+      }
+
+      const effectiveYears = usableYears();
+      els.computedYears.value = `${effectiveYears} ปี`;
+      return effectiveYears;
+    }
+
+    function calculateForPayment(paymentPerMillion) {
+      const affordable = affordablePaymentValue();
+      return paymentPerMillion > 0 ? affordable / paymentPerMillion * 1000000 : 0;
+    }
+
+    function ltvLimitValue() {
+      const price = n(els.price);
+      if (price <= 0) return Infinity;
+      return price * n(els.ltv) / 100;
+    }
+
+    function finiteCap() {
+      const cap = n(els.productCap);
+      return cap > 0 ? cap : Infinity;
+    }
+
+    function formatLimit(value) {
+      return Number.isFinite(value) ? money.format(Math.max(0, value)) : "ไม่จำกัด";
+    }
+
+    function renderComparison(effectiveYears, ltvCap, productCap) {
+      const rows = [
+        ["ธอส. S-em", 4200],
+        ["สูตรระวัง ธอส.", 7000],
+        [`ดอกเบี้ย ${n(els.rate).toFixed(3)}%`, paymentPerMillionFromRate(n(els.rate), effectiveYears)]
+      ];
+
+      els.compareRows.innerHTML = rows.map(([name, perMillion]) => {
+        const incomeLimit = calculateForPayment(perMillion);
+        const finalValue = Math.min(incomeLimit, ltvCap, productCap);
+        return `
+          <tr>
+            <td>${name}</td>
+            <td>${money.format(perMillion)}</td>
+            <td>${money.format(incomeLimit)}</td>
+            <td>${formatLimit(finalValue)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderMessages(finalLoan, affordable, effectiveYears, paymentPerMillion, ltvCap, productCap) {
+      const messages = [];
+      const requestedYears = n(els.years);
+      const existingDebtRatio = n(els.income) > 0 ? n(els.debt) / n(els.income) * 100 : 0;
+
+      if (affordable <= 0) {
+        messages.push(["bad", "ภาระหนี้เดิมสูงกว่าค่างวดที่ DSR รับได้ ควรลดหนี้หรือเพิ่มผู้กู้ร่วมก่อนยื่นกู้"]);
+      }
+
+      if (effectiveYears < requestedYears) {
+        messages.push(["warn", `ระยะเวลากู้ถูกลดเหลือ ${effectiveYears} ปี เพราะอายุผู้กู้รวมระยะเวลากู้ต้องไม่เกิน ${n(els.maxAge)} ปี`]);
+      }
+
+      if (selectedMode() === "sem" && productCap > 0 && productCap <= 3000000) {
+        messages.push(["", "โหมด S-em ใช้ค่างวดเริ่มต้นล้านละ 4,200 และจำกัดวงเงินหลัก 3 ล้านบาทตามเงื่อนไขโครงการ"]);
+      }
+
+      if (selectedMode() === "sem") {
+        const stressPayment = paymentPerMillionFromRate(6.145, Math.min(40, effectiveYears));
+        const stressInstallment = finalLoan / 1000000 * stressPayment;
+        messages.push(["warn", `ถ้าคิดที่ MRR 6.145% ระยะ ${Math.min(40, effectiveYears)} ปี ค่างวดของวงเงินนี้จะประมาณ ${money.format(stressInstallment)} ต่อเดือน`]);
+      }
+
+      if (selectedIncomeCase() === "minus2000") {
+        messages.push(["", "เคสนี้ใช้สูตร (รายได้ที่นับได้ - 2,000) - หนี้เดิม โดยไม่คูณ DSR"]);
+      }
+
+      if (existingDebtRatio >= 35) {
+        messages.push(["warn", `หนี้เดิมคิดเป็น ${existingDebtRatio.toFixed(1)}% ของรายได้ก่อนกู้บ้าน มีโอกาสกระทบการอนุมัติ`]);
+      }
+
+      if (Number.isFinite(ltvCap) && finalLoan === ltvCap) {
+        messages.push(["", "วงเงินสุดท้ายถูกจำกัดด้วยราคาซื้อขายบ้านและ LTV"]);
+      }
+
+      els.messages.innerHTML = messages.map(([kind, text]) => (
+        `<div class="notice ${kind}">${text}</div>`
+      )).join("");
+    }
+
+    function calculate() {
+      const mode = selectedMode();
+
+      if (mode === "sem") {
+        els.productCap.value = 3000000;
+        formatMoneyField(els.productCap);
+      }
+
+      const effectiveYears = syncAutoYears(mode);
+      const paymentPerMillion = activePaymentPerMillion(mode, effectiveYears);
+      const incomeBase = incomeBaseValue();
+      const affordable = affordablePaymentValue();
+      const incomeLimit = calculateForPayment(paymentPerMillion);
+      const ltvCap = ltvLimitValue();
+      const productCap = finiteCap();
+      const finalLoan = Math.max(0, Math.min(incomeLimit, ltvCap, productCap));
+      const installment = finalLoan / 1000000 * paymentPerMillion;
+      const down = n(els.price) > 0 ? Math.max(0, n(els.price) - finalLoan) : 0;
+
+      els.finalLoan.textContent = money.format(finalLoan);
+      els.modeLabel.textContent = activeLabel(mode);
+      els.affordablePayment.textContent = money.format(affordable);
+      els.incomeBase.textContent = money.format(incomeBase);
+      els.estimatedInstallment.textContent = money.format(installment);
+      els.paymentPerMillion.textContent = money.format(paymentPerMillion);
+      els.effectiveYears.textContent = `${effectiveYears} ปี`;
+      els.incomeLimit.textContent = money.format(incomeLimit);
+      els.ltvLimit.textContent = formatLimit(ltvCap);
+      els.capLimit.textContent = formatLimit(productCap);
+      els.downPayment.textContent = money.format(down);
+
+      renderMessages(finalLoan, affordable, effectiveYears, paymentPerMillion, ltvCap, productCap);
+      renderComparison(effectiveYears, ltvCap, productCap);
+      saveState();
+    }
+
+    function saveState() {
+      const state = {};
+      Object.keys(defaults).forEach((key) => state[key] = els[key].value);
+      state.mode = selectedMode();
+      state.incomeCase = selectedIncomeCase();
+      localStorage.setItem("ghbLoanCalculator", JSON.stringify(state));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem("ghbLoanCalculator");
+      if (!raw) return;
+      try {
+        const state = JSON.parse(raw);
+        Object.keys(defaults).forEach((key) => {
+          if (state[key] !== undefined) els[key].value = state[key];
+        });
+        if (state.mode) {
+          const radio = document.querySelector(`input[name='mode'][value='${state.mode}']`);
+          if (radio) radio.checked = true;
+        }
+        if (state.incomeCase) {
+          const incomeCaseRadio = document.querySelector(`input[name='incomeCase'][value='${state.incomeCase}']`);
+          if (incomeCaseRadio) incomeCaseRadio.checked = true;
+        }
+        formatMoneyFields();
+      } catch {
+        localStorage.removeItem("ghbLoanCalculator");
+      }
+    }
+
+    function reset() {
+      Object.entries(defaults).forEach(([key, value]) => els[key].value = value);
+      document.querySelector("input[name='mode'][value='sem']").checked = true;
+      document.querySelector("input[name='incomeCase'][value='gross']").checked = true;
+      formatMoneyFields();
+      calculate();
+    }
+
+    document.querySelectorAll("input, select").forEach((el) => {
+      el.addEventListener("input", () => {
+        if (el.matches("[data-money]")) formatMoneyField(el);
+        calculate();
+      });
+      el.addEventListener("change", calculate);
+    });
+
+    els.resetBtn.addEventListener("click", reset);
+    els.printBtn.addEventListener("click", () => window.print());
+
+    loadState();
+    formatMoneyFields();
+    calculate();
+  </script>
+</body>
+</html>
