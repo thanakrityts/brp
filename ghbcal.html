@@ -164,7 +164,7 @@
     }
 
     .income-method {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .option {
@@ -466,8 +466,13 @@
               <strong>หักค่าใช้จ่าย 2,000</strong>
               <span>(รายได้ที่นับได้ - 2,000) - หนี้เดิม</span>
             </label>
+            <label class="option">
+              <input name="incomeCase" type="radio" value="mou">
+              <strong>ลูกค้า MOU</strong>
+              <span>รายได้ที่นับได้ x 80% - หนี้เดิม</span>
+            </label>
           </div>
-          <p class="hint">สูตรปกติใช้ ฐานรายได้ x DSR - หนี้เดิม ส่วนเคสหัก 2,000 จะไม่คูณ DSR</p>
+          <p class="hint">สูตรปกติใช้ ฐานรายได้ x DSR - หนี้เดิม, เคสหัก 2,000 จะไม่คูณ DSR, ลูกค้า MOU ใช้ DSR 80%</p>
         </section>
 
         <section>
@@ -691,6 +696,9 @@
       if (selectedIncomeCase() === "minus2000") {
         return Math.max(0, incomeBaseValue() - debt);
       }
+      if (selectedIncomeCase() === "mou") {
+        return Math.max(0, incomeBaseValue() * 80 / 100 - debt);
+      }
       return Math.max(0, incomeBaseValue() * n(els.dsr) / 100 - debt);
     }
 
@@ -798,6 +806,10 @@
 
       if (selectedIncomeCase() === "minus2000") {
         messages.push(["", "เคสนี้ใช้สูตร (รายได้ที่นับได้ - 2,000) - หนี้เดิม โดยไม่คูณ DSR"]);
+      }
+
+      if (selectedIncomeCase() === "mou") {
+        messages.push(["", "เคสลูกค้า MOU ใช้ DSR 80%: รายได้ที่นับได้ x 80% - หนี้เดิม"]);
       }
 
       if (existingDebtRatio >= 35) {
