@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เครื่องคำนวณค่างวด ธอส. 2 โปรโมชั่น</title>
+  <style>
+    :root {
+      --orange: #f37021;
+      --blue: #0645d9;
+      --dark: #1f2937;
+      --muted: #6b7280;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --green: #0f766e;
+      --red: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Tahoma", "Sarabun", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .hero {
+      background: linear-gradient(135deg, var(--orange), #ff9b54);
+      color: white;
+      padding: 24px;
+      border-radius: 22px;
+      box-shadow: 0 12px 28px rgba(243,112,33,.22);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 4vw, 38px);
+    }
+    .hero p { margin: 0; opacity: .95; }
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(15,23,42,.06);
+    }
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 12px 0 6px;
+    }
+    input, select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 16px;
+      background: #fff;
+    }
+    input:focus, select:focus {
+      outline: 2px solid rgba(243,112,33,.25);
+      border-color: var(--orange);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .primary {
+      background: var(--blue);
+      color: white;
+    }
+    .secondary {
+      background: #eef2ff;
+      color: var(--blue);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .metric b {
+      display: block;
+      font-size: 22px;
+      color: var(--orange);
+      margin-top: 3px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      background: white;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 9px;
+      text-align: right;
+      vertical-align: top;
+    }
+    th:first-child, td:first-child { text-align: left; }
+    th {
+      background: #f3f4f6;
+      color: #374151;
+      white-space: nowrap;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .warning {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+      font-size: 14px;
+    }
+    .ok {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      font-size: 14px;
+    }
+    details {
+      margin-top: 14px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 16px;
+    }
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .wrap { padding: 14px; }
+      .row { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; }
+      table { font-size: 13px; }
+      th, td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>เครื่องคำนวณค่างวด ธอส. 2 โปรโมชั่น</h1>
+      <p>คำนวณเปรียบเทียบโปรสวัสดิการ/MOU และโปรสินเชื่อเพื่อที่อยู่อาศัย ปี 2569 แสดงผลทั้งแบบทำประกันและไม่ทำประกัน พร้อม DSR เบื้องต้น</p>
+    </section>
+
+    <main class="grid">
+      <section class="card">
+        <h2>ข้อมูลลูกค้าและวงเงิน</h2>
+
+        <label for="promo">เลือกโปรโมชั่น</label>
+        <select id="promo">
+          <option value="welfare">โปรสวัสดิการ/MOU</option>
+          <option value="general">โปรสินเชื่อเพื่อที่อยู่อาศัย ปี 2569</option>
+        </select>
+
+        <label for="bigFamily">GHB Big Family</label>
+        <select id="bigFamily">
+          <option value="yes">ใช้สิทธิ์ Big Family</option>
+          <option value="no">ไม่ใช้สิทธิ์ Big Family</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label for="price">ราคาบ้าน/วงเงินกู้</label>
+            <input id="price" type="text" inputmode="decimal" value="1150000" min="0" step="10000" />
+          </div>
+          <div>
+            <label for="age">อายุผู้กู้</label>
+            <input id="age" type="number" value="38" min="18" max="70" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="term">ระยะเวลาที่ต้องการผ่อน</label>
+            <input id="term" type="number" value="40" min="3" max="40" />
+            <div class="hint">ขั้นต่ำ 3 ปี สูงสุด 40 ปี และระบบจะจำกัดด้วยอายุผู้กู้ + ระยะกู้ ไม่เกิน 70 ปี</div>
+          </div>
+          <div>
+            <label for="mrr">MRR ปัจจุบัน (%)</label>
+            <input id="mrr" type="number" value="6.545" step="0.001" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="income">รายได้สุทธิ/เดือน</label>
+            <input id="income" type="text" inputmode="decimal" value="30000" min="0" step="1000" />
+          </div>
+          <div>
+            <label for="oldDebt">หนี้เดิม/เดือน</label>
+            <input id="oldDebt" type="text" inputmode="decimal" value="0" min="0" step="500" />
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" onclick="calculate()">คำนวณ</button>
+          <button class="secondary" onclick="resetDemo()">ใส่ตัวอย่าง 1.15 ล้าน อายุ 38</button>
+        </div>
+
+        <details>
+          <summary>ตั้งค่าอัตราดอกเบี้ยของแต่ละโปร</summary>
+          <div class="hint" style="margin-top:10px">
+            แก้ไขได้ตามประกาศ/เงื่อนไขจริง ณ วันยื่นกู้ | Big Family ลดดอกเบี้ยปีแรก 0.25%
+          </div>
+
+          <label>โปรสวัสดิการ/MOU - ทำ MRTA/MLTA</label>
+          <div class="row">
+            <input id="wM1" type="number" value="2.20" step="0.001" title="ปี 1" />
+            <input id="wM2" type="number" value="2.90" step="0.001" title="ปี 2" />
+          </div>
+          <div class="row">
+            <input id="wM3spread" type="number" value="2.645" step="0.001" title="ปี 3 = MRR -" />
+            <input id="wM45spread" type="number" value="2.00" step="0.001" title="ปี 4-5 = MRR -" />
+          </div>
+          <input id="wM6spread" type="number" value="1.00" step="0.001" title="ปี 6 เป็นต้นไป = MRR -" />
+
+          <label>โปรสวัสดิการ/MOU - ไม่ทำ MRTA/MLTA</label>
+          <div class="row">
+            <input id="wN1" type="number" value="2.70" step="0.001" title="ปี 1" />
+            <input id="wN2" type="number" value="3.40" step="0.001" title="ปี 2" />
+          </div>
+          <div class="row">
+            <input id="wN3spread" type="number" value="2.145" step="0.001" title="ปี 3 = MRR -" />
+            <input id="wN45spread" type="number" value="2.00" step="0.001" title="ปี 4-5 = MRR -" />
+          </div>
+          <input id="wN6spread" type="number" value="1.00" step="0.001" title="ปี 6 เป็นต้นไป = MRR -" />
+
+          <label>โปรทั่วไป ทำ MRTA/MLTA</label>
+          <div class="row">
+            <input id="gM1" type="number" value="2.40" step="0.001" />
+            <input id="gM2" type="number" value="3.40" step="0.001" />
+          </div>
+          <div class="row">
+            <input id="gM3spread" type="number" value="2.445" step="0.001" />
+            <input id="gM4spread" type="number" value="0.50" step="0.001" />
+          </div>
+
+          <label>โปรทั่วไป ไม่ทำ MRTA/MLTA</label>
+          <div class="row">
+            <input id="gN1" type="number" value="2.90" step="0.001" />
+            <input id="gN2" type="number" value="3.90" step="0.001" />
+          </div>
+          <div class="row">
+            <input id="gN3spread" type="number" value="1.945" step="0.001" />
+            <input id="gN4spread" type="number" value="0.50" step="0.001" />
+          </div>
+        </details>
+
+        <div class="footer">
+          หมายเหตุ: เป็นเครื่องมือประเมินเบื้องต้น ไม่ใช่ผลอนุมัติจริงของธนาคาร | ระยะเวลากู้ขั้นต่ำ 3 ปี สูงสุด 40 ปี | ค่าปรับ/ค่าธรรมเนียมผิดสัญญาให้ยึดประกาศธนาคาร ณ วันทำสัญญา
+        </div>
+      </section>
+
+      <section>
+        <div class="summary" id="summary"></div>
+
+        <section class="card">
+          <h2>ตารางค่างวดประมาณการ</h2>
+          <div id="result"></div>
+          <div id="message"></div>
+        </section>
+
+        <section class="card" style="margin-top:18px">
+          <h2>ตารางเปรียบเทียบโปรหลักและเงื่อนไข</h2>
+          <div id="compare"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+<script>
+function baht(n) {
+  if (!isFinite(n)) return "-";
+  return Math.round(n).toLocaleString("th-TH") + " บาท";
+}
+function pct(n) {
+  if (!isFinite(n)) return "-";
+  return n.toFixed(2) + "%";
+}
+function cleanNumberText(text) {
+  return String(text || "").replace(/,/g, "");
+}
+function val(id) {
+  const el = document.getElementById(id);
+  return Number(cleanNumberText(el ? el.value : 0) || 0);
+}
+function formatMoneyInput(el) {
+  const raw = cleanNumberText(el.value).replace(/[^0-9.]/g, "");
+  if (raw === "") {
+    el.value = "";
+    return;
+  }
+  const parts = raw.split(".");
+  const intPart = parts[0] ? Number(parts[0]).toLocaleString("en-US") : "0";
+  el.value = parts.length > 1 ? intPart + "." + parts.slice(1).join("") : intPart;
+}
+function monthlyPayment(principal, annualRate, years) {
+  const months = Math.max(1, Math.round(years * 12));
+  const r = annualRate / 100 / 12;
+  if (r === 0) return principal / months;
+  return principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+}
+function simulateYear(balance, monthlyPay, annualRate) {
+  const r = annualRate / 100 / 12;
+  let interestYear = 0;
+  let principalYear = 0;
+  for (let i = 0; i < 12; i++) {
+    const interest = balance * r;
+    let principal = monthlyPay - interest;
+    if (principal < 0) principal = 0;
+    if (principal > balance) principal = balance;
+    balance -= principal;
+    interestYear += interest;
+    principalYear += principal;
+  }
+  return { balance, interestYear, principalYear };
+}
+function getRates(kind, mrr, insurance) {
+  const useBigFamily = document.getElementById("bigFamily").value === "yes";
+  const bigFamilyDiscount = useBigFamily ? 0.25 : 0;
+
+  if (kind === "welfare" && insurance === "mrta") {
+    return [
+      { label: "ปีที่ 1", rate: val("wM1") - bigFamilyDiscount, type: "promo2900" },
+      { label: "ปีที่ 2", rate: val("wM2") },
+      { label: "ปีที่ 3", rate: mrr - val("wM3spread") },
+      { label: "ปีที่ 4", rate: mrr - val("wM45spread") },
+      { label: "ปีที่ 5", rate: mrr - val("wM45spread") },
+      { label: "ปีที่ 6 เป็นต้นไป", rate: mrr - val("wM6spread") }
+    ];
+  }
+
+  if (kind === "welfare" && insurance === "no_mrta") {
+    return [
+      { label: "ปีที่ 1", rate: val("wN1") - bigFamilyDiscount },
+      { label: "ปีที่ 2", rate: val("wN2") },
+      { label: "ปีที่ 3", rate: mrr - val("wN3spread") },
+      { label: "ปีที่ 4", rate: mrr - val("wN45spread") },
+      { label: "ปีที่ 5", rate: mrr - val("wN45spread") },
+      { label: "ปีที่ 6 เป็นต้นไป", rate: mrr - val("wN6spread") }
+    ];
+  }
+
+  if (kind === "general" && insurance === "mrta") {
+    return [
+      { label: "ปีที่ 1", rate: val("gM1") - bigFamilyDiscount, type: "promo3000" },
+      { label: "ปีที่ 2", rate: val("gM2") },
+      { label: "ปีที่ 3", rate: mrr - val("gM3spread") },
+      { label: "ปีที่ 4 เป็นต้นไป", rate: mrr - val("gM4spread") }
+    ];
+  }
+
+  return [
+    { label: "ปีที่ 1", rate: val("gN1") - bigFamilyDiscount },
+    { label: "ปีที่ 2", rate: val("gN2") },
+    { label: "ปีที่ 3", rate: mrr - val("gN3spread") },
+    { label: "ปีที่ 4 เป็นต้นไป", rate: mrr - val("gN4spread") }
+  ];
+}
+function promoName(kind, insurance) {
+  const useBigFamily = document.getElementById("bigFamily").value === "yes";
+  const insuranceText = insurance === "mrta" ? "ทำ MRTA/MLTA" : "ไม่ทำ MRTA/MLTA";
+  const bigText = useBigFamily ? " + Big Family" : "";
+
+  if (kind === "welfare") return `โปรสวัสดิการ/MOU ${insuranceText}${bigText}`;
+  return `โปรสินเชื่อเพื่อที่อยู่อาศัย ปี 2569 ${insuranceText}${bigText}`;
+}
+function renderDualTable(mrtaData, noMrtaData) {
+  const maxRows = Math.max(mrtaData.rows.length, noMrtaData.rows.length);
+  let html = `<table>
+    <thead>
+      <tr>
+        <th rowspan="2">ช่วงปี</th>
+        <th colspan="3">ทำ MRTA/MLTA</th>
+        <th colspan="3">ไม่ทำ MRTA/MLTA</th>
+      </tr>
+      <tr>
+        <th>ดอกเบี้ย</th>
+        <th>ค่างวด/เดือน</th>
+        <th>ยอดคงเหลือปลายปี</th>
+        <th>ดอกเบี้ย</th>
+        <th>ค่างวด/เดือน</th>
+        <th>ยอดคงเหลือปลายปี</th>
+      </tr>
+    </thead><tbody>`;
+
+  for (let i = 0; i < maxRows; i++) {
+    const m = mrtaData.rows[i];
+    const n = noMrtaData.rows[i];
+    const label = (m && m.label) || (n && n.label) || "-";
+    html += `<tr>
+      <td><span class="pill">${label}</span></td>
+      <td>${m ? pct(m.rate) : "-"}</td>
+      <td><b>${m ? baht(m.payment) : "-"}</b></td>
+      <td>${m ? baht(m.balanceEnd) : "-"}</td>
+      <td>${n ? pct(n.rate) : "-"}</td>
+      <td><b>${n ? baht(n.payment) : "-"}</b></td>
+      <td>${n ? baht(n.balanceEnd) : "-"}</td>
+    </tr>`;
+  }
+
+  html += `</tbody></table>`;
+  return html;
+}
+
+function calculate() {
+  const selected = document.getElementById("promo").value;
+  const principal = val("price");
+  const age = val("age");
+  const requestedTerm = val("term");
+  const income = val("income");
+  const oldDebt = val("oldDebt");
+  const maxTermByAge = Math.max(1, 70 - age);
+  const usedTerm = Math.max(3, Math.min(requestedTerm, 40, maxTermByAge));
+
+  const mrtaData = calcForPromo(selected, "mrta");
+  const noMrtaData = calcForPromo(selected, "no_mrta");
+
+  const firstPayMrta = mrtaData.rows[0].payment;
+  const firstPayNoMrta = noMrtaData.rows[0].payment;
+  const dsrMrta = income > 0 ? (oldDebt + firstPayMrta) / income * 100 : NaN;
+  const dsrNoMrta = income > 0 ? (oldDebt + firstPayNoMrta) / income * 100 : NaN;
+
+  document.getElementById("summary").innerHTML = `
+    <div class="metric"><span>วงเงินกู้</span><b>${baht(principal)}</b></div>
+    <div class="metric"><span>ระยะเวลากู้ขั้นต่ำ</span><b>3 ปี</b></div>
+    <div class="metric"><span>ระยะเวลากู้ที่ใช้</span><b>${usedTerm} ปี</b></div>
+    <div class="metric"><span>ปีแรก ทำประกัน</span><b>${baht(firstPayMrta)}</b></div>
+    <div class="metric"><span>ปีแรก ไม่ทำประกัน</span><b>${baht(firstPayNoMrta)}</b></div>
+  `;
+
+  document.getElementById("result").innerHTML = `
+    <p><b>${selected === "welfare" ? "โปรสวัสดิการ/MOU" : "โปรสินเชื่อเพื่อที่อยู่อาศัย ปี 2569"}</b> | อายุ ${age} ปี | ขอผ่อน ${requestedTerm} ปี | ระบบใช้คำนวณ ${usedTerm} ปี</p>
+    ${renderDualTable(mrtaData, noMrtaData)}
+  `;
+
+  let msg = "";
+  if (requestedTerm < 3) {
+    msg += `<div class="warning">ระยะเวลากู้ขั้นต่ำของโปรคือ 3 ปี ระบบจึงปรับระยะเวลากู้เป็น 3 ปี</div>`;
+  }
+  if (requestedTerm > maxTermByAge) {
+    msg += `<div class="warning">อายุผู้กู้ ${age} ปี ทำให้ผ่อนได้สูงสุดประมาณ ${maxTermByAge} ปี ตามหลักอายุ + ระยะกู้ ไม่เกิน 70 ปี</div>`;
+  }
+  if (income > 0) {
+    msg += `<div class="ok">DSR ปีแรก: ทำประกัน ${pct(dsrMrta)} | ไม่ทำประกัน ${pct(dsrNoMrta)} โดยคำนวณจากหนี้เดิม + ค่างวดปีแรก เทียบกับรายได้สุทธิ</div>`;
+    if (dsrMrta > 50 || dsrNoMrta > 50) {
+      msg += `<div class="warning">DSR บางกรณีสูงกว่า 50% ควรพิจารณาลดวงเงิน ปิดหนี้เดิม หรือเพิ่มผู้กู้ร่วม</div>`;
+    }
+  }
+  document.getElementById("message").innerHTML = msg;
+
+  renderCompare();
+}
+
+function calcSpecific(promo, insurance, bigFamily) {
+  const oldPromo = document.getElementById("promo").value;
+  const oldBigFamily = document.getElementById("bigFamily").value;
+
+  document.getElementById("promo").value = promo;
+  document.getElementById("bigFamily").value = bigFamily;
+
+  const data = calcForPromo(promo, insurance);
+  const name = promoName(promo, insurance);
+
+  document.getElementById("promo").value = oldPromo;
+  document.getElementById("bigFamily").value = oldBigFamily;
+
+  return { name, data };
+}
+
+function renderCompare() {
+  const cases = [
+    { promo: "welfare", insurance: "mrta", bigFamily: "yes", group: "สวัสดิการ/MOU", condition: "ทำ MRTA/MLTA + Big Family" },
+    { promo: "welfare", insurance: "mrta", bigFamily: "no", group: "สวัสดิการ/MOU", condition: "ทำ MRTA/MLTA" },
+    { promo: "welfare", insurance: "no_mrta", bigFamily: "yes", group: "สวัสดิการ/MOU", condition: "ไม่ทำ MRTA/MLTA + Big Family" },
+    { promo: "welfare", insurance: "no_mrta", bigFamily: "no", group: "สวัสดิการ/MOU", condition: "ไม่ทำ MRTA/MLTA" },
+    { promo: "general", insurance: "mrta", bigFamily: "yes", group: "สินเชื่อเพื่อที่อยู่อาศัย ปี 2569", condition: "ทำ MRTA/MLTA + Big Family" },
+    { promo: "general", insurance: "mrta", bigFamily: "no", group: "สินเชื่อเพื่อที่อยู่อาศัย ปี 2569", condition: "ทำ MRTA/MLTA" },
+    { promo: "general", insurance: "no_mrta", bigFamily: "yes", group: "สินเชื่อเพื่อที่อยู่อาศัย ปี 2569", condition: "ไม่ทำ MRTA/MLTA + Big Family" },
+    { promo: "general", insurance: "no_mrta", bigFamily: "no", group: "สินเชื่อเพื่อที่อยู่อาศัย ปี 2569", condition: "ไม่ทำ MRTA/MLTA" }
+  ];
+
+  let html = `<table><thead><tr><th>โปรหลัก</th><th>เงื่อนไข</th><th>ขั้นต่ำ</th><th>ระยะกู้ที่ใช้</th><th>ปีแรก</th><th>ปี 2</th><th>ปี 3</th><th>ปี 4/4-5</th><th>ปี 6 เป็นต้นไป</th></tr></thead><tbody>`;
+  cases.forEach(c => {
+    const result = calcSpecific(c.promo, c.insurance, c.bigFamily);
+    const d = result.data;
+    const pays = d.rows.map(r => baht(r.payment));
+    html += `<tr>
+      <td><b>${c.group}</b></td>
+      <td>${c.condition}</td>
+      <td>3 ปี</td>
+      <td>${d.term} ปี</td>
+      <td>${pays[0] || "-"}</td>
+      <td>${pays[1] || "-"}</td>
+      <td>${pays[2] || "-"}</td>
+      <td>${pays[3] || "-"}</td>
+      <td>${pays[5] || pays[3] || "-"}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  document.getElementById("compare").innerHTML = html;
+}
+function resetDemo() {
+  document.getElementById("price").value = "1,150,000";
+  document.getElementById("age").value = 38;
+  document.getElementById("term").value = 40;
+  document.getElementById("income").value = "30,000";
+  document.getElementById("oldDebt").value = "0";
+  calculate();
+}
+["promo","bigFamily","price","age","term","mrr","income","oldDebt","wM1","wM2","wM3spread","wM45spread","wM6spread","wN1","wN2","wN3spread","wN45spread","wN6spread","gM1","gM2","gM3spread","gM4spread","gN1","gN2","gN3spread","gN4spread"].forEach(id => {
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", calculate);
+    if (el && el.tagName === "SELECT") el.addEventListener("change", calculate);
+  });
+});
+document.addEventListener("DOMContentLoaded", () => {
+  ["price", "income", "oldDebt"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      formatMoneyInput(el);
+      el.addEventListener("input", () => {
+        const cursorAtEnd = el.selectionStart === el.value.length;
+        formatMoneyInput(el);
+        if (cursorAtEnd) el.selectionStart = el.selectionEnd = el.value.length;
+      });
+    }
+  });
+  calculate();
+});
+</script>
+</body>
+</html>
