@@ -1,0 +1,1854 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoopQuest AR - เกมการทำซ้ำ</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8fbff;
+      --muted: #b8c5d9;
+      --deep: #0b1020;
+      --panel: rgba(16, 24, 42, .86);
+      --panel-strong: rgba(22, 33, 56, .94);
+      --line: rgba(255, 255, 255, .12);
+      --violet: #9b5cff;
+      --aqua: #37d6ff;
+      --mint: #3ee58f;
+      --gold: #ffd45c;
+      --rose: #ff5d93;
+      --danger: #ff5364;
+      --wood: #7b4b31;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .36);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(62, 229, 143, .16), transparent 24rem),
+        radial-gradient(circle at 82% 18%, rgba(255, 212, 92, .13), transparent 23rem),
+        radial-gradient(circle at 50% 92%, rgba(155, 92, 255, .18), transparent 26rem),
+        linear-gradient(145deg, #08111f 0%, #132038 48%, #0a1420 100%);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      width: min(1240px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 16px 0 26px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sigil {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 40% 35%, rgba(255, 255, 255, .35), transparent 34%),
+        linear-gradient(135deg, #3ee58f, #37d6ff 48%, #9b5cff);
+      box-shadow: 0 12px 34px rgba(55, 214, 255, .22);
+      font-size: 28px;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill, .icon-btn {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .06);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .pill strong { color: white; }
+    .icon-btn { width: 40px; padding: 0; color: white; }
+    .icon-btn:hover, .gesture-btn:hover, .level-btn:hover { background: rgba(255, 255, 255, .11); }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 5px rgba(62, 229, 143, .13);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(330px, .85fr);
+      gap: 16px;
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .stage-card, .panel, .gesture-pad {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 430px;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      touch-action: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, .055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .055) 1px, transparent 1px),
+        radial-gradient(circle at 50% 40%, rgba(55, 214, 255, .13), transparent 20rem),
+        #07101d;
+      background-size: 80px 80px, 80px 80px, auto, auto;
+    }
+
+    #webcam {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      opacity: .42;
+    }
+
+    .forest-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 16% 76%, rgba(62, 229, 143, .2), transparent 13rem),
+        radial-gradient(circle at 80% 66%, rgba(255, 212, 92, .14), transparent 15rem),
+        linear-gradient(180deg, rgba(7, 16, 29, .2), rgba(7, 16, 29, .76));
+      pointer-events: none;
+    }
+
+    #gameSvg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    .camera-gate {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 4;
+      padding: 22px;
+      background: rgba(5, 10, 20, .88);
+      backdrop-filter: blur(12px);
+      transition: opacity .22s ease;
+    }
+
+    .camera-box {
+      width: min(470px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(18, 29, 50, .95);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .camera-box h2 { margin: 12px 0 8px; font-size: 23px; }
+    .camera-box p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+    .primary, .secondary, .danger {
+      min-height: 42px;
+      border: 0;
+      border-radius: 8px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      color: white;
+      font-weight: 800;
+    }
+
+    .primary { background: linear-gradient(135deg, #0fbf89, #37a2ff 52%, #9b5cff); }
+    .secondary { border: 1px solid var(--line); background: rgba(255, 255, 255, .075); }
+    .danger { background: var(--danger); }
+
+    .toast {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      z-index: 3;
+      max-width: calc(100% - 24px);
+      border: 1px solid rgba(255, 212, 92, .35);
+      border-radius: 8px;
+      background: rgba(59, 40, 9, .78);
+      color: #ffe9aa;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .goal-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .goal-strip p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .goal-strip strong { color: white; }
+
+    .progress {
+      width: 160px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .1);
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--mint), var(--gold));
+      transition: width .18s ease;
+    }
+
+    .gesture-pad {
+      margin-top: 12px;
+      padding: 13px;
+    }
+
+    .section-title, .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .gesture-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .gesture-btn {
+      min-height: 78px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .055);
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .gesture-btn span:first-child { font-size: 26px; }
+    .gesture-btn span:last-child { font-size: 12px; line-height: 1.25; }
+    .gesture-btn.active { border-color: var(--aqua); color: white; background: rgba(55, 214, 255, .14); }
+
+    .tracking {
+      margin-top: 10px;
+      border: 1px solid rgba(62, 229, 143, .16);
+      border-radius: 8px;
+      background: rgba(62, 229, 143, .06);
+      padding: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .tracking strong { color: var(--mint); }
+
+    .side {
+      display: grid;
+      gap: 13px;
+    }
+
+    .panel-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .badge {
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 999px;
+      background: rgba(155, 92, 255, .18);
+      color: white;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .code {
+      min-height: 205px;
+      padding: 14px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .quest-title {
+      color: var(--gold);
+      font-weight: 900;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .quest-step {
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .055);
+      padding: 8px 10px;
+      margin-top: 7px;
+      color: var(--muted);
+    }
+
+    .quest-step.hot {
+      color: white;
+      border-color: rgba(255, 212, 92, .38);
+      background: rgba(255, 212, 92, .11);
+    }
+
+    .code-line.hot { color: var(--gold); background: rgba(255, 212, 92, .09); border-radius: 6px; padding-left: 5px; }
+    .code-line.dim { color: #72829a; }
+    .code-line.indent { padding-left: 22px; }
+    .comment { color: #8998af; }
+    .kw { color: #ff7dae; }
+    .num { color: #ffd45c; }
+    .ok { color: #3ee58f; }
+    .bad { color: #ff5364; }
+
+    .vars {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .chip {
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .07);
+      color: var(--muted);
+      padding: 7px 9px;
+      font-size: 12px;
+    }
+
+    .chip strong { color: white; }
+
+    .levels, .lesson {
+      padding: 14px;
+    }
+
+    .levels h3, .lesson h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .level-btn {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 10px;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .05);
+      color: var(--ink);
+      padding: 10px;
+      margin-top: 8px;
+    }
+
+    .level-btn.active { border-color: var(--aqua); background: rgba(55, 214, 255, .12); }
+    .level-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; background: rgba(255, 255, 255, .08); font-size: 24px; }
+    .level-title { font-weight: 850; font-size: 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .level-btn p, .lesson p { margin: 4px 0 0; color: var(--muted); line-height: 1.55; font-size: 12px; }
+    .lesson p { font-size: 13px; line-height: 1.75; }
+    .lesson strong { color: white; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5, 9, 18, .88);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.show { display: grid; }
+
+    .player-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(62, 229, 143, .18), transparent 18rem),
+        radial-gradient(circle at 76% 80%, rgba(155, 92, 255, .2), transparent 20rem),
+        rgba(5, 9, 18, .94);
+      backdrop-filter: blur(10px);
+    }
+
+    .player-card {
+      width: min(520px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(165deg, rgba(24, 37, 62, .98), rgba(11, 16, 32, .98));
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .player-card h2 {
+      margin: 10px 0 8px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .player-logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 10px;
+      font-size: 38px;
+    }
+
+    .player-title {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .player-subtitle {
+      margin: 8px auto 14px;
+      max-width: 430px;
+      color: #dbe8f7;
+      text-align: center;
+      line-height: 1.65;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .player-divider {
+      height: 1px;
+      margin: 14px 0 16px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent);
+    }
+
+    .player-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .player-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .08);
+      color: white;
+      padding: 9px 11px;
+      outline: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--aqua);
+      box-shadow: 0 0 0 3px rgba(55, 214, 255, .13);
+    }
+
+    .field select option {
+      background: #10182a;
+      color: white;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 10px;
+    }
+
+    .form-error {
+      min-height: 18px;
+      color: #ffd45c;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .dialog {
+      width: min(500px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(165deg, rgba(24, 37, 62, .98), rgba(11, 16, 32, .98));
+      box-shadow: var(--shadow);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .dialog .big { font-size: 52px; margin-bottom: 6px; }
+    .dialog h2 { margin: 0 0 8px; font-size: 24px; }
+    .dialog p { margin: 0 0 14px; color: var(--muted); line-height: 1.65; }
+    .note { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: rgba(0, 0, 0, .18); padding: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 15px; }
+    .player-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      text-align: left;
+      border: 1px solid rgba(62, 229, 143, .22);
+      border-radius: 8px;
+      background: rgba(62, 229, 143, .07);
+      padding: 12px;
+      margin-bottom: 15px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .player-summary strong {
+      display: block;
+      color: white;
+      margin-top: 2px;
+    }
+
+    .dialog-actions { display: flex; gap: 9px; }
+    .dialog-actions button { flex: 1; }
+
+    footer {
+      margin-top: 18px;
+      color: #8492aa;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 930px) {
+      .layout { grid-template-columns: 1fr; }
+      .topbar { position: static; flex-direction: column; align-items: flex-start; }
+      .stats { justify-content: flex-start; }
+      .stage { min-height: 330px; }
+    }
+
+    @media (max-width: 570px) {
+      .app { width: min(100% - 18px, 1240px); padding-top: 9px; }
+      .gesture-grid { grid-template-columns: 1fr; }
+      .goal-strip { align-items: flex-start; flex-direction: column; }
+      .progress { width: 100%; }
+      .dialog-actions { flex-direction: column; }
+      .pill { flex: 1; min-width: 134px; }
+      .form-row, .player-summary { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="player-modal" id="playerModal">
+    <form class="player-card" id="playerForm">
+      <div class="sigil player-logo">✨</div>
+      <div class="player-title">LoopQuest AR</div>
+      <div class="player-subtitle">สื่อการสอน AR วิชา วิทยาการคำนวณ ม.4 ครูผู้สอน นายธนกฤชช์ โยมไธสง โรงเรียนบุรีรัมย์พิทยาคม</div>
+      <div class="player-divider"></div>
+      <h2>ข้อมูลผู้เล่น</h2>
+      <p>กรอกข้อมูลก่อนเริ่มภารกิจ เพื่อใช้แสดงในหน้าสรุปคะแนนท้ายเกม</p>
+      <div class="player-form">
+        <div class="field">
+          <label for="studentName">ชื่อ-สกุล</label>
+          <input id="studentName" name="studentName" type="text" autocomplete="name" placeholder="เช่น ธนกฤต ใจดี" required />
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="studentClass">ชั้น</label>
+            <select id="studentClass" name="studentClass" required>
+              <option value="">เลือกชั้น</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="studentNo">เลขที่</label>
+            <input id="studentNo" name="studentNo" type="number" min="1" max="60" inputmode="numeric" placeholder="เลขที่" required />
+          </div>
+        </div>
+        <div class="form-error" id="formError" aria-live="polite"></div>
+        <button class="primary" type="submit">เริ่มเข้าสู่เกม</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="sigil" aria-hidden="true">✨</div>
+        <div>
+          <h1>LoopQuest AR</h1>
+          <p class="subtitle">เกมผจญภัยแฟนตาซีสำหรับ ม.4 เรื่องการทำซ้ำในรายการและการทำซ้ำด้วยเงื่อนไข</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="pill"><span class="dot"></span> คะแนน <strong id="score">0</strong></div>
+        <div class="pill">เวลา <strong id="timerText">0 นาที 00 วินาที</strong></div>
+        <div class="pill">ด่าน <strong id="levelName">ป่าคริสตัล</strong></div>
+        <button class="icon-btn" id="soundBtn" title="เปิด/ปิดเสียง" aria-label="เปิด/ปิดเสียง">🔊</button>
+        <button class="icon-btn" id="resetBtn" title="เริ่มด่านใหม่" aria-label="เริ่มด่านใหม่">↻</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section>
+        <div class="stage-card">
+          <div class="stage" id="stage">
+            <video id="webcam" autoplay playsinline muted></video>
+            <div class="forest-bg"></div>
+            <svg id="gameSvg" viewBox="0 0 800 600" role="img" aria-label="พื้นที่เกม AR"></svg>
+            <div class="toast hidden" id="toast">ใช้โหมดสำรองได้: เลือกท่ามือด้านล่าง แล้วลาก/แตะในพื้นที่เกม</div>
+            <div class="camera-gate" id="cameraGate">
+              <div class="camera-box">
+                <div class="sigil" style="margin:0 auto;">📷</div>
+                <h2>เปิดประตู AR</h2>
+          <p>เปิดเว็บแคมแล้ววางมือให้อยู่ในกรอบ เกมจะจับท่า แบมือ และกำมือ เพื่อควบคุมเวทมนตร์การทำซ้ำ</p>
+                <button class="primary" id="cameraBtn">เปิดกล้องและเริ่มจับมือ</button>
+                <button class="secondary" id="skipCameraBtn" style="margin-left:8px;">เล่นแบบไม่ใช้กล้อง</button>
+              </div>
+            </div>
+          </div>
+          <div class="goal-strip">
+            <p><strong>ภารกิจ:</strong> <span id="goalText"></span></p>
+            <div class="progress" aria-label="ความคืบหน้าภารกิจ"><i id="progressFill"></i></div>
+          </div>
+        </div>
+
+        <div class="gesture-pad">
+          <div class="section-title">
+            <span>ท่ามือควบคุมเกม</span>
+            <span id="gestureLabel">แบมือ: ปล่อยพลัง</span>
+          </div>
+          <div class="gesture-grid">
+            <button class="gesture-btn active" data-gesture="open"><span>✋</span><span>แบมือ<br>วาง / ปล่อยพลัง</span></button>
+            <button class="gesture-btn" data-gesture="fist"><span>✊</span><span>กำมือ<br>หยิบ / เลือก / หยุด</span></button>
+          </div>
+          <div class="tracking">
+            <div><strong id="trackingMode">ยังไม่เริ่มจับมือ</strong></div>
+            <div id="trackingTip">ถ้าไม่ใช้กล้อง ให้เลือกแบมือหรือกำมือจากปุ่ม แล้วลากหรือแตะในพื้นที่เกมเพื่อทดลองสอนในห้องเรียนได้ทันที</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="panel">
+          <div class="panel-head">
+            <span class="badge" id="loopBadge">แบบรายการ</span>
+            <span id="feedback">เริ่มภารกิจแรก</span>
+          </div>
+          <div class="code" id="codeBlock"></div>
+          <div class="vars" id="vars"></div>
+        </section>
+
+        <section class="panel">
+          <div class="levels">
+            <h3>เลือกด่าน</h3>
+            <button class="level-btn active" data-level="0">
+              <span class="level-icon">💎</span>
+              <span><span class="level-title">1. ป่าคริสตัล <span class="badge">รายการ</span></span><p>วนเก็บคริสตัลทุกชิ้นในรายการ</p></span>
+            </button>
+            <button class="level-btn" data-level="1">
+              <span class="level-icon">🧚</span>
+              <span><span class="level-title">2. สวนภูตเวท <span class="badge">รายการ</span></span><p>ทำคำสั่งเดียวกับภูตทุกตัว</p></span>
+            </button>
+            <button class="level-btn" data-level="2">
+              <span class="level-icon">🌫️</span>
+              <span><span class="level-title">3. สะพานหมอก <span class="badge">เงื่อนไข</span></span><p>ทำซ้ำจนกว่าสะพานจะเต็ม</p></span>
+            </button>
+            <button class="level-btn" data-level="3">
+              <span class="level-icon">🔥</span>
+              <span><span class="level-title">4. ถ้ำคบเพลิง <span class="badge">รายการ</span></span><p>จุดไฟคบเพลิงทุกดวงในถ้ำ</p></span>
+            </button>
+            <button class="level-btn" data-level="4">
+              <span class="level-icon">⏳</span>
+              <span><span class="level-title">5. น้ำพุเวลา <span class="badge">เงื่อนไข</span></span><p>เติมหยดเวลาไปเรื่อย ๆ จนเต็ม</p></span>
+            </button>
+            <button class="level-btn" data-level="5">
+              <span class="level-icon">🐉</span>
+              <span><span class="level-title">6. หอคอยมังกร <span class="badge">ผสม</span></span><p>เลือกชนิดลูปให้เหมาะกับโจทย์</p></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="lesson">
+            <h3>บทเรียน</h3>
+            <div id="lessonText"></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer>สื่อการสอน AR วิชา วิทยาการคำนวณ ม.4 ครูผู้สอน นายธนกฤชช์ โยมไธสง โรงเรียนบุรีรัมย์พิทยาคม</footer>
+  </div>
+
+  <div class="modal" id="victoryModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="big">🏆</div>
+      <h2 id="victoryTitle">ภารกิจสำเร็จ!</h2>
+      <p id="victoryText"></p>
+      <div class="player-summary hidden" id="playerSummary"></div>
+      <div class="note hidden" id="screenshotInstruction">ให้นักเรียนแคปภาพหน้าจอนี้เพื่อส่งครู</div>
+      <div class="note" id="victoryLesson"></div>
+      <div class="dialog-actions">
+        <button class="secondary" id="replayBtn">เล่นด่านนี้อีกครั้ง</button>
+        <button class="primary" id="nextBtn">ด่านถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="dangerModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="big">⚠️</div>
+      <h2>ลูปไม่ยอมหยุด</h2>
+      <p>เงื่อนไขสำเร็จแล้ว แต่ยังทำซ้ำต่อไปเรื่อย ๆ จึงเกิดปัญหาการทำซ้ำไม่สิ้นสุด</p>
+      <div class="note">ในด่านแบบเงื่อนไข เมื่อพลังครบ 100% ให้กำมือเพื่อหยุดการทำซ้ำทันที</div>
+      <button class="danger" id="retryDangerBtn">รีเซ็ตแล้วลองใหม่</button>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById("gameSvg");
+    const webcam = document.getElementById("webcam");
+    const playerModal = document.getElementById("playerModal");
+    const playerForm = document.getElementById("playerForm");
+    const studentName = document.getElementById("studentName");
+    const studentClass = document.getElementById("studentClass");
+    const studentNo = document.getElementById("studentNo");
+    const formError = document.getElementById("formError");
+    const cameraGate = document.getElementById("cameraGate");
+    const toast = document.getElementById("toast");
+    const scoreEl = document.getElementById("score");
+    const timerText = document.getElementById("timerText");
+    const levelNameEl = document.getElementById("levelName");
+    const goalText = document.getElementById("goalText");
+    const progressFill = document.getElementById("progressFill");
+    const codeBlock = document.getElementById("codeBlock");
+    const vars = document.getElementById("vars");
+    const lessonText = document.getElementById("lessonText");
+    const loopBadge = document.getElementById("loopBadge");
+    const feedback = document.getElementById("feedback");
+    const gestureLabel = document.getElementById("gestureLabel");
+    const trackingMode = document.getElementById("trackingMode");
+    const trackingTip = document.getElementById("trackingTip");
+    const victoryModal = document.getElementById("victoryModal");
+    const dangerModal = document.getElementById("dangerModal");
+    const victoryTitle = document.getElementById("victoryTitle");
+    const victoryText = document.getElementById("victoryText");
+    const victoryLesson = document.getElementById("victoryLesson");
+    const playerSummary = document.getElementById("playerSummary");
+    const screenshotInstruction = document.getElementById("screenshotInstruction");
+    const replayBtn = document.getElementById("replayBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const MAX_SCORE = 294;
+
+    const gestureNames = {
+      open: "แบมือ: วาง / ปล่อยพลัง",
+      fist: "กำมือ: หยิบ / เลือก / หยุด"
+    };
+
+    const levelMeta = [
+      {
+        name: "ป่าคริสตัล",
+        badge: "แบบรายการ",
+        goal: "กำมือเหนือแท่นคริสตัลเพื่อหยิบ แล้วแบมือบนประตูเวท เก็บให้ครบทั้ง 5 ชิ้น",
+        lesson: "<p><strong>การทำซ้ำในรายการ</strong> คือการทำคำสั่งเดียวกันกับสมาชิกทุกตัวในชุดข้อมูล</p><p>คริสตัลแต่ละชิ้นคือหนึ่งสมาชิกในรายการ เมื่อวนครบทุกชิ้น ลูปหยุดเอง</p>"
+      },
+      {
+        name: "สวนภูตเวท",
+        badge: "แบบรายการ",
+        goal: "กำมือที่หนังสือเวทเพื่อหยิบประกายแสง แล้วแบมือใกล้ภูตแต่ละตัวจนครบ 6 ตัว",
+        lesson: "<p><strong>การทำซ้ำกับทุกตัวในรายการ</strong> ช่วยลดงานซ้ำ ๆ เช่น จุดแสงให้ภูตทุกตัว โดยไม่ต้องสั่งซ้ำหลายครั้ง</p><p>แนวคิดสำคัญคือทำงานทีละสมาชิกจนหมดรายการ</p>"
+      },
+      {
+        name: "สะพานหมอก",
+        badge: "แบบเงื่อนไข",
+        goal: "แบมือที่หินรูนเพื่อเติมพลังสะพานจนถึง 100% แล้วกำมือเพื่อหยุดลูป",
+        lesson: "<p><strong>การทำซ้ำด้วยเงื่อนไข</strong> ใช้เมื่อไม่รู้จำนวนรอบแน่นอน แต่รู้ว่าต้องทำจนกว่าเงื่อนไขจะสำเร็จ</p><p>ถ้าเงื่อนไขไม่เปลี่ยนหรือไม่หยุดเมื่อควรหยุด การทำซ้ำจะไม่จบ</p>"
+      },
+      {
+        name: "ถ้ำคบเพลิง",
+        badge: "แบบรายการ",
+        goal: "กำมือที่เตาไฟเพื่อหยิบเปลวไฟ แล้วแบมือใกล้คบเพลิงแต่ละดวงให้ครบ 4 ดวง",
+        lesson: "<p><strong>การทำซ้ำในรายการ</strong> เหมาะกับงานที่มีของหลายชิ้นให้ทำเหมือนกัน</p><p>คบเพลิงแต่ละดวงคือหนึ่งสมาชิกในรายการ ผู้เล่นจึงทำขั้นตอนเดิมซ้ำจนจุดครบทุกดวง</p>"
+      },
+      {
+        name: "น้ำพุเวลา",
+        badge: "แบบเงื่อนไข",
+        goal: "แบมือที่อ่างน้ำพุเพื่อเติมหยดเวลา จนพลังครบ 100% แล้วกำมือเพื่อหยุดการทำซ้ำ",
+        lesson: "<p><strong>การทำซ้ำด้วยเงื่อนไข</strong> ใช้กับภารกิจที่ต้องตรวจว่าถึงเป้าหมายหรือยัง</p><p>เมื่อพลังน้ำพุครบ 100% แล้วต้องหยุด ไม่เช่นนั้นจะทำซ้ำเกินความจำเป็น</p>"
+      },
+      {
+        name: "หอคอยมังกร",
+        badge: "แบบผสม",
+        goal: "กำมือเลือกคำตอบซ้ายหรือขวา แล้วแบมือกลางวงเวทเพื่อยืนยันคำตอบ",
+        lesson: "<p><strong>เลือกให้เหมาะกับโจทย์</strong>: ถ้ามีรายการชัดเจนให้ใช้การทำซ้ำในรายการ ถ้าต้องทำจนกว่าเงื่อนไขจะเปลี่ยนให้ใช้การทำซ้ำด้วยเงื่อนไข</p><p>ด่านนี้ช่วยให้นักเรียนแยกโจทย์สองแบบก่อนเริ่มเขียนโค้ดจริง</p>"
+      }
+    ];
+
+    const towerTasks = [
+      { text: "จุดคบเพลิงทุกดวงในรายการ", kind: "list" },
+      { text: "เติมพลังประตูจนกว่าจะครบ 100%", kind: "condition" },
+      { text: "ช่วยภูตทุกตัวที่ยืนรออยู่", kind: "list" },
+      { text: "เดินข้ามหมอกจนกว่าจะถึงปลายสะพาน", kind: "condition" }
+    ];
+
+    let level = 0;
+    let score = 0;
+    let soundOn = true;
+    let gesture = "open";
+    let hand = { x: 400, y: 320, down: false };
+    let held = null;
+    let levelComplete = false;
+    let dangerTriggered = false;
+    let cameraReady = false;
+    let handsModel = null;
+    let sendingFrame = false;
+    let lastHandSeen = 0;
+    let audioCtx = null;
+
+    let crystals = 0;
+    let fairiesLit = Array(6).fill(false);
+    let bridgeEnergy = 0;
+    let bridgeFullSince = 0;
+    let conditionFlash = 0;
+    let torchesLit = Array(4).fill(false);
+    let fountainEnergy = 0;
+    let fountainFullSince = 0;
+    let towerIndex = 0;
+    let towerChoice = null;
+    let towerMistakes = 0;
+    let effects = [];
+    let gameStartTime = 0;
+    let finalElapsedMs = 0;
+    let finalSummaryActive = false;
+    let player = {
+      name: "",
+      className: "",
+      number: ""
+    };
+
+    function fillClassOptions() {
+      for (let room = 1; room <= 16; room++) {
+        ["ก", "ข"].forEach(group => {
+          const option = document.createElement("option");
+          option.value = `ม.4/${room}${group}`;
+          option.textContent = `ม.4/${room}${group}`;
+          studentClass.appendChild(option);
+        });
+      }
+    }
+
+    function submitPlayerForm(event) {
+      event.preventDefault();
+      const name = studentName.value.trim();
+      const className = studentClass.value;
+      const number = studentNo.value.trim();
+      if (!name || !className || !number) {
+        formError.textContent = "กรุณากรอกชื่อ-สกุล ชั้น และเลขที่ให้ครบก่อนเริ่มเกม";
+        return;
+      }
+      player = { name, className, number };
+      gameStartTime = Date.now();
+      finalElapsedMs = 0;
+      finalSummaryActive = false;
+      updateTimer();
+      formError.textContent = "";
+      playerModal.classList.add("hidden");
+    }
+
+    function formatElapsed(ms) {
+      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes} นาที ${String(seconds).padStart(2, "0")} วินาที`;
+    }
+
+    function currentElapsedMs() {
+      if (finalElapsedMs) return finalElapsedMs;
+      return gameStartTime ? Date.now() - gameStartTime : 0;
+    }
+
+    function updateTimer() {
+      timerText.textContent = formatElapsed(currentElapsedMs());
+    }
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function tone(freq, dur, wave = "sine", delay = 0) {
+      if (!soundOn) return;
+      try {
+        ensureAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = wave;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+        gain.gain.setValueAtTime(.13, audioCtx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + delay + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + delay);
+        osc.stop(audioCtx.currentTime + delay + dur);
+      } catch (_) {}
+    }
+
+    function sound(kind) {
+      if (kind === "win") [523, 659, 784, 1046].forEach((f, i) => tone(f, .1, "triangle", i * .08));
+      if (kind === "pick") {
+        tone(392, .07, "triangle");
+        tone(587, .11, "sine", .04);
+      }
+      if (kind === "cast") {
+        tone(720, .1, "sine");
+        tone(960, .16, "triangle", .06);
+      }
+      if (kind === "bad") tone(120, .32, "sawtooth");
+      if (kind === "tick") tone(260, .05, "square");
+    }
+
+    function addEffect(x, y, kind = "spark") {
+      const colors = {
+        pick: ["#37d6ff", "#ffffff", "#3ee58f"],
+        cast: ["#ffd45c", "#ff5d93", "#ffffff"],
+        win: ["#ffd45c", "#3ee58f", "#37d6ff", "#ffffff"],
+        bad: ["#ff5364", "#ffd45c", "#ffffff"]
+      }[kind] || ["#ffffff"];
+      effects.push({
+        x,
+        y,
+        kind,
+        colors,
+        born: Date.now(),
+        life: kind === "win" ? 1250 : 720,
+        seed: Math.random()
+      });
+    }
+
+    function drawEffects() {
+      const now = Date.now();
+      effects = effects.filter(effect => now - effect.born < effect.life);
+      return effects.map(effect => {
+        const age = now - effect.born;
+        const t = age / effect.life;
+        const opacity = Math.max(0, 1 - t);
+        const ring = 18 + t * (effect.kind === "win" ? 145 : 68);
+        let html = `
+          <g opacity="${opacity}" filter="url(#glow)">
+            <circle cx="${effect.x}" cy="${effect.y}" r="${ring}" fill="none" stroke="${effect.colors[0]}" stroke-width="${effect.kind === "win" ? 5 : 3}" stroke-dasharray="8 9"/>
+          </g>`;
+        for (let i = 0; i < 12; i++) {
+          const angle = effect.seed * 6.28 + (i / 12) * Math.PI * 2;
+          const dist = 16 + t * (effect.kind === "win" ? 120 : 70);
+          const px = effect.x + Math.cos(angle) * dist;
+          const py = effect.y + Math.sin(angle) * dist;
+          const color = effect.colors[i % effect.colors.length];
+          html += `<circle cx="${px}" cy="${py}" r="${Math.max(1.5, 5 - t * 3)}" fill="${color}" opacity="${opacity}"/>`;
+        }
+        return html;
+      }).join("");
+    }
+
+    async function startCamera() {
+      try {
+        ensureAudio();
+        trackingMode.textContent = "กำลังเตรียมระบบจับมือ...";
+        trackingTip.textContent = "ระบบจะขออนุญาตใช้กล้อง และโหลดโมเดลตรวจจับมือผ่านอินเทอร์เน็ต";
+        await loadHandLibrary();
+        await setupHands();
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+        webcam.srcObject = stream;
+        await webcam.play();
+        cameraReady = true;
+        lastHandSeen = Date.now();
+        hideGate();
+        trackingMode.textContent = "กล้องพร้อมจับมือแล้ว";
+        trackingTip.textContent = "วางมือให้เห็นชัดเจน แล้วใช้แบมือหรือกำมือเพื่อควบคุมเกม";
+        requestAnimationFrame(trackHands);
+      } catch (_) {
+        toast.textContent = "เปิดกล้องหรือโหลดระบบจับมือไม่สำเร็จ ใช้โหมดสำรองด้วยเมาส์/แตะได้ทันที";
+        toast.classList.remove("hidden");
+        trackingMode.textContent = "ใช้โหมดสำรอง";
+      trackingTip.textContent = "เลือกแบมือหรือกำมือจากปุ่ม แล้วลากหรือแตะในพื้นที่เกม";
+      }
+    }
+
+    function skipCamera() {
+      hideGate();
+      toast.classList.remove("hidden");
+      trackingMode.textContent = "โหมดสำรองพร้อมใช้งาน";
+      trackingTip.textContent = "เลือกท่ามือด้านล่าง แล้วลากหรือแตะตำแหน่งที่ต้องการในพื้นที่เกม";
+    }
+
+    function hideGate() {
+      cameraGate.style.opacity = "0";
+      cameraGate.style.pointerEvents = "none";
+      setTimeout(() => cameraGate.classList.add("hidden"), 240);
+    }
+
+    function loadHandLibrary() {
+      if (window.Hands) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function setupHands() {
+      if (handsModel) return;
+      handsModel = new Hands({ locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+      handsModel.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: .72,
+        minTrackingConfidence: .68
+      });
+      handsModel.onResults(handleHandResults);
+    }
+
+    async function trackHands() {
+      if (!cameraReady || !handsModel) return;
+      if (webcam.readyState >= 2 && !sendingFrame) {
+        sendingFrame = true;
+        try {
+          await handsModel.send({ image: webcam });
+        } finally {
+          sendingFrame = false;
+        }
+      }
+      if (Date.now() - lastHandSeen > 950) {
+        hand.down = false;
+        trackingMode.textContent = "ยังไม่เห็นมือ";
+        trackingTip.textContent = "ยื่นมือเข้ากรอบกล้องให้เห็นนิ้วชัดเจน";
+      }
+      requestAnimationFrame(trackHands);
+    }
+
+    function handleHandResults(results) {
+      const points = results.multiHandLandmarks && results.multiHandLandmarks[0];
+      if (!points) return;
+      lastHandSeen = Date.now();
+      const palm = points[9];
+      hand.x = clamp((1 - palm.x) * 800, 24, 776);
+      hand.y = clamp(palm.y * 600, 24, 576);
+      hand.down = true;
+      const nextGesture = classifyGesture(points);
+      if (nextGesture !== gesture) setGesture(nextGesture);
+      trackingMode.textContent = "จับมือได้แล้ว";
+      trackingTip.textContent = `ตำแหน่งมือ ${Math.round(hand.x)}, ${Math.round(hand.y)} | ${gestureNames[gesture]}`;
+      processControls();
+    }
+
+    function classifyGesture(p) {
+      const isUp = (tip, pip) => p[tip].y < p[pip].y - .025;
+      const extended = [isUp(8, 6), isUp(12, 10), isUp(16, 14), isUp(20, 18)].filter(Boolean).length;
+      if (extended <= 1) return "fist";
+      return "open";
+    }
+
+    function setGesture(nextGesture) {
+      if (!gestureNames[nextGesture]) return;
+      gesture = nextGesture;
+      gestureLabel.textContent = gestureNames[gesture];
+      document.querySelectorAll(".gesture-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.gesture === gesture));
+      processControls();
+      renderInfo();
+    }
+
+    function pointerPoint(event) {
+      const rect = svg.getBoundingClientRect();
+      const p = event.touches ? event.touches[0] : event;
+      return {
+        x: clamp(((p.clientX - rect.left) / rect.width) * 800, 0, 800),
+        y: clamp(((p.clientY - rect.top) / rect.height) * 600, 0, 600)
+      };
+    }
+
+    function pointerStart(event) {
+      ensureAudio();
+      hand.down = true;
+      Object.assign(hand, pointerPoint(event));
+      processControls();
+      event.preventDefault();
+    }
+
+    function pointerMove(event) {
+      if (!hand.down) return;
+      Object.assign(hand, pointerPoint(event));
+      processControls();
+      event.preventDefault();
+    }
+
+    function pointerEnd() {
+      hand.down = false;
+    }
+
+    function processControls() {
+      if (!hand.down || levelComplete || dangerTriggered) return;
+      if (level === 0) processCrystals();
+      if (level === 1) processFairies();
+      if (level === 2) processBridge();
+      if (level === 3) processTorches();
+      if (level === 4) processFountain();
+      if (level === 5) processTower();
+      renderInfo();
+    }
+
+    function processCrystals() {
+      if (gesture === "fist" && !held && crystals < 5 && near(180, 460, 95)) {
+        held = "crystal";
+        feedback.textContent = "หยิบคริสตัลแล้ว นำไปปล่อยที่ประตูเวท";
+        sound("pick");
+        addEffect(180, 430, "pick");
+      }
+      if (gesture === "open" && held === "crystal" && near(620, 320, 105)) {
+        held = null;
+        crystals++;
+        score += 10;
+        feedback.textContent = `วนรอบที่ ${crystals}: เก็บคริสตัลหนึ่งชิ้น`;
+        sound("cast");
+        addEffect(620, 320, "cast");
+        if (crystals >= 5) completeLevel();
+      }
+    }
+
+    function processFairies() {
+      if (gesture === "fist" && !held && near(155, 468, 92)) {
+        held = "spark";
+        feedback.textContent = "หยิบประกายแสงจากหนังสือเวทแล้ว";
+        sound("pick");
+        addEffect(155, 416, "pick");
+      }
+      if (gesture === "open" && held === "spark") {
+        fairyPositions().forEach((pt, i) => {
+          if (!fairiesLit[i] && near(pt.x, pt.y, 54)) {
+            fairiesLit[i] = true;
+            held = null;
+            score += 12;
+            feedback.textContent = `ทำซ้ำกับภูตตัวที่ ${fairiesLit.filter(Boolean).length}`;
+            sound("cast");
+            addEffect(pt.x, pt.y, "cast");
+            if (fairiesLit.every(Boolean)) completeLevel();
+          }
+        });
+      }
+    }
+
+    function processBridge() {
+      if (gesture === "fist" && bridgeEnergy < 100) {
+        conditionFlash = Date.now();
+        feedback.textContent = "ตรวจเงื่อนไข: สะพานยังมีพลังไม่ครบ จึงทำซ้ำต่อ";
+      }
+      if (gesture === "open" && near(178, 455, 105)) {
+        if (bridgeEnergy < 100) {
+          bridgeEnergy = clamp(bridgeEnergy + .85, 0, 100);
+          if (Math.floor(bridgeEnergy) % 20 === 0) sound("tick");
+          feedback.textContent = "กำลังทำซ้ำ: เติมพลังสะพาน";
+          if (Math.floor(bridgeEnergy) % 18 === 0) addEffect(178, 420, "cast");
+          if (bridgeEnergy >= 100) bridgeFullSince = Date.now();
+        } else if (!bridgeFullSince) {
+          bridgeFullSince = Date.now();
+        }
+      }
+      if (bridgeEnergy >= 100 && gesture === "fist") {
+        feedback.textContent = "หยุดลูปเมื่อเงื่อนไขครบแล้ว";
+        addEffect(608, 265, "win");
+        completeLevel();
+      }
+    }
+
+    function processTorches() {
+      if (gesture === "fist" && !held && near(160, 460, 100)) {
+        held = "flame";
+        feedback.textContent = "หยิบเปลวไฟแล้ว นำไปจุดคบเพลิงในถ้ำ";
+        sound("pick");
+        addEffect(160, 420, "pick");
+      }
+      if (gesture === "open" && held === "flame") {
+        torchPositions().forEach((pt, i) => {
+          if (!torchesLit[i] && near(pt.x, pt.y, 62)) {
+            torchesLit[i] = true;
+            held = null;
+            score += 15;
+            feedback.textContent = `จุดคบเพลิงดวงที่ ${torchesLit.filter(Boolean).length}`;
+            sound("cast");
+            addEffect(pt.x, pt.y - 28, "cast");
+            if (torchesLit.every(Boolean)) completeLevel();
+          }
+        });
+      }
+    }
+
+    function processFountain() {
+      if (gesture === "fist" && fountainEnergy < 100) {
+        conditionFlash = Date.now();
+        feedback.textContent = "ตรวจเงื่อนไข: น้ำพุยังไม่เต็ม จึงเติมพลังต่อ";
+      }
+      if (gesture === "open" && near(190, 452, 110)) {
+        if (fountainEnergy < 100) {
+          fountainEnergy = clamp(fountainEnergy + 1.05, 0, 100);
+          feedback.textContent = "กำลังทำซ้ำ: เติมหยดเวลาให้น้ำพุ";
+          if (Math.floor(fountainEnergy) % 20 === 0) {
+            sound("tick");
+            addEffect(190, 402, "cast");
+          }
+          if (fountainEnergy >= 100) fountainFullSince = Date.now();
+        } else if (!fountainFullSince) {
+          fountainFullSince = Date.now();
+        }
+      }
+      if (fountainEnergy >= 100 && gesture === "fist") {
+        score += 40;
+        feedback.textContent = "หยุดการเติมพลังเมื่อน้ำพุเต็มแล้ว";
+        addEffect(600, 315, "win");
+        completeLevel();
+      }
+    }
+
+    function processTower() {
+      if (gesture === "fist" && near(180, 470, 95) && towerChoice !== "list") {
+        towerChoice = "list";
+        feedback.textContent = "เลือกเวททำซ้ำในรายการ";
+        sound("pick");
+        addEffect(180, 470, "pick");
+      }
+      if (gesture === "fist" && near(620, 470, 95) && towerChoice !== "condition") {
+        towerChoice = "condition";
+        feedback.textContent = "เลือกเวททำซ้ำด้วยเงื่อนไข";
+        sound("pick");
+        addEffect(620, 470, "pick");
+      }
+      if (gesture === "open" && near(400, 440, 110) && towerChoice) {
+        const task = towerTasks[towerIndex];
+        if (towerChoice === task.kind) {
+          score += 18;
+          towerIndex++;
+          towerChoice = null;
+          feedback.textContent = "ถูกต้อง เลือกชนิดลูปได้เหมาะกับโจทย์";
+          sound("cast");
+          addEffect(400, 440, "cast");
+          if (towerIndex >= towerTasks.length) completeLevel();
+        } else {
+          towerMistakes++;
+          feedback.textContent = task.kind === "list" ? "โจทย์นี้มีรายการชัดเจน ลองเลือกแบบรายการ" : "โจทย์นี้ต้องทำจนกว่าเงื่อนไขจะครบ";
+          sound("bad");
+          addEffect(400, 440, "bad");
+        }
+      }
+    }
+
+    function completeLevel() {
+      if (levelComplete || dangerTriggered) return;
+      levelComplete = true;
+      if (level >= levelMeta.length - 1 && !finalElapsedMs) finalElapsedMs = Date.now() - gameStartTime;
+      sound("win");
+      addEffect(400, 300, "win");
+      const meta = levelMeta[level];
+      const isFinalLevel = level >= levelMeta.length - 1;
+      const elapsedText = formatElapsed(currentElapsedMs());
+      const lines = [
+        "คุณใช้การทำซ้ำกับคริสตัลทุกชิ้นในรายการได้ครบถ้วน",
+        "คุณทำคำสั่งเดียวซ้ำกับภูตทุกตัว โดยไม่ต้องสั่งทีละบรรทัด",
+        "คุณเติมพลังจนเงื่อนไขสำเร็จ แล้วหยุดลูปได้ถูกจังหวะ",
+        "คุณจุดคบเพลิงทุกดวงในถ้ำด้วยขั้นตอนซ้ำแบบรายการได้ครบถ้วน",
+        "คุณเติมหยดเวลาให้น้ำพุจนเต็ม แล้วหยุดการทำซ้ำได้ถูกต้อง",
+        "คุณแยกโจทย์แบบรายการและแบบเงื่อนไขได้ครบทุกข้อ"
+      ];
+      victoryTitle.textContent = isFinalLevel ? "สรุปคะแนนท้ายเกม" : "ภารกิจสำเร็จ!";
+      victoryText.textContent = lines[level];
+      victoryLesson.innerHTML = meta.lesson;
+      finalSummaryActive = isFinalLevel;
+      playerSummary.classList.toggle("hidden", !isFinalLevel);
+      screenshotInstruction.classList.toggle("hidden", !isFinalLevel);
+      replayBtn.classList.toggle("hidden", isFinalLevel);
+      if (isFinalLevel) {
+        playerSummary.innerHTML = `
+          <span>ชื่อ-สกุล<strong>${escapeHtml(player.name || "-")}</strong></span>
+          <span>ชั้น<strong>${escapeHtml(player.className || "-")}</strong></span>
+          <span>เลขที่<strong>${escapeHtml(player.number || "-")}</strong></span>
+          <span>คะแนนรวม<strong>${score} / ${MAX_SCORE} คะแนน</strong></span>
+          <span>คะแนนเต็ม<strong>${MAX_SCORE} คะแนน</strong></span>
+          <span>เวลาที่ใช้เล่น<strong>${elapsedText}</strong></span>
+        `;
+      }
+      nextBtn.classList.remove("hidden");
+      nextBtn.textContent = isFinalLevel ? "รับทราบคะแนน" : "ด่านถัดไป";
+      victoryModal.classList.add("show");
+      victoryModal.setAttribute("aria-hidden", "false");
+    }
+
+    function triggerDanger() {
+      dangerTriggered = true;
+      sound("bad");
+      dangerModal.classList.add("show");
+      dangerModal.setAttribute("aria-hidden", "false");
+    }
+
+    function switchLevel(nextLevel) {
+      closeModals();
+      level = nextLevel;
+      held = null;
+      levelComplete = false;
+      dangerTriggered = false;
+      crystals = 0;
+      fairiesLit = Array(6).fill(false);
+      bridgeEnergy = 0;
+      bridgeFullSince = 0;
+      conditionFlash = 0;
+      torchesLit = Array(4).fill(false);
+      fountainEnergy = 0;
+      fountainFullSince = 0;
+      towerIndex = 0;
+      towerChoice = null;
+      towerMistakes = 0;
+      effects = [];
+      hand = { x: 400, y: 320, down: false };
+      setGesture("open");
+      feedback.textContent = "เริ่มภารกิจ";
+      document.querySelectorAll(".level-btn").forEach(btn => btn.classList.toggle("active", Number(btn.dataset.level) === level));
+      renderInfo();
+      draw();
+    }
+
+    function resetCurrent() {
+      switchLevel(level);
+    }
+
+    function closeModals() {
+      [victoryModal, dangerModal].forEach(modal => {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+      });
+      victoryTitle.textContent = "ภารกิจสำเร็จ!";
+      playerSummary.classList.add("hidden");
+      screenshotInstruction.classList.add("hidden");
+      replayBtn.classList.remove("hidden");
+      nextBtn.textContent = "ด่านถัดไป";
+      finalSummaryActive = false;
+    }
+
+    function returnToStartScreen() {
+      closeModals();
+      score = 0;
+      gameStartTime = 0;
+      finalElapsedMs = 0;
+      player = { name: "", className: "", number: "" };
+      playerForm.reset();
+      formError.textContent = "";
+      switchLevel(0);
+      updateTimer();
+      playerModal.classList.remove("hidden");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderInfo() {
+      const meta = levelMeta[level];
+      scoreEl.textContent = score;
+      levelNameEl.textContent = meta.name;
+      loopBadge.textContent = meta.badge;
+      goalText.textContent = meta.goal;
+      lessonText.innerHTML = meta.lesson;
+
+      if (level === 0) {
+        const remainingCrystals = 5 - crystals - (held === "crystal" ? 1 : 0);
+        progressFill.style.width = `${(crystals / 5) * 100}%`;
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: มีคริสตัล 5 ชิ้นอยู่ในรายการ</div>
+          <div class="quest-step ${crystals < 5 ? "hot" : ""}">1. หยิบคริสตัลทีละชิ้นจากแท่น</div>
+          <div class="quest-step ${held === "crystal" ? "hot" : ""}">2. นำคริสตัลที่ถืออยู่ไปวางที่ประตูเวท</div>
+          <div class="quest-step ${crystals >= 5 ? "hot" : ""}">3. ทำซ้ำจนกว่าคริสตัลในรายการจะหมด</div>
+          <div class="quest-step">แนวคิด: งานเหมือนเดิม ทำกับของทุกชิ้นในรายการ</div>`;
+        vars.innerHTML = `<span class="chip">วางแล้ว <strong>${crystals}/5</strong></span><span class="chip">เหลือบนแท่น <strong>${remainingCrystals}</strong></span><span class="chip">ถืออยู่ <strong>${held ? "คริสตัล" : "-"}</strong></span>`;
+      }
+
+      if (level === 1) {
+        const lit = fairiesLit.filter(Boolean).length;
+        progressFill.style.width = `${(lit / 6) * 100}%`;
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: มีภูต 6 ตัวรอรับประกายแสง</div>
+          <div class="quest-step ${held !== "spark" && lit < 6 ? "hot" : ""}">1. หยิบประกายแสงจากหนังสือเวท</div>
+          <div class="quest-step ${held === "spark" ? "hot" : ""}">2. วางประกายแสงให้ภูตหนึ่งตัว</div>
+          <div class="quest-step ${lit < 6 ? "" : "hot"}">3. ทำซ้ำกับภูตตัวถัดไปจนช่วยครบทุกตัว</div>
+          <div class="quest-step">แนวคิด: คำสั่งเดียวกันใช้กับสมาชิกทุกตัวในรายการ</div>`;
+        vars.innerHTML = `<span class="chip">ช่วยแล้ว <strong>${lit}/6</strong></span><span class="chip">ประกายแสง <strong>${held === "spark" ? "อยู่ในมือ" : "ยังไม่หยิบ"}</strong></span>`;
+      }
+
+      if (level === 2) {
+        const ready = bridgeEnergy >= 100;
+        progressFill.style.width = `${bridgeEnergy}%`;
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: สะพานจะปรากฏเมื่อพลังครบ 100%</div>
+          <div class="quest-step ${!ready ? "hot" : ""}">1. ถ้าพลังยังไม่ครบ ให้เติมพลังต่อ</div>
+          <div class="quest-step ${!ready ? "hot" : ""}">2. ตรวจดูพลังสะพานทุกครั้งหลังเติม</div>
+          <div class="quest-step ${ready ? "hot" : ""}">3. เมื่อพลังครบแล้ว ให้กำมือเพื่อหยุดการทำซ้ำ</div>
+          <div class="quest-step">แนวคิด: ทำซ้ำไปเรื่อย ๆ จนกว่าเงื่อนไขจะสำเร็จ</div>`;
+        vars.innerHTML = `<span class="chip">พลังสะพาน <strong>${Math.floor(bridgeEnergy)}%</strong></span><span class="chip">เงื่อนไข <strong>${ready ? "ควรหยุด" : "ยังทำซ้ำ"}</strong></span>`;
+      }
+
+      if (level === 3) {
+        const litTorches = torchesLit.filter(Boolean).length;
+        const unlitTorches = 4 - litTorches;
+        progressFill.style.width = `${(litTorches / 4) * 100}%`;
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: มีคบเพลิง 4 ดวงอยู่ในถ้ำ</div>
+          <div class="quest-step ${held !== "flame" && litTorches < 4 ? "hot" : ""}">1. หยิบเปลวไฟจากเตาไฟกลางถ้ำ</div>
+          <div class="quest-step ${held === "flame" ? "hot" : ""}">2. นำเปลวไฟไปวางที่คบเพลิงหนึ่งดวง</div>
+          <div class="quest-step ${litTorches >= 4 ? "hot" : ""}">3. ทำซ้ำจนกว่าคบเพลิงทุกดวงจะสว่าง</div>
+          <div class="quest-step">แนวคิด: เมื่อมีรายการของหลายชิ้น ให้ทำงานเดิมกับทุกชิ้นในรายการ</div>`;
+        vars.innerHTML = `<span class="chip">จุดแล้ว <strong>${litTorches}/4</strong></span><span class="chip">ยังไม่สว่าง <strong>${unlitTorches}</strong></span><span class="chip">ถืออยู่ <strong>${held === "flame" ? "เปลวไฟ" : "-"}</strong></span>`;
+      }
+
+      if (level === 4) {
+        const ready = fountainEnergy >= 100;
+        progressFill.style.width = `${fountainEnergy}%`;
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: น้ำพุเวลาต้องการพลังครบ 100%</div>
+          <div class="quest-step ${!ready ? "hot" : ""}">1. ถ้าพลังยังไม่เต็ม ให้เติมหยดเวลาต่อ</div>
+          <div class="quest-step ${!ready ? "hot" : ""}">2. ดูค่าพลังหลังเติมทุกครั้ง</div>
+          <div class="quest-step ${ready ? "hot" : ""}">3. เมื่อครบ 100% ให้กำมือเพื่อหยุด</div>
+          <div class="quest-step">แนวคิด: ทำซ้ำจนกว่าเงื่อนไข “พลังครบ” จะเป็นจริง</div>`;
+        vars.innerHTML = `<span class="chip">พลังน้ำพุ <strong>${Math.floor(fountainEnergy)}%</strong></span><span class="chip">เงื่อนไข <strong>${ready ? "ควรหยุด" : "ยังเติมต่อ"}</strong></span>`;
+      }
+
+      if (level === 5) {
+        const task = towerTasks[Math.min(towerIndex, towerTasks.length - 1)];
+        progressFill.style.width = `${(towerIndex / towerTasks.length) * 100}%`;
+        const choiceText = towerChoice === "list" ? "ทำซ้ำกับทุกชิ้นในรายการ" : towerChoice === "condition" ? "ทำซ้ำจนกว่าเงื่อนไขจะครบ" : "-";
+        codeBlock.innerHTML = `
+          <div class="quest-title">โจทย์: ${task.text}</div>
+          <div class="quest-step ${towerChoice === "list" ? "hot" : ""}">ตัวเลือกซ้าย: ทำซ้ำกับทุกชิ้นในรายการ</div>
+          <div class="quest-step ${towerChoice === "condition" ? "hot" : ""}">ตัวเลือกขวา: ทำซ้ำจนกว่าเงื่อนไขจะครบ</div>
+          <div class="quest-step">กำมือเพื่อเลือกคำตอบ แล้วแบมือกลางวงเวทเพื่อยืนยัน</div>
+          <div class="quest-step">แนวคิด: อ่านโจทย์ก่อนว่าเป็น “ของหลายชิ้น” หรือ “ทำจนกว่าจะสำเร็จ”</div>`;
+        vars.innerHTML = `<span class="chip">ข้อที่ <strong>${Math.min(towerIndex + 1, towerTasks.length)}/${towerTasks.length}</strong></span><span class="chip">เลือก <strong>${choiceText}</strong></span><span class="chip">พลาด <strong>${towerMistakes}</strong></span>`;
+      }
+    }
+
+    function draw() {
+      let html = `
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="portal" x1="0" x2="1"><stop stop-color="#37d6ff"/><stop offset=".5" stop-color="#3ee58f"/><stop offset="1" stop-color="#ffd45c"/></linearGradient>
+        </defs>
+        <g opacity=".38">
+          <path d="M0 470 C110 420 166 448 250 410 C356 360 440 398 520 350 C640 278 702 330 800 286 L800 600 L0 600Z" fill="#10261f"/>
+          <path d="M0 520 C142 468 202 510 314 454 C432 395 506 456 626 398 C708 360 762 378 800 352 L800 600 L0 600Z" fill="#183022"/>
+        </g>`;
+
+      if (level === 0) html += drawCrystals();
+      if (level === 1) html += drawFairies();
+      if (level === 2) html += drawBridge();
+      if (level === 3) html += drawTorches();
+      if (level === 4) html += drawFountain();
+      if (level === 5) html += drawTower();
+      html += drawEffects();
+      html += drawCursor();
+      svg.innerHTML = html;
+    }
+
+    function drawCrystals() {
+      const left = 5 - crystals - (held === "crystal" ? 1 : 0);
+      let html = `
+        ${altar(180, 460, "รายการคริสตัล")}
+        ${portalGate(620, 320, crystals / 5, "ประตูเวท")}
+        <text x="180" y="535" text-anchor="middle" fill="#d7fbff" font-size="14" font-weight="800">กำมือเพื่อหยิบ</text>
+        <text x="620" y="535" text-anchor="middle" fill="#ffe9aa" font-size="14" font-weight="800">แบมือเพื่อปล่อย</text>`;
+      const spots = [[138,430], [174,410], [214,430], [152,470], [204,475]];
+      for (let i = 0; i < left; i++) html += crystal(spots[i][0], spots[i][1], .85, i);
+      for (let i = 0; i < crystals; i++) html += crystal(620, 458 - i * 54, .72, i);
+      if (held === "crystal") html += crystal(hand.x, hand.y - 28, .95, crystals);
+      return html;
+    }
+
+    function drawFairies() {
+      let html = `
+        ${book(155, 468, held !== "spark")}
+        <text x="155" y="535" text-anchor="middle" fill="#d7fbff" font-size="14" font-weight="800">กำมือหยิบประกาย</text>`;
+      fairyPositions().forEach((pt, i) => {
+        html += fairy(pt.x, pt.y, fairiesLit[i], i);
+      });
+      if (held === "spark") html += spark(hand.x, hand.y - 24, 1.1);
+      return html;
+    }
+
+    function drawBridge() {
+      const tiles = Math.floor(bridgeEnergy / 20);
+      let html = `
+        ${runeStone(178, 455)}
+        <text x="178" y="538" text-anchor="middle" fill="#d7fbff" font-size="14" font-weight="800">แบมือเติมพลัง</text>
+        <g transform="translate(330,350)">
+          <path d="M-40 60 C80 10 210 10 320 60" stroke="#7aa8c7" stroke-width="18" stroke-linecap="round" opacity=".2" fill="none"/>`;
+      for (let i = 0; i < 5; i++) {
+        const lit = i < tiles;
+        html += `<rect x="${i * 68}" y="${40 - i * 7}" width="48" height="22" rx="6" fill="${lit ? "#62e6ff" : "#26384d"}" stroke="${lit ? "#d6fbff" : "#53647a"}" opacity="${lit ? ".95" : ".55"}"/>`;
+      }
+      html += `</g>
+        <g transform="translate(608,265)">
+          <circle r="70" fill="rgba(155,92,255,.12)" stroke="#9b5cff" stroke-width="3" stroke-dasharray="8 8"/>
+          <text x="0" y="-8" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">เงื่อนไข</text>
+          <text x="0" y="18" text-anchor="middle" fill="${bridgeEnergy >= 100 ? "#3ee58f" : "#ffd45c"}" font-size="13" font-weight="800">พลัง ${Math.floor(bridgeEnergy)} / 100</text>
+        </g>`;
+      if (Date.now() - conditionFlash < 850) {
+        html += `<text x="610" y="365" text-anchor="middle" fill="#ffd45c" font-size="15" font-weight="900">ตรวจเงื่อนไขแล้ว</text>`;
+      }
+      return html;
+    }
+
+    function drawTorches() {
+      let html = `
+        ${brazier(160, 460, held !== "flame")}
+        <text x="160" y="538" text-anchor="middle" fill="#ffe9aa" font-size="14" font-weight="800">กำมือหยิบเปลวไฟ</text>`;
+      torchPositions().forEach((pt, i) => {
+        html += torch(pt.x, pt.y, torchesLit[i], i);
+      });
+      if (held === "flame") html += flame(hand.x, hand.y - 28, 1.05);
+      return html;
+    }
+
+    function drawFountain() {
+      const ready = fountainEnergy >= 100;
+      let html = `
+        <g transform="translate(190,452)">
+          <ellipse cx="0" cy="62" rx="105" ry="26" fill="#000" opacity=".28"/>
+          <path d="M-74,22 C-58,-34 58,-34 74,22 C58,66 -58,66 -74,22Z" fill="#243957" stroke="#37d6ff" stroke-width="3"/>
+          <circle cx="0" cy="-8" r="42" fill="rgba(55,214,255,.14)" stroke="#9b5cff" stroke-width="4"/>
+          <text x="0" y="-2" text-anchor="middle" fill="#d7fbff" font-size="26" font-weight="900">⏳</text>
+          <text x="0" y="86" text-anchor="middle" fill="#d7fbff" font-size="14" font-weight="800">แบมือเติมหยดเวลา</text>
+        </g>
+        <g transform="translate(600,315)">
+          <ellipse cx="0" cy="150" rx="96" ry="24" fill="#000" opacity=".3"/>
+          <path d="M-76,110 C-96,50 -60,0 0,-16 C60,0 96,50 76,110 C44,134 -44,134 -76,110Z" fill="#182b48" stroke="#37d6ff" stroke-width="4"/>
+          <circle cx="0" cy="${88 - fountainEnergy * .78}" r="${20 + fountainEnergy * .32}" fill="#37d6ff" opacity="${.18 + fountainEnergy * .006}"/>
+          <path d="M-48,100 C-22,78 22,78 48,100" stroke="#d7fbff" stroke-width="5" opacity=".55" fill="none"/>
+          <text x="0" y="160" text-anchor="middle" fill="${ready ? "#3ee58f" : "#ffd45c"}" font-size="15" font-weight="900">พลัง ${Math.floor(fountainEnergy)}%</text>
+        </g>`;
+      if (Date.now() - conditionFlash < 850) {
+        html += `<text x="600" y="508" text-anchor="middle" fill="#ffd45c" font-size="15" font-weight="900">ตรวจเงื่อนไขน้ำพุแล้ว</text>`;
+      }
+      return html;
+    }
+
+    function drawTower() {
+      const task = towerTasks[Math.min(towerIndex, towerTasks.length - 1)];
+      return `
+        <g transform="translate(400,120)">
+          <path d="M-58,78 L-40,-70 L40,-70 L58,78Z" fill="#2b3150" stroke="#8ca0c8" stroke-width="3"/>
+          <path d="M-52,-70 L0,-124 L52,-70Z" fill="#7b4b31" stroke="#ffd45c" stroke-width="3"/>
+          <circle cx="0" cy="-10" r="26" fill="#37d6ff" opacity=".72"/>
+          <text x="0" y="112" text-anchor="middle" fill="#fff" font-size="15" font-weight="900">หอคอยมังกร</text>
+        </g>
+        <g transform="translate(400,292)">
+          <rect x="-235" y="-36" width="470" height="72" rx="8" fill="rgba(11,16,32,.86)" stroke="#ffd45c"/>
+          <text x="0" y="-8" text-anchor="middle" fill="#ffd45c" font-size="13" font-weight="900">โจทย์ข้อที่ ${Math.min(towerIndex + 1, towerTasks.length)}</text>
+          <text x="0" y="18" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="850">${task.text}</text>
+        </g>
+        ${loopStone(180, 470, "list", "รายการ", towerChoice === "list")}
+        ${loopStone(620, 470, "condition", "เงื่อนไข", towerChoice === "condition")}
+        <g transform="translate(400,440)">
+          <circle r="62" fill="rgba(62,229,143,.1)" stroke="#3ee58f" stroke-width="3" stroke-dasharray="7 7"/>
+          <text x="0" y="-6" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="900">แบมือ</text>
+          <text x="0" y="18" text-anchor="middle" fill="#b8c5d9" font-size="12">ยืนยัน</text>
+        </g>`;
+    }
+
+    function drawCursor() {
+      const color = gesture === "open" ? "#3ee58f" : "#ff5364";
+      const icon = gesture === "open" ? "✋" : "✊";
+      return `
+        <g transform="translate(${hand.x}, ${hand.y})" filter="url(#glow)">
+          <circle r="48" fill="${color}" opacity=".13"/>
+          <circle r="32" fill="#111a2c" stroke="${color}" stroke-width="3" stroke-dasharray="5 5"/>
+          <text x="0" y="10" text-anchor="middle" font-size="28">${icon}</text>
+          <rect x="-70" y="-63" width="140" height="24" rx="8" fill="#0b1020" stroke="${color}" opacity=".95"/>
+          <text x="0" y="-47" text-anchor="middle" fill="${color}" font-size="11" font-weight="900">${hand.down ? "ควบคุมอยู่" : "เลื่อนมือ/แตะจอ"}</text>
+        </g>`;
+    }
+
+    function altar(x, y, label) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="46" rx="100" ry="24" fill="#000" opacity=".28"/>
+          <path d="M-82 10 C-68 -32 68 -32 82 10 C70 56 -70 56 -82 10Z" fill="#253556" stroke="#37d6ff" stroke-width="3"/>
+          <text x="0" y="34" text-anchor="middle" fill="#d7fbff" font-size="13" font-weight="850">${label}</text>
+        </g>`;
+    }
+
+    function portalGate(x, y, ratio, label) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="178" rx="78" ry="22" fill="#000" opacity=".3"/>
+          <path d="M-76,170 L-76,-15 C-76,-105 76,-105 76,-15 L76,170" fill="none" stroke="#785537" stroke-width="16" stroke-linecap="round"/>
+          <path d="M-53,156 L-53,-12 C-53,-72 53,-72 53,-12 L53,156" fill="rgba(55,214,255,.12)" stroke="url(#portal)" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="0" cy="${132 - ratio * 122}" r="${18 + ratio * 26}" fill="url(#portal)" opacity="${.22 + ratio * .48}"/>
+          <text x="0" y="196" text-anchor="middle" fill="#ffe9aa" font-size="14" font-weight="900">${label}</text>
+        </g>`;
+    }
+
+    function crystal(x, y, s = 1, seed = 0) {
+      const colors = ["#37d6ff", "#3ee58f", "#ffd45c", "#ff5d93", "#9b5cff"];
+      const c = colors[seed % colors.length];
+      return `
+        <g transform="translate(${x},${y}) scale(${s})" filter="url(#glow)">
+          <path d="M0,-34 L25,-8 L12,34 L-12,34 L-25,-8Z" fill="${c}" stroke="#f8fbff" stroke-width="2" opacity=".95"/>
+          <path d="M0,-34 L0,34 M-25,-8 L25,-8" stroke="#ffffff" stroke-width="2" opacity=".45"/>
+        </g>`;
+    }
+
+    function book(x, y, showSpark = true) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="50" rx="92" ry="23" fill="#000" opacity=".26"/>
+          <path d="M-72,-18 C-40,-36 -14,-24 0,-6 C14,-24 40,-36 72,-18 L72,40 C40,24 14,28 0,48 C-14,28 -40,24 -72,40Z" fill="#7b4b31" stroke="#ffd45c" stroke-width="3"/>
+          <path d="M0,-6 L0,48" stroke="#ffd45c" stroke-width="2"/>
+          ${showSpark ? spark(0, -52, 1) : ""}
+          <text x="0" y="72" text-anchor="middle" fill="#ffe9aa" font-size="13" font-weight="850">หนังสือเวท</text>
+        </g>`;
+    }
+
+    function fairy(x, y, lit, i) {
+      return `
+        <g transform="translate(${x},${y})" opacity="${lit ? 1 : .62}">
+          <ellipse cx="-18" cy="-4" rx="20" ry="31" fill="${lit ? "#a6f8ff" : "#8792aa"}" opacity=".45" transform="rotate(-26)"/>
+          <ellipse cx="18" cy="-4" rx="20" ry="31" fill="${lit ? "#ffe7a3" : "#8792aa"}" opacity=".45" transform="rotate(26)"/>
+          <circle cx="0" cy="0" r="21" fill="${lit ? "#ffd45c" : "#47546d"}" stroke="#f8fbff" stroke-width="2"/>
+          <circle cx="-7" cy="-4" r="2.6" fill="#0b1020"/><circle cx="7" cy="-4" r="2.6" fill="#0b1020"/>
+          <path d="M-8,8 Q0,14 8,8" stroke="#0b1020" stroke-width="2" fill="none"/>
+          <text x="0" y="49" text-anchor="middle" fill="${lit ? "#3ee58f" : "#b8c5d9"}" font-size="12" font-weight="850">ภูต ${i + 1}</text>
+        </g>`;
+    }
+
+    function spark(x, y, s = 1) {
+      return `
+        <g transform="translate(${x},${y}) scale(${s})" filter="url(#glow)">
+          <path d="M0,-28 L8,-8 L29,0 L8,8 L0,29 L-8,8 L-29,0 L-8,-8Z" fill="#ffd45c" stroke="#fff4c8" stroke-width="2"/>
+        </g>`;
+    }
+
+    function flame(x, y, s = 1) {
+      return `
+        <g transform="translate(${x},${y}) scale(${s})" filter="url(#glow)">
+          <path d="M0,-38 C28,-12 18,30 0,38 C-20,24 -28,0 0,-38Z" fill="#ff7a2f" stroke="#ffe08a" stroke-width="2"/>
+          <path d="M2,-18 C15,0 10,22 0,28 C-10,16 -12,0 2,-18Z" fill="#ffd45c"/>
+        </g>`;
+    }
+
+    function brazier(x, y, showFlame = true) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="58" rx="92" ry="24" fill="#000" opacity=".28"/>
+          <path d="M-70,4 C-54,44 54,44 70,4 Z" fill="#4b3148" stroke="#ffd45c" stroke-width="3"/>
+          <path d="M-58,4 C-34,-20 34,-20 58,4" fill="#6b3f2d" stroke="#ff9b45" stroke-width="3"/>
+          ${showFlame ? flame(0, -28, .82) : ""}
+          <text x="0" y="78" text-anchor="middle" fill="#ffe9aa" font-size="13" font-weight="850">เตาไฟ</text>
+        </g>`;
+    }
+
+    function torch(x, y, lit, i) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="68" rx="42" ry="13" fill="#000" opacity=".24"/>
+          <path d="M-8,28 L8,28 L14,82 L-14,82Z" fill="#7b4b31" stroke="#d0a17a" stroke-width="2"/>
+          <path d="M-24,16 L24,16 L14,36 L-14,36Z" fill="#3a2730" stroke="#ffd45c" stroke-width="2"/>
+          ${lit ? flame(0, -12, .62) : '<circle cx="0" cy="3" r="15" fill="#344056" stroke="#718096" stroke-width="2"/>'}
+          <text x="0" y="104" text-anchor="middle" fill="${lit ? "#ffd45c" : "#b8c5d9"}" font-size="12" font-weight="850">คบเพลิง ${i + 1}</text>
+        </g>`;
+    }
+
+    function runeStone(x, y) {
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="56" rx="96" ry="26" fill="#000" opacity=".28"/>
+          <path d="M-66,32 C-78,-32 -34,-72 18,-68 C70,-62 84,-12 62,42 C22,58 -28,58 -66,32Z" fill="#33455f" stroke="#83e7ff" stroke-width="3"/>
+          <circle cx="0" cy="-8" r="30" fill="rgba(55,214,255,.16)" stroke="#37d6ff" stroke-width="4"/>
+          <text x="0" y="-2" text-anchor="middle" fill="#d7fbff" font-size="24" font-weight="900">∞</text>
+        </g>`;
+    }
+
+    function loopStone(x, y, kind, label, active) {
+      const color = kind === "list" ? "#37d6ff" : "#ffd45c";
+      const text = kind === "list" ? "ทุกชิ้น" : "จนกว่า";
+      return `
+        <g transform="translate(${x},${y})">
+          <ellipse cx="0" cy="48" rx="90" ry="24" fill="#000" opacity=".28"/>
+          <rect x="-76" y="-54" width="152" height="92" rx="8" fill="${active ? "rgba(55,214,255,.2)" : "rgba(17,26,44,.9)"}" stroke="${active ? "#3ee58f" : color}" stroke-width="3"/>
+          <text x="0" y="-18" text-anchor="middle" fill="${color}" font-size="20" font-weight="950">${text}</text>
+          <text x="0" y="12" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="850">${label}</text>
+          <text x="0" y="66" text-anchor="middle" fill="#b8c5d9" font-size="12">กำมือเลือก</text>
+        </g>`;
+    }
+
+    function fairyPositions() {
+      return [
+        { x: 345, y: 230 }, { x: 500, y: 205 }, { x: 640, y: 260 },
+        { x: 350, y: 405 }, { x: 510, y: 430 }, { x: 665, y: 390 }
+      ];
+    }
+
+    function torchPositions() {
+      return [
+        { x: 350, y: 240 }, { x: 530, y: 220 }, { x: 374, y: 418 }, { x: 640, y: 400 }
+      ];
+    }
+
+    function near(x, y, r) {
+      return Math.hypot(hand.x - x, hand.y - y) <= r;
+    }
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function loop() {
+      if (level === 2 && bridgeEnergy >= 100 && gesture === "open" && hand.down && !levelComplete && !dangerTriggered) {
+        if (bridgeFullSince && Date.now() - bridgeFullSince > 1400) triggerDanger();
+      }
+      if (level === 4 && fountainEnergy >= 100 && gesture === "open" && hand.down && !levelComplete && !dangerTriggered) {
+        if (fountainFullSince && Date.now() - fountainFullSince > 1400) triggerDanger();
+      }
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    document.getElementById("cameraBtn").addEventListener("click", startCamera);
+    document.getElementById("skipCameraBtn").addEventListener("click", skipCamera);
+    playerForm.addEventListener("submit", submitPlayerForm);
+    document.getElementById("soundBtn").addEventListener("click", () => {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊" : "🔇";
+    });
+    document.getElementById("resetBtn").addEventListener("click", resetCurrent);
+    replayBtn.addEventListener("click", resetCurrent);
+    document.getElementById("retryDangerBtn").addEventListener("click", resetCurrent);
+    nextBtn.addEventListener("click", () => {
+      if (finalSummaryActive) {
+        returnToStartScreen();
+        return;
+      }
+      switchLevel(Math.min(level + 1, levelMeta.length - 1));
+    });
+    document.querySelectorAll(".gesture-btn").forEach(btn => btn.addEventListener("click", () => setGesture(btn.dataset.gesture)));
+    document.querySelectorAll(".level-btn").forEach(btn => btn.addEventListener("click", () => switchLevel(Number(btn.dataset.level))));
+    svg.addEventListener("pointerdown", pointerStart);
+    svg.addEventListener("pointermove", pointerMove);
+    window.addEventListener("pointerup", pointerEnd);
+    window.addEventListener("keydown", event => {
+      if (event.key === "1") setGesture("open");
+      if (event.key === "2") setGesture("fist");
+      if (event.key.toLowerCase() === "r") resetCurrent();
+    });
+
+    fillClassOptions();
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    renderInfo();
+    draw();
+    loop();
+  </script>
+</body>
+</html>
