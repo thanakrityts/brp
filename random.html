@@ -1,0 +1,2737 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสุ่มชื่อนักเรียนแบบอินเตอร์แอคทีฟ</title>
+    <!-- Google Fonts: Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library via CDN (with JS fallback) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+    
+    <style>
+        /* ----------------------------------------------------
+           DESIGN SYSTEM & GLOBAL STYLES (SUPPORT LIGHT/DARK THEME)
+           ---------------------------------------------------- */
+        :root {
+            --bg-primary: #0a0a14;
+            --bg-surface: rgba(20, 20, 35, 0.6);
+            --bg-card: rgba(30, 30, 50, 0.4);
+            --border-glow: rgba(0, 243, 255, 0.15);
+            --border-light: rgba(255, 255, 255, 0.06);
+            
+            --accent-purple: #bd34fe;
+            --accent-cyan: #00f3ff;
+            --accent-gold: #ffb800;
+            --accent-pink: #ff2a85;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a2a2c2;
+            --text-muted: #6e6e8a;
+            
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --font-main: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+            /* Theme-specific variables */
+            --shadow-color: rgba(0, 0, 0, 0.7);
+            --slot-bg: linear-gradient(180deg, #18182a 0%, #0d0d19 100%);
+            --slot-window-bg: #06060c;
+            --sidebar-bg: rgba(10, 10, 20, 0.35);
+            --input-bg: rgba(0, 0, 0, 0.25);
+            --scroll-thumb-bg: rgba(255, 255, 255, 0.08);
+            --history-item-bg: rgba(255, 255, 255, 0.02);
+            --wheel-bg: radial-gradient(circle, rgba(30, 30, 60, 0.2) 0%, rgba(10, 10, 25, 0.5) 100%);
+            --wheel-center-bg: radial-gradient(circle, #2a2a48 0%, #101025 100%);
+            --footer-bg: rgba(0, 0, 0, 0.15);
+            --modal-bg: linear-gradient(135deg, #181830 0%, #0c0c16 100%);
+            --avatar-bg: #111122;
+        }
+
+        body.light-theme {
+            --bg-primary: #f0f2f5;
+            --bg-surface: rgba(255, 255, 255, 0.75);
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --border-glow: rgba(189, 52, 254, 0.15);
+            --border-light: rgba(0, 0, 0, 0.08);
+            
+            --text-primary: #1c1c28;
+            --text-secondary: #4e4e6a;
+            --text-muted: #8888a0;
+            
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --slot-bg: linear-gradient(180deg, #f0f0f5 0%, #e2e2eb 100%);
+            --slot-window-bg: #ffffff;
+            --sidebar-bg: rgba(0, 0, 0, 0.02);
+            --input-bg: rgba(255, 255, 255, 0.85);
+            --scroll-thumb-bg: rgba(0, 0, 0, 0.08);
+            --history-item-bg: rgba(0, 0, 0, 0.02);
+            --wheel-bg: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(240, 240, 245, 0.95) 100%);
+            --wheel-center-bg: radial-gradient(circle, #ffffff 0%, #e5e5f0 100%);
+            --footer-bg: rgba(255, 255, 255, 0.4);
+            --modal-bg: #ffffff;
+            --avatar-bg: #f5f5f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* ----------------------------------------------------
+           DYNAMIC NEON BACKGROUND GLOWS
+           ---------------------------------------------------- */
+        .bg-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.45;
+            transition: all 0.5s ease;
+        }
+
+        .bg-glow-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-purple) 0%, rgba(0,0,0,0) 70%);
+            top: -10%;
+            left: -10%;
+        }
+
+        .bg-glow-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-cyan) 0%, rgba(0,0,0,0) 70%);
+            bottom: -10%;
+            right: -10%;
+        }
+
+        body.light-theme .bg-glow-1 {
+            background: radial-gradient(circle, rgba(189, 52, 254, 0.2) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0.6;
+        }
+
+        body.light-theme .bg-glow-2 {
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.2) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0.6;
+        }
+
+        /* ----------------------------------------------------
+           APP STRUCTURE (GLASSMORPHISM)
+           ---------------------------------------------------- */
+        .app-container {
+            width: 95%;
+            max-width: 1300px;
+            height: 90vh;
+            min-height: 700px;
+            background: var(--bg-surface);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            box-shadow: 0 24px 64px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* Header */
+        .app-header {
+            height: 70px;
+            padding: 0 28px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.6));
+        }
+
+        body.light-theme .logo-icon {
+            color: var(--accent-purple);
+            filter: drop-shadow(0 0 4px rgba(189, 52, 254, 0.4));
+        }
+
+        .header-logo h1 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 243, 255, 0.25);
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+        }
+
+        body.light-theme .badge {
+            background: rgba(189, 52, 254, 0.1);
+            color: var(--accent-purple);
+            border: 1px solid rgba(189, 52, 254, 0.2);
+            box-shadow: none;
+        }
+
+        /* Designer info at top right */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-designer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-right: 15px;
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .btn-icon {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.25);
+        }
+
+        body.light-theme .btn-icon:hover {
+            background: rgba(0, 0, 0, 0.08);
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(189, 52, 254, 0.15);
+        }
+
+        .btn-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Main Grid Layout */
+        .app-main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 310px 1fr 310px;
+            overflow: hidden;
+        }
+
+        /* ----------------------------------------------------
+           SIDEBARS: STUDENT LIST & HISTORY
+           ---------------------------------------------------- */
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--sidebar-bg);
+            overflow: hidden;
+            transition: background 0.4s ease;
+        }
+
+        .left-panel {
+            border-right: 1px solid var(--border-light);
+        }
+
+        .right-panel {
+            border-left: 1px solid var(--border-light);
+        }
+
+        .panel-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        body.light-theme .panel-header {
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .panel-header h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Forms & Text Fields */
+        .add-form {
+            padding: 10px 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-form input,
+        .search-box input {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .add-form input:focus,
+        .search-box input:focus {
+            border-color: var(--accent-purple);
+            background: var(--bg-card);
+            box-shadow: 0 0 10px rgba(189, 52, 254, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), #901cf0);
+            border: none;
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(189, 52, 254, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(189, 52, 254, 0.5);
+            filter: brightness(1.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Search Box */
+        .search-box {
+            margin: 5px 20px 15px 20px;
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 38px;
+            font-size: 0.85rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Action Links */
+        .student-list-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .student-list-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px 10px 20px;
+            font-size: 0.75rem;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .btn-link {
+            color: #0d83a4;
+            font-weight: 500;
+        }
+
+        .btn-link:hover {
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+
+        body.light-theme .btn-link:hover {
+            color: var(--accent-purple);
+            text-shadow: none;
+        }
+
+        .btn-link.danger {
+            color: rgba(255, 42, 133, 0.8);
+        }
+
+        body.light-theme .btn-link.danger {
+            color: #d6005c;
+        }
+
+        .btn-link.danger:hover {
+            color: var(--accent-pink);
+            text-shadow: 0 0 5px rgba(255, 42, 133, 0.5);
+        }
+
+        body.light-theme .btn-link.danger:hover {
+            color: #ff0844;
+        }
+
+        .btn-text {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .btn-text {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-text:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        body.light-theme .btn-text:hover {
+            background: rgba(0, 0, 0, 0.06);
+            border-color: rgba(0,0,0,0.12);
+            color: var(--text-primary);
+        }
+
+        .btn-text.danger:hover {
+            border-color: rgba(255, 42, 133, 0.3);
+            color: var(--accent-pink);
+            background: rgba(255, 42, 133, 0.08);
+        }
+
+        body.light-theme .btn-text.danger:hover {
+            border-color: rgba(255, 42, 133, 0.2);
+            color: #d6005c;
+            background: rgba(255, 42, 133, 0.05);
+        }
+
+        /* Scrollable Student List */
+        .student-list {
+            flex: 1;
+            list-style: none;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+        }
+
+        /* Custom Scrollbar for sidebars */
+        .student-list::-webkit-scrollbar,
+        .history-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .student-list::-webkit-scrollbar-track,
+        .history-list-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .student-list::-webkit-scrollbar-thumb,
+        .history-list-container::-webkit-scrollbar-thumb {
+            background: var(--scroll-thumb-bg);
+            border-radius: 3px;
+        }
+
+        .student-list::-webkit-scrollbar-thumb:hover,
+        .history-list-container::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: var(--transition-smooth);
+            animation: slideIn 0.25s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .student-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+
+        body.light-theme .student-item:hover {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0,0,0,0.06);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .student-item.disabled {
+            opacity: 0.45;
+        }
+
+        .student-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .student-checkbox {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+
+        body.light-theme .student-checkbox {
+            accent-color: var(--accent-purple);
+        }
+
+        .student-name {
+            font-size: 0.9rem;
+            font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-delete-student {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-delete-student:hover {
+            color: var(--accent-pink);
+            background: rgba(255, 42, 133, 0.1);
+        }
+
+        .btn-delete-student svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* History List Panel */
+        .history-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--history-item-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .history-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--accent-cyan);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        body.light-theme .history-avatar {
+            background: rgba(189, 52, 254, 0.1);
+            color: var(--accent-purple);
+            border-color: rgba(189, 52, 254, 0.2);
+        }
+
+        .history-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .history-name {
+            font-size: 0.85rem;
+            font-weight: 450;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .history-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 0;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        /* ----------------------------------------------------
+           CENTER STAGE: RANDOMIZER ENGINE
+           ---------------------------------------------------- */
+        .randomizer-stage {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 20px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .randomizer-stage {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Mode Selector Styling */
+        .mode-selector-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+        }
+
+        body.light-theme .mode-selector {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .btn-mode {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-mode:hover {
+            color: white;
+        }
+
+        body.light-theme .btn-mode:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-mode.active {
+            background: var(--bg-primary);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 243, 255, 0.25);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+        }
+
+        body.light-theme .btn-mode.active {
+            background: #ffffff;
+            color: var(--accent-purple);
+            border-color: rgba(189, 52, 254, 0.15);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Display Container */
+        .display-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .mode-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mode-container.active {
+            display: flex;
+        }
+
+        /* ----------------------------------------------------
+           WHEEL OF FORTUNE (CANVAS)
+           ---------------------------------------------------- */
+        .wheel-wrapper {
+            position: relative;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 0 50px rgba(189, 52, 254, 0.15), inset 0 0 20px rgba(255,255,255,0.03);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--wheel-bg);
+            border: 2px solid rgba(255,255,255,0.05);
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+
+        body.light-theme .wheel-wrapper {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        /* Glowing Neon Outer Ring */
+        .wheel-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.4));
+            opacity: 0.8;
+        }
+
+        body.light-theme .wheel-wrapper::after {
+            filter: none;
+            opacity: 0.5;
+        }
+
+        #wheel-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        /* Pointer Indicator (Right pointing Left) */
+        .wheel-pointer {
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            width: 32px;
+            height: 32px;
+            color: var(--accent-gold);
+            z-index: 10;
+            filter: drop-shadow(0 0 10px rgba(255, 184, 0, 0.7));
+        }
+
+        body.light-theme .wheel-pointer {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+        }
+
+        .wheel-center-pin {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: var(--wheel-center-bg);
+            border: 3px solid var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5), inset 0 2px 10px rgba(255,255,255,0.2);
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .wheel-center-pin {
+            border-color: var(--accent-purple);
+            box-shadow: 0 4px 15px rgba(189, 52, 254, 0.2);
+        }
+
+        .wheel-center-pin span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        body.light-theme .wheel-center-pin span {
+            color: var(--text-primary);
+            text-shadow: none;
+        }
+
+        /* ----------------------------------------------------
+           SLOT MACHINE DESIGN
+           ---------------------------------------------------- */
+        .slot-machine-wrapper {
+            width: 380px;
+            height: 200px;
+            background: var(--slot-bg);
+            border-radius: 24px;
+            padding: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        body.light-theme .slot-machine-wrapper {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        .slot-machine-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 24px;
+            border: 2px solid transparent;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.3));
+        }
+
+        body.light-theme .slot-machine-wrapper::before {
+            filter: none;
+            opacity: 0.4;
+        }
+
+        .slot-window {
+            width: 100%;
+            height: 120px;
+            background: var(--slot-window-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9);
+            transition: background-color 0.4s ease;
+        }
+
+        body.light-theme .slot-window {
+            border-color: rgba(0,0,0,0.05);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* Gradient Covers for 3D Roller illusion */
+        .slot-overlay-top,
+        .slot-overlay-bottom {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .slot-overlay-top {
+            top: 0;
+            background: linear-gradient(180deg, var(--slot-window-bg) 0%, transparent 100%);
+        }
+
+        .slot-overlay-bottom {
+            bottom: 0;
+            background: linear-gradient(360deg, var(--slot-window-bg) 0%, transparent 100%);
+        }
+
+        /* Horizontal alignment line indicators */
+        .slot-target-line {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 52px;
+            border-top: 1.5px solid rgba(255, 184, 0, 0.45);
+            border-bottom: 1.5px solid rgba(255, 184, 0, 0.45);
+            background: rgba(255, 184, 0, 0.04);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .slot-target-line::before,
+        .slot-target-line::after {
+            content: '▶';
+            position: absolute;
+            font-size: 0.65rem;
+            color: var(--accent-gold);
+            top: 50%;
+            transform: translateY(-50%);
+            filter: drop-shadow(0 0 5px rgba(255, 184, 0, 0.6));
+        }
+
+        body.light-theme .slot-target-line::before,
+        body.light-theme .slot-target-line::after {
+            filter: none;
+            color: var(--accent-purple);
+        }
+
+        .slot-target-line::before { left: 8px; }
+        .slot-target-line::after { right: 8px; transform: translateY(-50%) rotate(180deg); }
+
+        .slot-reels-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slot-reel {
+            width: 80%;
+            text-align: center;
+            position: relative;
+            top: 0;
+            transform: translateY(0);
+            will-change: transform;
+        }
+
+        .slot-item {
+            height: 50px;
+            line-height: 50px;
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.15s ease;
+        }
+
+        .slot-item.highlighted {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.6rem;
+            text-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+        }
+
+        body.light-theme .slot-item.highlighted {
+            text-shadow: none;
+            color: var(--accent-purple);
+        }
+
+        /* ----------------------------------------------------
+           SPIN CONTROL AREA
+           ---------------------------------------------------- */
+        .spin-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Giant Spin Button */
+        .btn-spin-large {
+            position: relative;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, #00bcff 100%);
+            border: none;
+            color: #05050f;
+            font-family: var(--font-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            padding: 16px 42px;
+            border-radius: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.35);
+            outline: none;
+        }
+
+        body.light-theme .btn-spin-large {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #901cf0 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(189, 52, 254, 0.25);
+        }
+
+        .btn-glow-effect {
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 45px;
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-spin-large:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.6);
+            filter: brightness(1.08);
+        }
+
+        body.light-theme .btn-spin-large:hover {
+            box-shadow: 0 10px 30px rgba(189, 52, 254, 0.45);
+        }
+
+        .btn-spin-large:hover .btn-glow-effect {
+            opacity: 0.6;
+        }
+
+        .btn-spin-large:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-spin-large svg {
+            width: 22px;
+            height: 22px;
+            animation: rotateSlow 8s linear infinite;
+        }
+
+        .btn-spin-large:hover svg {
+            animation-duration: 2s;
+        }
+
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .options-row {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Toggle Switch Styling */
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: relative;
+            width: 44px;
+            height: 22px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 34px;
+            transition: .3s;
+        }
+
+        body.light-theme .slider {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0,0,0,0.04);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        .toggle-switch input:checked + .slider {
+            background-color: rgba(189, 52, 254, 0.15);
+            border-color: rgba(189, 52, 254, 0.4);
+        }
+
+        body.light-theme .toggle-switch input:checked + .slider {
+            background-color: rgba(189, 52, 254, 0.1);
+        }
+
+        .toggle-switch input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: var(--accent-purple);
+            box-shadow: 0 0 8px var(--accent-purple);
+        }
+
+        .label-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: var(--transition-smooth);
+        }
+
+        .toggle-switch:hover .label-text {
+            color: var(--text-primary);
+        }
+
+        /* ----------------------------------------------------
+           MODALS: GENERAL & WINNER CELEBRATION
+           ---------------------------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(4, 4, 8, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        body.light-theme .modal-overlay {
+            background: rgba(240, 242, 245, 0.7);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 28px;
+            padding: 35px;
+            width: 90%;
+            max-width: 440px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.1), background 0.4s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        body.light-theme .modal-content {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Winner Modal Custom Glow */
+        .winner-glow-box {
+            border-color: rgba(189, 52, 254, 0.3);
+            box-shadow: 0 0 50px rgba(189, 52, 254, 0.25), 0 25px 60px rgba(0,0,0,0.7);
+        }
+
+        body.light-theme .winner-glow-box {
+            box-shadow: 0 10px 40px rgba(189, 52, 254, 0.15);
+            border-color: rgba(189, 52, 254, 0.15);
+        }
+
+        .modal-stars-decor {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 24px;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.2);
+        }
+
+        body.light-theme .modal-title {
+            color: #e6a100;
+            text-shadow: none;
+        }
+
+        .winner-avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px auto;
+        }
+
+        .winner-avatar-glow {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+            animation: pulseGlow 2s infinite alternate;
+            z-index: 1;
+        }
+
+        .winner-avatar {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--avatar-bg);
+            border: 3px solid var(--accent-purple);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(189, 52, 254, 0.5);
+            transition: background 0.4s ease;
+        }
+
+        body.light-theme .winner-avatar {
+            box-shadow: 0 4px 15px rgba(189, 52, 254, 0.2);
+        }
+
+        .winner-avatar svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .winner-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        body.light-theme .winner-name {
+            text-shadow: none;
+        }
+
+        .winner-sub {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .btn-modal-close {
+            background: linear-gradient(135deg, var(--accent-purple), #901cf0);
+            border: none;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(189, 52, 254, 0.3);
+        }
+
+        .btn-modal-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(189, 52, 254, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Bulk Import Modal Custom Styling */
+        .import-content {
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .import-content .modal-title {
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-instruction {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .import-content textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            padding: 14px;
+            border-radius: 14px;
+            outline: none;
+            resize: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            transition: var(--transition-smooth);
+        }
+
+        .import-content textarea:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+        }
+
+        body.light-theme .import-content textarea:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 8px rgba(189, 52, 254, 0.1);
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        body.light-theme .btn-secondary {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        body.light-theme .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-primary-modal {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, #00bcff 100%);
+            border: none;
+            color: #05050f;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(0, 243, 255, 0.2);
+        }
+
+        body.light-theme .btn-primary-modal {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #901cf0 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(189, 52, 254, 0.2);
+        }
+
+        .btn-primary-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 243, 255, 0.4);
+            filter: brightness(1.08);
+        }
+
+        body.light-theme .btn-primary-modal:hover {
+            box-shadow: 0 6px 16px rgba(189, 52, 254, 0.35);
+        }
+
+        /* ----------------------------------------------------
+           FOOTER SECTION
+           ---------------------------------------------------- */
+        .app-footer {
+            height: 50px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--footer-bg);
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+
+        .app-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .app-footer a:hover {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+        }
+
+        body.light-theme .app-footer a:hover {
+            color: var(--accent-purple);
+            text-shadow: none;
+        }
+
+        /* ----------------------------------------------------
+           RESPONSIVE DESIGN ADJUSTMENTS
+           ---------------------------------------------------- */
+        @media (max-width: 1100px) {
+            .app-container {
+                height: auto;
+                min-height: 100vh;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+            }
+            
+            .app-main {
+                grid-template-columns: 1fr;
+                overflow-y: auto;
+            }
+            
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border-light);
+            }
+            
+            .right-panel {
+                border-left: none;
+                border-top: 1px solid var(--border-light);
+            }
+            
+            .randomizer-stage {
+                padding: 40px 20px;
+            }
+            
+            .sidebar-panel {
+                max-height: 400px;
+            }
+            
+            .app-footer {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 8px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-designer {
+                display: none; /* Hide top designer text on narrow headers to prevent overflow */
+            }
+        }
+
+        @media (max-width: 500px) {
+            .wheel-wrapper {
+                width: 320px;
+                height: 320px;
+            }
+            
+            .slot-machine-wrapper {
+                width: 310px;
+                height: 180px;
+            }
+            
+            .slot-window {
+                height: 100px;
+            }
+            
+            .slot-item {
+                font-size: 1.15rem;
+                height: 40px;
+                line-height: 40px;
+            }
+            
+            .slot-item.highlighted {
+                font-size: 1.35rem;
+            }
+            
+            .slot-target-line {
+                height: 42px;
+            }
+            
+            .winner-name {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Glow Elements -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <h1>ระบบสุ่มชื่อนักเรียน</h1>
+                <span class="badge">Interactive Randomizer</span>
+            </div>
+            <div class="header-controls">
+                <span class="header-designer">Designed by Mr.Thanakrit Yomthaisong</span>
+                
+                <button id="btn-theme-toggle" class="btn-icon" title="สลับโหมดมืด/สว่าง">
+                    <!-- Sun Icon -->
+                    <svg id="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.22" x2="5.64" y2="17.78"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg id="theme-icon-dark" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+
+                <button id="btn-sound-toggle" class="btn-icon" title="เปิด/ปิดเสียง">
+                    <svg id="sound-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                    <svg id="sound-icon-off" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <line x1="23" y1="9" x2="17" y2="15"/>
+                        <line x1="17" y1="9" x2="23" y2="15"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="app-main">
+            <!-- Left Sidebar: Student Management -->
+            <section class="sidebar-panel left-panel">
+                <div class="panel-header">
+                    <h2>รายชื่อนักเรียน (<span id="student-count">0</span>)</h2>
+                    <button id="btn-bulk-import" class="btn-text">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="12" y1="18" x2="12" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                        นำเข้าหลายชื่อ
+                    </button>
+                </div>
+                
+                <!-- Quick Add Form -->
+                <form id="add-student-form" class="add-form">
+                    <input type="text" id="input-student-name" placeholder="ระบุชื่อนักเรียน..." autocomplete="off" required>
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <!-- Search box -->
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="search-student" placeholder="ค้นหาชื่อนักเรียน...">
+                </div>
+
+                <!-- Student List -->
+                <div class="student-list-container">
+                    <div class="student-list-actions">
+                        <button id="btn-select-all" class="btn-link">เลือกทั้งหมด</button>
+                        <button id="btn-deselect-all" class="btn-link">ยกเลิกทั้งหมด</button>
+                        <button id="btn-clear-list" class="btn-link danger">ลบทั้งหมด</button>
+                    </div>
+                    <ul id="student-list" class="student-list">
+                        <!-- Student items will be dynamically generated -->
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Center Stage: The Randomizer -->
+            <section class="randomizer-stage">
+                <!-- Mode Selector -->
+                <div class="mode-selector-wrapper">
+                    <div class="mode-selector">
+                        <button id="mode-wheel" class="btn-mode active" data-mode="wheel">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2v20M2 12h20M12 12l7.07-7.07M12 12L4.93 19.07M12 12L4.93 4.93M12 12l7.07 7.07"/>
+                            </svg>
+                            วงล้อนำโชค
+                        </button>
+                        <button id="mode-slot" class="btn-mode" data-mode="slot">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="3" x2="9" y2="21"/>
+                                <line x1="15" y1="3" x2="15" y2="21"/>
+                                <line x1="3" y1="12" x2="21" y2="12"/>
+                            </svg>
+                            ตู้สล็อตแมชชีน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Display Screen -->
+                <div class="display-container">
+                    <!-- Wheel Mode Container -->
+                    <div id="container-wheel" class="mode-container active">
+                        <div class="wheel-wrapper">
+                            <!-- Indicator Arrow -->
+                            <div class="wheel-pointer">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="12,24 0,0 24,0"/>
+                                </svg>
+                            </div>
+                            <canvas id="wheel-canvas" width="500" height="500"></canvas>
+                            <div class="wheel-center-pin">
+                                <span>สปิน!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slot Mode Container -->
+                    <div id="container-slot" class="mode-container">
+                        <div class="slot-machine-wrapper">
+                            <div class="slot-window">
+                                <div class="slot-overlay-top"></div>
+                                <div class="slot-overlay-bottom"></div>
+                                <div class="slot-target-line"></div>
+                                <div class="slot-reels-container">
+                                    <div id="slot-reel" class="slot-reel">
+                                        <!-- Slot items will roll here -->
+                                        <div class="slot-item dummy">พร้อมลุ้น!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="spin-controls">
+                    <button id="btn-spin" class="btn-spin-large">
+                        <span class="btn-glow-effect"></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                        <span id="spin-text">เริ่มสุ่มชื่อ!</span>
+                    </button>
+                    
+                    <div class="options-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-no-repeat" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">สุ่มแบบไม่ซ้ำคนเดิม</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Sidebar: History & Log -->
+            <section class="sidebar-panel right-panel">
+                <div class="panel-header">
+                    <h2>ประวัติผู้โชคดี (<span id="history-count">0</span>)</h2>
+                    <button id="btn-clear-history" class="btn-text danger">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"/>
+                        </svg>
+                        ล้างประวัติ
+                    </button>
+                </div>
+
+                <div class="history-list-container">
+                    <ul id="history-list" class="history-list">
+                        <!-- History items will be dynamically appended here -->
+                        <li class="history-empty">ยังไม่มีประวัติการสุ่ม</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Designed by Mr.Thanakrit Yomthaisong</p>
+            <p>E-mail : <a href="mailto:thanakrit.yts@brp.ac.th">thanakrit.yts@brp.ac.th</a></p>
+        </footer>
+    </div>
+
+    <!-- Winner Modal Dialog -->
+    <div id="winner-modal" class="modal-overlay">
+        <div class="modal-content winner-glow-box">
+            <div class="modal-stars-decor">✨ 🎉 ✨</div>
+            <h3 class="modal-title">🎉 ยินดีด้วยกับผู้โชคดี! 🎉</h3>
+            <div class="winner-avatar-container">
+                <div class="winner-avatar-glow"></div>
+                <div class="winner-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+            </div>
+            <div id="winner-name-display" class="winner-name">สมชาย รักดี</div>
+            <p class="winner-sub">สุ่มได้ลำดับที่ <span id="winner-index">1</span></p>
+            <button id="btn-close-modal" class="btn-modal-close">ตกลง</button>
+        </div>
+    </div>
+
+    <!-- Bulk Import Modal -->
+    <div id="import-modal" class="modal-overlay">
+        <div class="modal-content import-content">
+            <h3 class="modal-title">นำเข้ารายชื่อหลายรายการ</h3>
+            <p class="modal-instruction">กรอกชื่อนักเรียนทีละชื่อ โดยคั่นด้วยการขึ้นบรรทัดใหม่ (Enter)</p>
+            <textarea id="textarea-import" rows="10" placeholder="ตัวอย่าง:&#10;เด็กชายกิตติศักดิ์ มีชัย&#10;เด็กหญิงพรไพลิน สมรักษ์&#10;เด็กชายอนันต์ บุญดี"></textarea>
+            <div class="modal-buttons">
+                <button id="btn-cancel-import" class="btn-secondary">ยกเลิก</button>
+                <button id="btn-submit-import" class="btn-primary-modal">นำเข้ารายชื่อ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic Script -->
+    <script>
+        // ----------------------------------------------------
+        // STATE & CONFIGURATION
+        // ----------------------------------------------------
+        const DEFAULT_STUDENTS = [
+            "เด็กชายภูผา สมบูรณ์",
+            "เด็กหญิงแก้วตา จิตใจดี",
+            "เด็กชายต้นกล้า กลิ่นเกล้า",
+            "เด็กหญิงใยไหม ใฝ่ธรรม",
+            "เด็กชายปันปัน ปัญญาดี",
+            "เด็กหญิงนับดาว แสนดี",
+            "เด็กชายพีรพล พลเยี่ยม",
+            "เด็กหญิงณิชา ดาริกา",
+            "เด็กชายศรัญญู ชูชื่น",
+            "เด็กหญิงรวิสรา รุ่งอรุณ",
+            "เด็กชายภานุวัฒน์ วัฒนา",
+            "เด็กหญิงอริสรา พรประเสริฐ",
+            "เด็กชายธีรเดช ทวีลาภ",
+            "เด็กหญิงมนัสวี ศรีวิไล",
+            "เด็กชายกิตติธัช ชัยชนะ",
+            "เด็กหญิงเบญจวรรณ ปัญญามี",
+            "เด็กชายจิรพัฒน์ รัตนวิจิตร",
+            "เด็กหญิงพัชราภา สุวรรณ",
+            "เด็กชายณภัทร มั่งคั่ง",
+            "เด็กหญิงชลลดา สุนทรศิริ"
+        ];
+
+        let students = [];
+        let history = [];
+        let soundEnabled = true;
+        let isDarkTheme = true;
+        let currentMode = "wheel"; // "wheel" or "slot"
+        let isSpinning = false;
+
+        // Audio Context (Lazy loaded on user interaction)
+        let audioCtx = null;
+
+        // ----------------------------------------------------
+        // DOM ELEMENTS
+        // ----------------------------------------------------
+        const studentListEl = document.getElementById("student-list");
+        const historyListEl = document.getElementById("history-list");
+        const studentCountEl = document.getElementById("student-count");
+        const historyCountEl = document.getElementById("history-count");
+        const inputStudentName = document.getElementById("input-student-name");
+        const addStudentForm = document.getElementById("add-student-form");
+        const searchStudentInput = document.getElementById("search-student");
+        const toggleNoRepeat = document.getElementById("toggle-no-repeat");
+
+        const modeWheelBtn = document.getElementById("mode-wheel");
+        const modeSlotBtn = document.getElementById("mode-slot");
+        const containerWheel = document.getElementById("container-wheel");
+        const containerSlot = document.getElementById("container-slot");
+
+        const btnSpin = document.getElementById("btn-spin");
+        const spinText = document.getElementById("spin-text");
+        const btnSoundToggle = document.getElementById("btn-sound-toggle");
+        const soundIconOn = document.getElementById("sound-icon-on");
+        const soundIconOff = document.getElementById("sound-icon-off");
+
+        const btnThemeToggle = document.getElementById("btn-theme-toggle");
+        const themeIconLight = document.getElementById("theme-icon-light");
+        const themeIconDark = document.getElementById("theme-icon-dark");
+
+        const btnSelectAll = document.getElementById("btn-select-all");
+        const btnDeselectAll = document.getElementById("btn-deselect-all");
+        const btnClearList = document.getElementById("btn-clear-list");
+        const btnClearHistory = document.getElementById("btn-clear-history");
+        const btnBulkImport = document.getElementById("btn-bulk-import");
+
+        // Modals
+        const winnerModal = document.getElementById("winner-modal");
+        const winnerNameDisplay = document.getElementById("winner-name-display");
+        const winnerIndexDisplay = document.getElementById("winner-index");
+        const btnCloseModal = document.getElementById("btn-close-modal");
+
+        const importModal = document.getElementById("import-modal");
+        const textareaImport = document.getElementById("textarea-import");
+        const btnCancelImport = document.getElementById("btn-cancel-import");
+        const btnSubmitImport = document.getElementById("btn-submit-import");
+
+        // Canvas
+        const canvas = document.getElementById("wheel-canvas");
+        const ctx = canvas.getContext("2d");
+
+        // ----------------------------------------------------
+        // WEB AUDIO SYNTHESIZER
+        // ----------------------------------------------------
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === "suspended") {
+                audioCtx.resume();
+            }
+        }
+
+        function playSynthesizedSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === "tick") {
+                // High-pitched mechanical clicking tick
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.04);
+                
+                gainNode.gain.setValueAtTime(0.08, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } 
+            else if (type === "roll") {
+                // Low-frequency rumble
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(120, now);
+                
+                gainNode.gain.setValueAtTime(0.05, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.06);
+            } 
+            else if (type === "win") {
+                // Arpeggio in Major scale (C Major 7th/9th) for celebration
+                const notes = [261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99, 987.77]; // C4, E4, G4, B4, C5, E5, G5, B5
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    const startTime = now + idx * 0.08;
+                    
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    
+                    // Add slight vibrato to the final note
+                    if (idx === notes.length - 1) {
+                        const lfo = audioCtx.createOscillator();
+                        const lfoGain = audioCtx.createGain();
+                        lfo.frequency.setValueAtTime(8, startTime); // 8 Hz vibrato
+                        lfoGain.gain.setValueAtTime(15, startTime); // pitch amplitude variation
+                        
+                        lfo.connect(lfoGain);
+                        lfoGain.connect(osc.frequency);
+                        lfo.start(startTime);
+                        lfo.stop(startTime + 0.8);
+                        
+                        gainNode.gain.setValueAtTime(0.12, startTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.8);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.8);
+                    } else {
+                        gainNode.gain.setValueAtTime(0.08, startTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.25);
+                    }
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                });
+            }
+        }
+
+        // ----------------------------------------------------
+        // LOCAL STORAGE & DATA LOADING
+        // ----------------------------------------------------
+        function loadData() {
+            const savedStudents = localStorage.getItem("students");
+            const savedHistory = localStorage.getItem("history");
+            const savedSound = localStorage.getItem("soundEnabled");
+            const savedNoRepeat = localStorage.getItem("noRepeatEnabled");
+            const savedMode = localStorage.getItem("currentMode");
+            const savedTheme = localStorage.getItem("themeMode");
+
+            if (savedStudents) {
+                students = JSON.parse(savedStudents);
+            } else {
+                students = DEFAULT_STUDENTS.map((name, index) => ({
+                    id: index + 1,
+                    name: name,
+                    checked: true
+                }));
+                saveStudents();
+            }
+
+            if (savedHistory) {
+                history = JSON.parse(savedHistory);
+            } else {
+                history = [];
+            }
+
+            if (savedSound !== null) {
+                soundEnabled = savedSound === "true";
+            }
+            
+            if (savedNoRepeat !== null) {
+                toggleNoRepeat.checked = savedNoRepeat === "true";
+            }
+
+            if (savedMode !== null) {
+                currentMode = savedMode;
+            }
+
+            if (savedTheme !== null) {
+                isDarkTheme = savedTheme === "dark";
+            }
+            document.body.classList.toggle("light-theme", !isDarkTheme);
+
+            updateSoundUI();
+            updateThemeUI();
+            updateModeUI();
+            renderStudents();
+            renderHistory();
+            drawWheel();
+        }
+
+        function saveStudents() {
+            localStorage.setItem("students", JSON.stringify(students));
+        }
+
+        // Save history logs to local storage
+        function saveHistory() {
+            localStorage.setItem("history", JSON.stringify(history));
+        }
+
+        // ----------------------------------------------------
+        // LIST RENDERING
+        // ----------------------------------------------------
+        function renderStudents() {
+            const query = searchStudentInput.value.toLowerCase().trim();
+            studentListEl.innerHTML = "";
+            
+            let visibleCount = 0;
+            
+            students.forEach(student => {
+                if (query && !student.name.toLowerCase().includes(query)) {
+                    return;
+                }
+                visibleCount++;
+                
+                const li = document.createElement("li");
+                li.className = `student-item ${student.checked ? '' : 'disabled'}`;
+                li.dataset.id = student.id;
+                
+                li.innerHTML = `
+                    <div class="student-item-left">
+                        <input type="checkbox" class="student-checkbox" ${student.checked ? 'checked' : ''}>
+                        <span class="student-name" title="${student.name}">${student.name}</span>
+                    </div>
+                    <button class="btn-delete-student" title="ลบชื่อนี้">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                `;
+                
+                // Handle checkbox toggling
+                const checkbox = li.querySelector(".student-checkbox");
+                checkbox.addEventListener("change", (e) => {
+                    student.checked = e.target.checked;
+                    li.className = `student-item ${student.checked ? '' : 'disabled'}`;
+                    saveStudents();
+                    updateActiveCount();
+                    drawWheel();
+                    initSlotReel();
+                });
+
+                // Click on the left side toggles checkbox as well
+                const leftSide = li.querySelector(".student-item-left");
+                leftSide.addEventListener("click", (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        student.checked = checkbox.checked;
+                        li.className = `student-item ${student.checked ? '' : 'disabled'}`;
+                        saveStudents();
+                        updateActiveCount();
+                        drawWheel();
+                        initSlotReel();
+                    }
+                });
+                
+                // Handle student deletion
+                const deleteBtn = li.querySelector(".btn-delete-student");
+                deleteBtn.addEventListener("click", () => {
+                    students = students.filter(s => s.id !== student.id);
+                    saveStudents();
+                    renderStudents();
+                    drawWheel();
+                    initSlotReel();
+                });
+                
+                studentListEl.appendChild(li);
+            });
+            
+            updateActiveCount();
+        }
+
+        function updateActiveCount() {
+            const activeCount = students.filter(s => s.checked).length;
+            studentCountEl.textContent = `${activeCount}/${students.length}`;
+        }
+
+        function renderHistory() {
+            historyListEl.innerHTML = "";
+            historyCountEl.textContent = history.length;
+            
+            if (history.length === 0) {
+                historyListEl.innerHTML = `<li class="history-empty">ยังไม่มีประวัติการสุ่ม</li>`;
+                return;
+            }
+            
+            history.forEach(item => {
+                const li = document.createElement("li");
+                li.className = "history-item";
+                
+                const initial = item.name.trim().replace(/^(เด็กชาย|เด็กหญิง|นาย|นางสาว|ด\.ช\.|ด\.ญ\.)/, "").charAt(0) || "👤";
+                
+                li.innerHTML = `
+                    <div class="history-avatar">${initial}</div>
+                    <div class="history-info">
+                        <div class="history-name">${item.name}</div>
+                        <div class="history-time">${item.time}</div>
+                    </div>
+                `;
+                historyListEl.appendChild(li);
+            });
+            
+            historyListEl.scrollTop = 0;
+        }
+
+        // ----------------------------------------------------
+        // MOCK CELEBRATION (FALLBACK CONFETTI)
+        // ----------------------------------------------------
+        function triggerCelebration() {
+            playSynthesizedSound("win");
+            
+            if (typeof confetti === "function") {
+                const duration = 2.5 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 3,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0, y: 0.8 },
+                        colors: ['#00f3ff', '#bd34fe', '#ff2a85', '#ffb800']
+                    });
+                    confetti({
+                        particleCount: 3,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1, y: 0.8 },
+                        colors: ['#00f3ff', '#bd34fe', '#ff2a85', '#ffb800']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            } else {
+                createCSSConfetti();
+            }
+        }
+
+        function createCSSConfetti() {
+            const colors = ['#00f3ff', '#bd34fe', '#ff2a85', '#ffb800'];
+            const container = document.body;
+            
+            for (let i = 0; i < 100; i++) {
+                const conf = document.createElement('div');
+                conf.style.position = 'fixed';
+                conf.style.width = Math.random() * 8 + 6 + 'px';
+                conf.style.height = Math.random() * 12 + 6 + 'px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = '-20px';
+                conf.style.borderRadius = '2px';
+                conf.style.zIndex = '999';
+                conf.style.opacity = Math.random() * 0.7 + 0.3;
+                conf.style.pointerEvents = 'none';
+                
+                container.appendChild(conf);
+                
+                const speed = Math.random() * 3 + 2;
+                const drift = (Math.random() - 0.5) * 2;
+                let top = -20;
+                let left = parseFloat(conf.style.left);
+                
+                const interval = setInterval(() => {
+                    top += speed;
+                    left += drift;
+                    conf.style.top = top + 'px';
+                    conf.style.left = left + 'px';
+                    conf.style.transform = `rotate(${top * 2}deg)`;
+                    
+                    if (top > window.innerHeight) {
+                        clearInterval(interval);
+                        conf.remove();
+                    }
+                }, 16);
+            }
+        }
+
+        // ----------------------------------------------------
+        // WHEEL GRAPHICS & PHYSICS ENGINE
+        // ----------------------------------------------------
+        let currentAngle = 0;
+        let isWheelSpinning = false;
+        let wheelAnimFrame = null;
+
+        const WHEEL_COLORS = [
+            ["#bd34fe", "#8a14d4"],
+            ["#00f3ff", "#00b0c4"],
+            ["#ff2a85", "#d6005c"],
+            ["#ffb800", "#d69700"],
+            ["#05d5ff", "#0090b8"],
+            ["#a100ff", "#7300c7"]
+        ];
+
+        function getActiveStudents() {
+            return students.filter(s => s.checked);
+        }
+
+        function drawWheel() {
+            const active = getActiveStudents();
+            const N = active.length;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const radius = Math.min(cx, cy) - 15;
+            
+            if (N === 0) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+                ctx.stroke();
+                
+                ctx.font = "bold 18px " + varFont();
+                ctx.fillStyle = "#6e6e8a";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("เพิ่ม/ติ๊กเลือกนักเรียนเพื่อสปิน", cx, cy);
+                return;
+            }
+            
+            const sliceWidth = (2 * Math.PI) / N;
+            
+            for (let i = 0; i < N; i++) {
+                const startAngle = i * sliceWidth + currentAngle;
+                const endAngle = (i + 1) * sliceWidth + currentAngle;
+                
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radius, startAngle, endAngle);
+                ctx.closePath();
+                
+                const colorPair = WHEEL_COLORS[i % WHEEL_COLORS.length];
+                const gradient = ctx.createRadialGradient(cx, cy, 20, cx, cy, radius);
+                gradient.addColorStop(0, colorPair[0]);
+                gradient.addColorStop(1, colorPair[1]);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+                ctx.stroke();
+                
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(startAngle + sliceWidth / 2);
+                
+                ctx.font = N > 25 ? "11px " + varFont() : N > 15 ? "13px " + varFont() : "15px " + varFont();
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+                
+                ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+                
+                const displayName = active[i].name.length > 18 ? active[i].name.substring(0, 16) + "..." : active[i].name;
+                ctx.fillText(displayName, radius - 25, 0);
+                ctx.restore();
+            }
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "rgba(255,255,255,0.06)";
+            ctx.stroke();
+        }
+
+        function varFont() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--font-main').trim() || "Prompt";
+        }
+
+        function spinWheel() {
+            const active = getActiveStudents();
+            if (active.length === 0 || isSpinning) return;
+            
+            initAudio();
+            isSpinning = true;
+            isWheelSpinning = true;
+            btnSpin.disabled = true;
+            btnSpin.classList.add("spinning");
+            spinText.textContent = "กำลังลุ้น...";
+            
+            let velocity = Math.random() * 0.25 + 0.35;
+            const friction = 0.982;
+            
+            const sliceWidth = (2 * Math.PI) / active.length;
+            let lastIndex = -1;
+            
+            function animate() {
+                if (!isWheelSpinning) return;
+                
+                currentAngle += velocity;
+                velocity *= friction;
+                
+                drawWheel();
+                
+                const pointerAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI))) % (2 * Math.PI);
+                const currentIndex = Math.floor(pointerAngle / sliceWidth);
+                
+                if (currentIndex !== lastIndex && velocity > 0.005) {
+                    playSynthesizedSound("tick");
+                    lastIndex = currentIndex;
+                }
+                
+                if (velocity < 0.0012) {
+                    isWheelSpinning = false;
+                    isSpinning = false;
+                    cancelAnimationFrame(wheelAnimFrame);
+                    
+                    const winningIndex = currentIndex;
+                    const winner = active[winningIndex];
+                    
+                    showWinner(winner);
+                } else {
+                    wheelAnimFrame = requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+
+        // ----------------------------------------------------
+        // SLOT MACHINE ROLLER SYSTEM
+        // ----------------------------------------------------
+        const slotReel = document.getElementById("slot-reel");
+        let isSlotSpinning = false;
+        let slotAnimFrame = null;
+        const SLOT_ITEM_HEIGHT = 50;
+
+        function initSlotReel() {
+            const active = getActiveStudents();
+            slotReel.innerHTML = "";
+            
+            if (active.length === 0) {
+                slotReel.innerHTML = `<div class="slot-item dummy">พร้อมลุ้น!</div>`;
+                return;
+            }
+            
+            active.forEach(student => {
+                const item = document.createElement("div");
+                item.className = "slot-item";
+                item.textContent = student.name;
+                slotReel.appendChild(item);
+            });
+        }
+
+        function spinSlotMachine() {
+            const active = getActiveStudents();
+            if (active.length === 0 || isSpinning) return;
+            
+            initAudio();
+            isSpinning = true;
+            isSlotSpinning = true;
+            btnSpin.disabled = true;
+            spinText.textContent = "กำลังลุ้น...";
+            
+            const winnerIndex = Math.floor(Math.random() * active.length);
+            const winner = active[winnerIndex];
+            
+            slotReel.innerHTML = "";
+            
+            for (let i = 0; i < 4; i++) {
+                active.forEach(st => {
+                    const item = document.createElement("div");
+                    item.className = "slot-item";
+                    item.textContent = st.name;
+                    slotReel.appendChild(item);
+                });
+            }
+            
+            const winnerItemIdx = slotReel.children.length + Math.min(active.length, 10);
+            
+            const totalItemsToCreate = winnerItemIdx + 6;
+            for (let i = 0; i < totalItemsToCreate; i++) {
+                const studentIndex = i === winnerItemIdx ? winnerIndex : Math.floor(Math.random() * active.length);
+                const st = active[studentIndex];
+                const item = document.createElement("div");
+                item.className = "slot-item";
+                if (i === winnerItemIdx) {
+                    item.classList.add("winner-target");
+                }
+                item.textContent = st.name;
+                slotReel.appendChild(item);
+            }
+            
+            let positionY = 0;
+            const targetY = winnerItemIdx * SLOT_ITEM_HEIGHT - 35;
+            
+            let speed = 45;
+            const friction = 0.965;
+            let lastTickPos = 0;
+            
+            function animateSlot() {
+                if (!isSlotSpinning) return;
+                
+                positionY += speed;
+                speed *= friction;
+                
+                if (positionY - lastTickPos >= SLOT_ITEM_HEIGHT) {
+                    playSynthesizedSound("roll");
+                    lastTickPos = positionY;
+                }
+                
+                if (speed < 0.25 || positionY >= targetY) {
+                    isSlotSpinning = false;
+                    isSpinning = false;
+                    cancelAnimationFrame(slotAnimFrame);
+                    
+                    positionY = targetY;
+                    slotReel.style.transform = `translateY(-${positionY}px)`;
+                    
+                    const items = slotReel.querySelectorAll(".slot-item");
+                    items.forEach(it => it.classList.remove("highlighted"));
+                    if (items[winnerItemIdx]) {
+                        items[winnerItemIdx].classList.add("highlighted");
+                    }
+                    
+                    setTimeout(() => {
+                        showWinner(winner);
+                    }, 300);
+                } else {
+                    slotReel.style.transform = `translateY(-${positionY}px)`;
+                    slotAnimFrame = requestAnimationFrame(animateSlot);
+                }
+            }
+            
+            animateSlot();
+        }
+
+        // ----------------------------------------------------
+        // WINNER PROCESSING & UI
+        // ----------------------------------------------------
+        function showWinner(winner) {
+            const originalIndex = students.findIndex(s => s.id === winner.id) + 1;
+            
+            winnerNameDisplay.textContent = winner.name;
+            winnerIndexDisplay.textContent = originalIndex;
+            
+            triggerCelebration();
+            winnerModal.classList.add("active");
+            
+            const timeNow = new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }) + " น.";
+            history.unshift({
+                id: Date.now(),
+                name: winner.name,
+                time: timeNow
+            });
+            saveHistory();
+            renderHistory();
+            
+            if (toggleNoRepeat.checked) {
+                const studentIndex = students.findIndex(s => s.id === winner.id);
+                if (studentIndex !== -1) {
+                    students[studentIndex].checked = false;
+                    saveStudents();
+                    renderStudents();
+                    drawWheel();
+                    initSlotReel();
+                }
+            }
+            
+            btnSpin.disabled = false;
+            btnSpin.classList.remove("spinning");
+            spinText.textContent = "เริ่มสุ่มชื่อ!";
+        }
+
+        // ----------------------------------------------------
+        // EVENT HANDLERS
+        // ----------------------------------------------------
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem("soundEnabled", soundEnabled);
+            updateSoundUI();
+        }
+
+        function updateSoundUI() {
+            if (soundEnabled) {
+                soundIconOn.classList.remove("hidden");
+                soundIconOff.classList.add("hidden");
+            } else {
+                soundIconOn.classList.add("hidden");
+                soundIconOff.classList.remove("hidden");
+            }
+        }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle("light-theme", !isDarkTheme);
+            localStorage.setItem("themeMode", isDarkTheme ? "dark" : "light");
+            updateThemeUI();
+            if (currentMode === "wheel") {
+                drawWheel();
+            }
+        }
+
+        function updateThemeUI() {
+            if (isDarkTheme) {
+                themeIconDark.classList.add("hidden");
+                themeIconLight.classList.remove("hidden");
+            } else {
+                themeIconDark.classList.remove("hidden");
+                themeIconLight.classList.add("hidden");
+            }
+        }
+
+        function switchMode(mode) {
+            if (isSpinning) return;
+            currentMode = mode;
+            localStorage.setItem("currentMode", currentMode);
+            updateModeUI();
+        }
+
+        function updateModeUI() {
+            if (currentMode === "wheel") {
+                modeWheelBtn.classList.add("active");
+                modeSlotBtn.classList.remove("active");
+                containerWheel.classList.add("active");
+                containerSlot.classList.remove("active");
+                drawWheel();
+            } else {
+                modeWheelBtn.classList.remove("active");
+                modeSlotBtn.classList.add("active");
+                containerWheel.classList.remove("active");
+                containerSlot.classList.add("active");
+                initSlotReel();
+            }
+        }
+
+        // Add Single Student
+        addStudentForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = inputStudentName.value.trim();
+            if (!name) return;
+            
+            const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            students.push({
+                id: newId,
+                name: name,
+                checked: true
+            });
+            
+            saveStudents();
+            inputStudentName.value = "";
+            renderStudents();
+            drawWheel();
+            initSlotReel();
+        });
+
+        // Search Filter
+        searchStudentInput.addEventListener("input", renderStudents);
+
+        // Sound Button Trigger
+        btnSoundToggle.addEventListener("click", toggleSound);
+
+        // Theme Button Trigger
+        btnThemeToggle.addEventListener("click", toggleTheme);
+
+        // Mode Buttons Trigger
+        modeWheelBtn.addEventListener("click", () => switchMode("wheel"));
+        modeSlotBtn.addEventListener("click", () => switchMode("slot"));
+
+        // Spin Button Trigger
+        btnSpin.addEventListener("click", () => {
+            const active = getActiveStudents();
+            if (active.length === 0) {
+                alert("กรุณาเพิ่มหรือเลือกชื่อนักเรียนอย่างน้อย 1 คนเพื่อสุ่ม!");
+                return;
+            }
+            
+            if (currentMode === "wheel") {
+                spinWheel();
+            } else {
+                spinSlotMachine();
+            }
+        });
+
+        // Selection List Actions
+        btnSelectAll.addEventListener("click", () => {
+            students.forEach(s => s.checked = true);
+            saveStudents();
+            renderStudents();
+            drawWheel();
+            initSlotReel();
+        });
+
+        btnDeselectAll.addEventListener("click", () => {
+            students.forEach(s => s.checked = false);
+            saveStudents();
+            renderStudents();
+            drawWheel();
+            initSlotReel();
+        });
+
+        btnClearList.addEventListener("click", () => {
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรายชื่อนักเรียนทั้งหมด?")) {
+                students = [];
+                saveStudents();
+                renderStudents();
+                drawWheel();
+                initSlotReel();
+            }
+        });
+
+        btnClearHistory.addEventListener("click", () => {
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบประวัติการสุ่มทั้งหมด?")) {
+                history = [];
+                saveHistory();
+                renderHistory();
+            }
+        });
+
+        // Bulk Import Handlers
+        btnBulkImport.addEventListener("click", () => {
+            textareaImport.value = "";
+            importModal.classList.add("active");
+        });
+
+        btnCancelImport.addEventListener("click", () => {
+            importModal.classList.remove("active");
+        });
+
+        btnSubmitImport.addEventListener("click", () => {
+            const text = textareaImport.value.trim();
+            if (!text) {
+                importModal.classList.remove("active");
+                return;
+            }
+            
+            const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            let startId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            
+            lines.forEach(name => {
+                students.push({
+                    id: startId++,
+                    name: name,
+                    checked: true
+                });
+            });
+            
+            saveStudents();
+            renderStudents();
+            drawWheel();
+            initSlotReel();
+            
+            importModal.classList.remove("active");
+        });
+
+        // Close Winner Modal
+        btnCloseModal.addEventListener("click", () => {
+            winnerModal.classList.remove("active");
+        });
+
+        // Save No-repeat config state
+        toggleNoRepeat.addEventListener("change", (e) => {
+            localStorage.setItem("noRepeatEnabled", e.target.checked);
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === winnerModal) {
+                winnerModal.classList.remove("active");
+            }
+            if (e.target === importModal) {
+                importModal.classList.remove("active");
+            }
+        });
+
+        // Prevent audio ctx lock issues by initiating on first body click
+        document.body.addEventListener("click", () => {
+            initAudio();
+        }, { once: true });
+
+        // Setup canvas resize logic
+        window.addEventListener("resize", () => {
+            if (currentMode === "wheel") {
+                drawWheel();
+            }
+        });
+
+        // Start initialization
+        loadData();
+    </script>
+</body>
+</html>
