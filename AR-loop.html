@@ -582,6 +582,28 @@
     .dialog h2 { margin: 0 0 8px; font-size: 24px; }
     .dialog p { margin: 0 0 14px; color: var(--muted); line-height: 1.65; }
     .note { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: rgba(0, 0, 0, .18); padding: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 15px; }
+    .screenshot-instruction {
+      position: relative;
+      text-align: center;
+      border: 3px solid #fff3a6;
+      background: linear-gradient(135deg, #ffd45c, #ff9f3f);
+      color: #111827;
+      font-size: clamp(19px, 3.5vw, 26px);
+      font-weight: 950;
+      line-height: 1.45;
+      padding: 16px 18px;
+      box-shadow:
+        0 0 0 4px rgba(255, 212, 92, .22),
+        0 18px 42px rgba(255, 159, 63, .28);
+    }
+
+    .screenshot-instruction::before {
+      content: "📸";
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 1.18em;
+      vertical-align: -2px;
+    }
     .player-summary {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -781,7 +803,7 @@
       <h2 id="victoryTitle">ภารกิจสำเร็จ!</h2>
       <p id="victoryText"></p>
       <div class="player-summary hidden" id="playerSummary"></div>
-      <div class="note hidden" id="screenshotInstruction">ให้นักเรียนแคปภาพหน้าจอนี้เพื่อส่งครู</div>
+      <div class="note screenshot-instruction hidden" id="screenshotInstruction">ให้นักเรียนแคปภาพหน้าจอนี้เพื่อส่งครู</div>
       <div class="note" id="victoryLesson"></div>
       <div class="dialog-actions">
         <button class="secondary" id="replayBtn">เล่นด่านนี้อีกครั้ง</button>
