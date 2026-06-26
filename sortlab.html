@@ -1,0 +1,1784 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SortLab สื่อการสอน เรื่อง การจัดเรียงข้อมูล โดยครูธนกฤชช์ โยมไธสง</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #667085;
+      --paper: #fffdf7;
+      --mist: #eef7f5;
+      --line: #d8e2df;
+      --green: #138a72;
+      --green-dark: #0d6654;
+      --yellow: #ffc857;
+      --red: #ef476f;
+      --blue: #247ba0;
+      --violet: #6f5bd8;
+      --white: #ffffff;
+      --shadow: 0 18px 45px rgba(23, 33, 43, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(19, 138, 114, 0.10), transparent 36%),
+        linear-gradient(315deg, rgba(255, 200, 87, 0.20), transparent 38%),
+        var(--paper);
+      font-family: Tahoma, "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(23, 33, 43, 0.10);
+      background: rgba(255, 253, 247, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .brand-mark {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: conic-gradient(from 180deg, var(--green), var(--blue), var(--yellow), var(--green));
+      box-shadow: 0 8px 18px rgba(19, 138, 114, 0.22);
+    }
+
+    .brand-title {
+      min-width: 0;
+      max-width: 760px;
+      line-height: 1.28;
+      overflow-wrap: anywhere;
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .nav a:hover {
+      background: rgba(19, 138, 114, 0.10);
+      color: var(--green-dark);
+    }
+
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      align-items: center;
+      padding: 42px 0 26px;
+    }
+
+    .hero-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
+      gap: 42px;
+      align-items: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border: 1px solid rgba(19, 138, 114, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .spark {
+      width: 34px;
+      height: 10px;
+      flex: 0 0 34px;
+      border-radius: 3px;
+      background: var(--yellow);
+      box-shadow: 12px 0 0 var(--blue), 24px 0 0 var(--red);
+    }
+
+    h1 {
+      margin: 18px 0 16px;
+      max-width: 760px;
+      font-size: clamp(2.35rem, 6vw, 5.3rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      color: #425466;
+      font-size: clamp(1.02rem, 2vw, 1.22rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .btn {
+      min-height: 44px;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: inset 0 0 0 1px rgba(23, 33, 43, 0.12);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: inset 0 0 0 1px rgba(23, 33, 43, 0.15), 0 8px 18px rgba(23, 33, 43, 0.10);
+    }
+
+    .btn.primary {
+      background: var(--green);
+      color: var(--white);
+      box-shadow: 0 12px 22px rgba(19, 138, 114, 0.24);
+    }
+
+    .btn.primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn.icon {
+      width: 44px;
+      padding: 0;
+      font-size: 1.1rem;
+    }
+
+    .btn.tiny {
+      min-height: 36px;
+      padding: 8px 11px;
+      font-size: 0.93rem;
+    }
+
+    .visual-board {
+      min-height: 420px;
+      display: grid;
+      align-items: end;
+      position: relative;
+      padding: 28px 28px 22px;
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42)),
+        repeating-linear-gradient(0deg, rgba(23, 33, 43, 0.04) 0 1px, transparent 1px 44px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .visual-board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 22%, rgba(255, 200, 87, 0.42), transparent 24%),
+        radial-gradient(circle at 86% 12%, rgba(36, 123, 160, 0.20), transparent 28%);
+      pointer-events: none;
+    }
+
+    .hero-bars {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(28px, 1fr));
+      gap: clamp(8px, 2vw, 16px);
+      align-items: end;
+      height: 310px;
+    }
+
+    .hero-bar {
+      border-radius: 8px 8px 4px 4px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 12px;
+      color: var(--white);
+      font-weight: 800;
+      min-width: 0;
+      animation: lift 3.4s ease-in-out infinite;
+      box-shadow: inset 0 -12px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .hero-bar:nth-child(1) { height: 44%; background: var(--red); animation-delay: -0.2s; }
+    .hero-bar:nth-child(2) { height: 82%; background: var(--green); animation-delay: -0.6s; }
+    .hero-bar:nth-child(3) { height: 58%; background: var(--blue); animation-delay: -1s; }
+    .hero-bar:nth-child(4) { height: 28%; background: var(--yellow); color: #5a4300; animation-delay: -1.4s; }
+    .hero-bar:nth-child(5) { height: 72%; background: var(--violet); animation-delay: -1.8s; }
+    .hero-bar:nth-child(6) { height: 38%; background: #f08a4b; animation-delay: -2.2s; }
+    .hero-bar:nth-child(7) { height: 92%; background: #2a9d8f; animation-delay: -2.6s; }
+
+    @keyframes lift {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    main section {
+      padding: 64px 0;
+    }
+
+    .section-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 360px);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.22rem;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .lesson-card,
+    .panel,
+    .stat,
+    .quiz-card {
+      border: 1px solid rgba(23, 33, 43, 0.10);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 10px 24px rgba(23, 33, 43, 0.07);
+    }
+
+    .lesson-card {
+      padding: 20px;
+      min-height: 190px;
+    }
+
+    .lesson-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      color: var(--white);
+      font-weight: 900;
+    }
+
+    .lesson-card:nth-child(1) .lesson-badge { background: var(--blue); }
+    .lesson-card:nth-child(2) .lesson-badge { background: var(--green); }
+    .lesson-card:nth-child(3) .lesson-badge { background: var(--red); }
+
+    .lesson-card p,
+    .algorithm-text p,
+    .quiz-card p {
+      margin: 0;
+      color: #4b5c6b;
+    }
+
+    .algorithm-band {
+      background: rgba(238, 247, 245, 0.72);
+      border-top: 1px solid rgba(23, 33, 43, 0.08);
+      border-bottom: 1px solid rgba(23, 33, 43, 0.08);
+    }
+
+    .algorithm-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.35fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .algorithm-text {
+      display: grid;
+      gap: 16px;
+    }
+
+    .callout {
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .callout p {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .compare-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .compare-list li {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      color: #435467;
+    }
+
+    .dot {
+      width: 18px;
+      height: 18px;
+      margin-top: 4px;
+      border-radius: 6px;
+      background: var(--yellow);
+    }
+
+    .simulator {
+      padding: 20px;
+    }
+
+    .sim-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.85fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .step-panel {
+      border: 1px solid rgba(23, 33, 43, 0.10);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .step-panel h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      color: #344054;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .input-row,
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      min-width: min(100%, 240px);
+      flex: 1 1 260px;
+    }
+
+    .field label {
+      color: #475467;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .text-input,
+    .select,
+    .range {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(23, 33, 43, 0.15);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--ink);
+      padding: 9px 11px;
+      outline: none;
+    }
+
+    .text-input:focus,
+    .select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(19, 138, 114, 0.14);
+    }
+
+    .speed-control {
+      display: grid;
+      gap: 8px;
+    }
+
+    .speed-scale {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #667085;
+      font-size: 0.86rem;
+    }
+
+    .speed-readout {
+      min-height: 28px;
+      border-radius: 8px;
+      padding: 4px 8px;
+      background: rgba(19, 138, 114, 0.10);
+      color: var(--green-dark);
+      font-weight: 800;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .mode-tabs {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 4px;
+      border-radius: 8px;
+      background: #edf2f0;
+      min-width: min(100%, 320px);
+    }
+
+    .mode-tabs button {
+      border: 0;
+      border-radius: 8px;
+      min-height: 38px;
+      background: transparent;
+      color: #475467;
+      font-weight: 800;
+      padding: 8px 12px;
+    }
+
+    .mode-tabs button.active {
+      background: var(--white);
+      color: var(--green-dark);
+      box-shadow: 0 4px 12px rgba(23, 33, 43, 0.10);
+    }
+
+    .stage {
+      min-height: 480px;
+      border: 1px solid rgba(23, 33, 43, 0.10);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, #ffffff, #f8fbfa),
+        repeating-linear-gradient(90deg, rgba(23, 33, 43, 0.035) 0 1px, transparent 1px 48px);
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    .stage-title {
+      margin: 0;
+      font-size: 1.08rem;
+      color: #344054;
+    }
+
+    .flow-board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+      min-height: 370px;
+    }
+
+    .tray {
+      border: 1px dashed rgba(23, 33, 43, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .tray h3,
+    .holding h3 {
+      margin: 0;
+      color: #344054;
+      font-size: 1rem;
+    }
+
+    .card-list {
+      display: flex;
+      align-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 136px;
+    }
+
+    .number-card {
+      width: 56px;
+      height: 56px;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: var(--blue);
+      font-weight: 900;
+      font-size: 1.16rem;
+      box-shadow: 0 8px 14px rgba(23, 33, 43, 0.12);
+      transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .number-card.candidate {
+      background: var(--green);
+      transform: translateY(-6px);
+    }
+
+    .number-card.compare {
+      background: var(--yellow);
+      color: #4c3700;
+      transform: translateY(-6px);
+    }
+
+    .number-card.picked {
+      background: var(--red);
+      transform: scale(1.08);
+    }
+
+    .number-card.answer {
+      background: #7a8b99;
+    }
+
+    .number-card.answer.compare {
+      background: var(--yellow);
+      color: #4c3700;
+    }
+
+    .number-card.target {
+      background: var(--violet);
+      transform: translateY(-6px);
+    }
+
+    .holding {
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--white);
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .holding h3 {
+      color: rgba(255, 255, 255, 0.80);
+    }
+
+    .held-card {
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--red);
+      color: var(--white);
+      font-size: 1.45rem;
+      font-weight: 900;
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+    }
+
+    .held-card.empty {
+      border: 1px dashed rgba(255, 255, 255, 0.36);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.60);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 8px;
+    }
+
+    .arrow-line {
+      color: var(--green-dark);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: #667085;
+      font-size: 0.9rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 13px;
+      height: 13px;
+      border-radius: 4px;
+      display: inline-block;
+      background: var(--blue);
+    }
+
+    .legend .candidate-key { background: var(--green); }
+    .legend .compare-key { background: var(--yellow); }
+    .legend .picked-key { background: var(--red); }
+    .legend .answer-key { background: #7a8b99; }
+
+    .empty-note {
+      color: #98a2b3;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+    }
+
+    .insert-gap {
+      width: 22px;
+      min-height: 42px;
+      border-radius: 8px;
+      border: 2px dashed var(--violet);
+      background: rgba(111, 91, 216, 0.08);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+    }
+
+    .stat {
+      padding: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .message {
+      min-height: 52px;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fff7df;
+      color: #604700;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      margin-top: 0;
+      max-height: 250px;
+      overflow: auto;
+      border: 1px solid rgba(23, 33, 43, 0.10);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(23, 33, 43, 0.08);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f2f7f5;
+      color: #344054;
+      font-size: 0.92rem;
+      z-index: 1;
+    }
+
+    td {
+      color: #475467;
+      font-size: 0.94rem;
+    }
+
+    .compare-table {
+      overflow-x: auto;
+      border: 1px solid rgba(23, 33, 43, 0.10);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 12px 24px rgba(23, 33, 43, 0.07);
+    }
+
+    .compare-table table {
+      min-width: 760px;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .quiz-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 42px;
+      text-align: left;
+      border: 1px solid rgba(23, 33, 43, 0.12);
+      border-radius: 8px;
+      background: var(--white);
+      color: #344054;
+      padding: 9px 11px;
+    }
+
+    .choice.correct {
+      border-color: rgba(19, 138, 114, 0.42);
+      background: rgba(19, 138, 114, 0.12);
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .choice.wrong {
+      border-color: rgba(239, 71, 111, 0.42);
+      background: rgba(239, 71, 111, 0.10);
+      color: #9b1234;
+      font-weight: 800;
+    }
+
+    .feedback {
+      min-height: 44px;
+      color: #475467;
+      font-weight: 700;
+    }
+
+    .summary-band {
+      background: #17212b;
+      color: var(--white);
+    }
+
+    .summary-band .lead {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .summary-item {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .summary-item p {
+      color: rgba(255, 255, 255, 0.74);
+      margin: 0;
+    }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px solid rgba(23, 33, 43, 0.10);
+      background: rgba(255, 253, 247, 0.88);
+    }
+
+    .footer-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: #475467;
+    }
+
+    .credit {
+      font-weight: 800;
+      color: var(--green-dark);
+    }
+
+    @media (max-width: 900px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .nav {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-inner,
+      .algorithm-grid,
+      .section-head,
+      .lesson-grid,
+      .quiz-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .visual-board {
+        min-height: 340px;
+      }
+
+      .hero-bars {
+        height: 250px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .sim-workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 360px;
+      }
+
+      .flow-board {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .holding {
+        min-height: 150px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner,
+      .hero-inner,
+      .section-inner,
+      .footer-inner {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .nav a {
+        padding: 8px 9px;
+        font-size: 0.88rem;
+      }
+
+      main section {
+        padding: 48px 0;
+      }
+
+      .hero-actions,
+      .input-row,
+      .control-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .btn,
+      .btn.icon {
+        width: 100%;
+      }
+
+      .mode-tabs {
+        width: 100%;
+      }
+
+      .stage {
+        padding: 12px;
+      }
+
+      .step-panel {
+        padding: 12px;
+      }
+
+      .number-card {
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#home" aria-label="กลับหน้าแรก">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span class="brand-title">SortLab สื่อการสอน เรื่อง การจัดเรียงข้อมูล โดยครูธนกฤชช์ โยมไธสง</span>
+        </a>
+        <nav class="nav" aria-label="เมนูหลัก">
+          <a href="#concept">พื้นฐาน</a>
+          <a href="#simulator">ทดลองจัดเรียง</a>
+          <a href="#compare">เปรียบเทียบ</a>
+          <a href="#quiz">แบบฝึกหัด</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="home" class="hero" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div>
+            <span class="kicker"><span class="spark" aria-hidden="true"></span> วิทยาการคำนวณ ม.4</span>
+            <h1 id="hero-title">การจัดเรียงข้อมูล แบบหยิบไปตอบทีละตัว</h1>
+            <p class="hero-copy">เรียนรู้แนวคิด Selection Sort และ Insertion Sort ผ่านการย้ายข้อมูลจากรายการข้อมูลไปยังรายการคำตอบทีละตัว เห็นได้ชัดว่าค่าใดถูกเลือก เปรียบเทียบ และวางลงตำแหน่งใด</p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#simulator">เริ่มทดลอง</a>
+              <a class="btn" href="#concept">อ่านแนวคิด</a>
+            </div>
+          </div>
+          <div class="visual-board" aria-label="ภาพแท่งข้อมูลกำลังถูกจัดเรียง">
+            <div class="hero-bars">
+              <div class="hero-bar">4</div>
+              <div class="hero-bar">9</div>
+              <div class="hero-bar">6</div>
+              <div class="hero-bar">2</div>
+              <div class="hero-bar">8</div>
+              <div class="hero-bar">3</div>
+              <div class="hero-bar">10</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="concept" aria-labelledby="concept-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="concept-title">แนวคิดพื้นฐาน</h2>
+            </div>
+            <p class="lead">การจัดเรียงข้อมูลคือการนำข้อมูลมาจัดลำดับตามเกณฑ์ เช่น จากน้อยไปมาก จากมากไปน้อย หรือเรียงตามตัวอักษร เพื่อให้ค้นหาและวิเคราะห์ได้ง่ายขึ้น</p>
+          </div>
+
+          <div class="lesson-grid">
+            <article class="lesson-card">
+              <div class="lesson-badge">1</div>
+              <h3>ข้อมูลที่ยังไม่เรียง</h3>
+              <p>ตัวเลข คะแนน หรือราคาสินค้าอาจอยู่ปะปนกัน อัลกอริทึมจะกำหนดขั้นตอนชัดเจนเพื่อจัดให้เป็นระเบียบ</p>
+            </article>
+            <article class="lesson-card">
+              <div class="lesson-badge">2</div>
+              <h3>เปรียบเทียบทีละคู่</h3>
+              <p>คอมพิวเตอร์ตัดสินใจจากการเปรียบเทียบค่า เช่น ค่าใดน้อยกว่า ค่าใดมากกว่า แล้วเปลี่ยนตำแหน่งตามกติกา</p>
+            </article>
+            <article class="lesson-card">
+              <div class="lesson-badge">3</div>
+              <h3>ตรวจผลลัพธ์</h3>
+              <p>เมื่อจบขั้นตอน ข้อมูลควรเรียงตามลำดับที่ต้องการ และสามารถอธิบายได้ว่าแต่ละรอบเกิดอะไรขึ้น</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="algorithm-band" aria-labelledby="algorithm-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="algorithm-title">สองวิธีที่ควรรู้</h2>
+            </div>
+            <p class="lead">ทั้งสองวิธีใช้หลักคิดต่างกัน จึงเหมาะกับการนำมาเปรียบเทียบเพื่อฝึกคิดเชิงอัลกอริทึม</p>
+          </div>
+
+          <div class="algorithm-grid">
+            <div class="algorithm-text">
+              <article class="callout">
+                <h3>Selection Sort</h3>
+                <p>มองหาค่าที่น้อยที่สุดในส่วนที่ยังไม่เรียง แล้วนำไปวางไว้ด้านหน้า ทำซ้ำจนทุกตำแหน่งเรียบร้อย</p>
+              </article>
+              <ul class="compare-list">
+                <li><span class="dot"></span><span>รอบที่ 1 หาเลขน้อยสุดทั้งชุด แล้วเพิ่มลงรายการคำตอบเป็นตัวแรก</span></li>
+                <li><span class="dot"></span><span>รอบต่อไปหาเลขน้อยสุดในส่วนที่เหลือ</span></li>
+                <li><span class="dot"></span><span>ส่วนหน้าของข้อมูลจะเป็นพื้นที่ที่เรียงเสร็จแล้ว</span></li>
+              </ul>
+            </div>
+
+            <div class="algorithm-text">
+              <article class="callout">
+                <h3>Insertion Sort</h3>
+                <p>หยิบข้อมูลทีละตัว แล้วแทรกเข้าไปในตำแหน่งที่ถูกต้องของส่วนที่เรียงแล้ว คล้ายการเรียงไพ่ในมือ</p>
+              </article>
+              <ul class="compare-list">
+                <li><span class="dot"></span><span>เริ่มจากถือว่าข้อมูลตัวแรกเรียงแล้ว</span></li>
+                <li><span class="dot"></span><span>หยิบตัวถัดไปจากรายการข้อมูล แล้วแทรกในตำแหน่งเหมาะสมของรายการคำตอบ</span></li>
+                <li><span class="dot"></span><span>ทำงานได้ดีเมื่อข้อมูลเดิมเกือบเรียงอยู่แล้ว</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="simulator" aria-labelledby="simulator-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="simulator-title">ทดลองจัดเรียง</h2>
+            </div>
+            <p class="lead">เลือกวิธีจัดเรียง กรอกชุดตัวเลข แล้วดูการหยิบข้อมูลจากรายการซ้ายไปเติมในรายการคำตอบทางขวาทีละตัว</p>
+          </div>
+
+          <div class="panel simulator">
+            <div class="toolbar">
+              <div class="input-row">
+                <div class="field">
+                  <label for="numbersInput">ชุดข้อมูล</label>
+                  <input id="numbersInput" class="text-input" type="text" value="7, 3, 9, 1, 6, 2" inputmode="numeric">
+                </div>
+                <div class="field">
+                  <label>วิธีจัดเรียง</label>
+                  <div class="mode-tabs" role="tablist" aria-label="เลือกวิธีจัดเรียง">
+                    <button id="selectionTab" class="active" type="button">Selection</button>
+                    <button id="insertionTab" type="button">Insertion</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="speedRange">ความเร็ว</label>
+                  <div class="speed-control">
+                    <input id="speedRange" class="range" type="range" min="1" max="5" step="1" value="3">
+                    <div class="speed-scale" aria-hidden="true">
+                      <span>ช้า</span>
+                      <span>เร็ว</span>
+                    </div>
+                    <div id="speedText" class="speed-readout">ปานกลาง</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="control-row">
+                <button id="applyBtn" class="btn primary" type="button">ใช้ชุดข้อมูล</button>
+                <button id="prevBtn" class="btn icon" type="button" title="ย้อนกลับ" aria-label="ย้อนกลับ">‹</button>
+                <button id="playBtn" class="btn icon" type="button" title="เล่นหรือหยุด" aria-label="เล่นหรือหยุด">▶</button>
+                <button id="nextBtn" class="btn icon" type="button" title="ถัดไป" aria-label="ถัดไป">›</button>
+                <button id="resetBtn" class="btn tiny" type="button">รีเซ็ต</button>
+                <button id="randomBtn" class="btn tiny" type="button">สุ่มข้อมูล</button>
+              </div>
+            </div>
+
+            <div class="sim-workspace">
+              <div class="stage" aria-live="polite">
+                <h3 class="stage-title">ภาพตัวอย่างการจัดเรียง</h3>
+                <div id="flowBoard" class="flow-board"></div>
+                <div class="legend" aria-label="คำอธิบายสี">
+                  <span><i></i> ข้อมูลทั่วไป</span>
+                  <span><i class="candidate-key"></i> ตัวเลือกปัจจุบัน</span>
+                  <span><i class="compare-key"></i> กำลังเปรียบเทียบ</span>
+                  <span><i class="picked-key"></i> กำลังหยิบ</span>
+                  <span><i class="answer-key"></i> อยู่ในคำตอบแล้ว</span>
+                </div>
+              </div>
+
+              <aside class="step-panel" aria-label="ข้อความแสดงขั้นตอน">
+                <h3>ข้อความแสดงขั้นตอน</h3>
+
+                <div class="stats">
+                  <div class="stat">
+                    <strong id="stepNow">0</strong>
+                    <span>ขั้นตอนปัจจุบัน</span>
+                  </div>
+                  <div class="stat">
+                    <strong id="compareNow">0</strong>
+                    <span>จำนวนเปรียบเทียบ</span>
+                  </div>
+                  <div class="stat">
+                    <strong id="moveNow">0</strong>
+                    <span>จำนวนครั้งที่เพิ่มคำตอบ</span>
+                  </div>
+                </div>
+
+                <div id="message" class="message">พร้อมเริ่มทดลองจัดเรียงข้อมูล</div>
+
+                <div class="table-wrap" aria-label="ตารางบันทึกขั้นตอน">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ขั้นตอน</th>
+                        <th>รายการข้อมูล</th>
+                        <th>รายการคำตอบ</th>
+                        <th>เหตุการณ์</th>
+                        <th>หมายเหตุ</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stepsTable"></tbody>
+                  </table>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="compare" class="algorithm-band" aria-labelledby="compare-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="compare-title">เปรียบเทียบวิธีจัดเรียง</h2>
+            </div>
+            <p class="lead">ตารางนี้ช่วยให้นักเรียนเห็นความต่างของแนวคิด จุดเด่น และสถานการณ์ที่เหมาะสม</p>
+          </div>
+
+          <div class="compare-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>หัวข้อ</th>
+                  <th>Selection Sort</th>
+                  <th>Insertion Sort</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>แนวคิดหลัก</td>
+                  <td>เลือกค่าน้อยที่สุดจากส่วนที่เหลือ แล้ววางหน้า</td>
+                  <td>หยิบค่าทีละตัว แล้วแทรกในส่วนที่เรียงแล้ว</td>
+                </tr>
+                <tr>
+                  <td>ภาพจำ</td>
+                  <td>หาตัวเล็กสุดไปยืนหัวแถว</td>
+                  <td>เรียงไพ่ในมือจากซ้ายไปขวา</td>
+                </tr>
+                <tr>
+                  <td>การย้ายข้อมูลในแบบจำลอง</td>
+                  <td>เลือกค่าน้อยที่สุดจากรายการข้อมูล แล้วเพิ่มท้ายรายการคำตอบ</td>
+                  <td>หยิบค่าหน้าสุดจากรายการข้อมูล แล้วแทรกในตำแหน่งที่ถูกต้อง</td>
+                </tr>
+                <tr>
+                  <td>เหมาะกับข้อมูล</td>
+                  <td>ข้อมูลขนาดเล็ก และใช้สอนแนวคิดเลือกค่าต่ำสุดได้ชัด</td>
+                  <td>ข้อมูลขนาดเล็กหรือข้อมูลที่เกือบเรียงแล้ว</td>
+                </tr>
+                <tr>
+                  <td>เป้าหมายการเรียนรู้</td>
+                  <td>ฝึกมองส่วนที่เรียงแล้วกับยังไม่เรียง</td>
+                  <td>ฝึกเข้าใจการแทรกข้อมูลลงในคำตอบที่เรียงแล้ว</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" aria-labelledby="quiz-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="quiz-title">แบบฝึกหัดท้ายบท</h2>
+            </div>
+            <p class="lead">เลือกคำตอบแล้วดูคำอธิบายสั้น ๆ เพื่อทบทวนแนวคิดหลังทดลอง</p>
+          </div>
+
+          <div class="quiz-grid">
+            <article class="quiz-card" data-answer="b">
+              <h3>ข้อ 1</h3>
+              <p>Selection Sort ทำอะไรเป็นหลักในแต่ละรอบ?</p>
+              <div class="choice-list">
+                <button class="choice" data-choice="a" type="button">สุ่มตำแหน่งข้อมูล</button>
+                <button class="choice" data-choice="b" type="button">เลือกค่าน้อยที่สุดในส่วนที่ยังไม่เรียง</button>
+                <button class="choice" data-choice="c" type="button">ลบข้อมูลที่ซ้ำกัน</button>
+              </div>
+              <div class="feedback"> </div>
+            </article>
+
+            <article class="quiz-card" data-answer="a">
+              <h3>ข้อ 2</h3>
+              <p>Insertion Sort มีภาพจำใกล้เคียงกับกิจกรรมใด?</p>
+              <div class="choice-list">
+                <button class="choice" data-choice="a" type="button">เรียงไพ่ในมือ</button>
+                <button class="choice" data-choice="b" type="button">โยนเหรียญ</button>
+                <button class="choice" data-choice="c" type="button">นับจำนวนกล่อง</button>
+              </div>
+              <div class="feedback"> </div>
+            </article>
+
+            <article class="quiz-card" data-answer="c">
+              <h3>ข้อ 3</h3>
+              <p>ถ้าข้อมูลคือ 4, 1, 3 หลัง Selection Sort รอบแรกจะได้อะไร?</p>
+              <div class="choice-list">
+                <button class="choice" data-choice="a" type="button">4, 3, 1</button>
+                <button class="choice" data-choice="b" type="button">3, 1, 4</button>
+                <button class="choice" data-choice="c" type="button">1, 4, 3</button>
+              </div>
+              <div class="feedback"> </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="summary-band" aria-labelledby="summary-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <h2 id="summary-title">สรุปบทเรียน</h2>
+            </div>
+            <p class="lead">เมื่อเข้าใจขั้นตอนการจัดเรียง นักเรียนจะเห็นว่าอัลกอริทึมคือวิธีแก้ปัญหาอย่างเป็นระบบและตรวจสอบได้</p>
+          </div>
+
+          <div class="summary-grid">
+            <article class="summary-item">
+              <h3>Selection Sort</h3>
+              <p>เลือกค่าที่เหมาะสมที่สุดจากส่วนที่เหลือ แล้ววางในตำแหน่งถัดไปของส่วนที่เรียงแล้ว</p>
+            </article>
+            <article class="summary-item">
+              <h3>Insertion Sort</h3>
+              <p>นำค่าถัดไปเข้าไปแทรกในรายการคำตอบที่เรียงแล้ว โดยวางก่อนค่าที่มากกว่า</p>
+            </article>
+            <article class="summary-item">
+              <h3>ทักษะสำคัญ</h3>
+              <p>สังเกต เปรียบเทียบ อธิบายขั้นตอน และตรวจสอบผลลัพธ์จากข้อมูลจริง</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span>SortLab สื่อการสอน เรื่อง การจัดเรียงข้อมูล โดยครูธนกฤชช์ โยมไธสง</span>
+        <span class="credit">Designed by Thanakrit Yomthaisong</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const state = {
+      mode: "selection",
+      input: [7, 3, 9, 1, 6, 2],
+      steps: [],
+      index: 0,
+      timer: null,
+      playing: false
+    };
+
+    const els = {
+      input: document.getElementById("numbersInput"),
+      speed: document.getElementById("speedRange"),
+      speedText: document.getElementById("speedText"),
+      selectionTab: document.getElementById("selectionTab"),
+      insertionTab: document.getElementById("insertionTab"),
+      apply: document.getElementById("applyBtn"),
+      prev: document.getElementById("prevBtn"),
+      play: document.getElementById("playBtn"),
+      next: document.getElementById("nextBtn"),
+      reset: document.getElementById("resetBtn"),
+      random: document.getElementById("randomBtn"),
+      flowBoard: document.getElementById("flowBoard"),
+      stepNow: document.getElementById("stepNow"),
+      compareNow: document.getElementById("compareNow"),
+      moveNow: document.getElementById("moveNow"),
+      message: document.getElementById("message"),
+      table: document.getElementById("stepsTable")
+    };
+
+    function parseNumbers(value) {
+      const numbers = value
+        .split(/[,\s]+/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .map(Number);
+
+      if (numbers.some((item) => Number.isNaN(item))) {
+        throw new Error("กรุณากรอกเฉพาะตัวเลข คั่นด้วยจุลภาคหรือช่องว่าง");
+      }
+
+      if (numbers.length < 2 || numbers.length > 10) {
+        throw new Error("กรุณากรอกข้อมูล 2 ถึง 10 ค่า");
+      }
+
+      return numbers.map((item) => Math.round(item));
+    }
+
+    function createStep(source, answer, held, event, note, highlights, compares, moves) {
+      return {
+        source: source.slice(),
+        answer: answer.slice(),
+        held,
+        event,
+        note,
+        highlights: highlights || {},
+        compares,
+        moves
+      };
+    }
+
+    function buildSelectionSteps(source) {
+      const remaining = source.slice();
+      const answer = [];
+      const steps = [createStep(remaining, answer, null, "เริ่มต้น", "รายการคำตอบยังว่าง ให้เลือกค่าน้อยที่สุดจากรายการข้อมูลมาเติมทีละตัว", {}, 0, 0)];
+      let compares = 0;
+      let moves = 0;
+
+      while (remaining.length > 0) {
+        let minIndex = 0;
+        steps.push(createStep(
+          remaining,
+          answer,
+          null,
+          `รอบที่ ${answer.length + 1}`,
+          "เริ่มหาค่าน้อยที่สุดในรายการข้อมูลที่เหลือ",
+          { sourceCandidate: [minIndex] },
+          compares,
+          moves
+        ));
+
+        for (let j = 1; j < remaining.length; j += 1) {
+          compares += 1;
+          const foundNewMin = remaining[j] < remaining[minIndex];
+          steps.push(createStep(
+            remaining,
+            answer,
+            null,
+            `เปรียบเทียบ ${remaining[j]} กับ ${remaining[minIndex]}`,
+            foundNewMin ? `${remaining[j]} น้อยกว่า จึงเปลี่ยนตัวเลือกเป็นค่านี้` : `${remaining[minIndex]} ยังเป็นค่าน้อยที่สุดในรอบนี้`,
+            { sourceCandidate: [minIndex], sourceCompare: [j] },
+            compares,
+            moves
+          ));
+
+          if (foundNewMin) {
+            minIndex = j;
+          }
+        }
+
+        const picked = remaining[minIndex];
+        steps.push(createStep(
+          remaining,
+          answer,
+          picked,
+          `หยิบ ${picked}`,
+          "นำค่าน้อยที่สุดออกจากรายการข้อมูล",
+          { sourcePicked: [minIndex] },
+          compares,
+          moves
+        ));
+
+        remaining.splice(minIndex, 1);
+        answer.push(picked);
+        moves += 1;
+        steps.push(createStep(
+          remaining,
+          answer,
+          null,
+          `เพิ่ม ${picked} ในรายการคำตอบ`,
+          `คำตอบมี ${answer.length} ค่า และยังเรียงจากน้อยไปมาก`,
+          { answerTarget: [answer.length - 1] },
+          compares,
+          moves
+        ));
+      }
+
+      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", "ย้ายข้อมูลครบทุกตัว รายการคำตอบเรียงจากน้อยไปมากแล้ว", { answerTarget: range(0, answer.length - 1) }, compares, moves));
+      return steps;
+    }
+
+    function buildInsertionSteps(source) {
+      const remaining = source.slice();
+      const answer = [];
+      const steps = [createStep(remaining, answer, null, "เริ่มต้น", "หยิบข้อมูลจากหน้ารายการ แล้วแทรกลงในคำตอบให้ถูกตำแหน่ง", {}, 0, 0)];
+      let compares = 0;
+      let moves = 0;
+
+      while (remaining.length > 0) {
+        const key = remaining[0];
+        steps.push(createStep(
+          remaining,
+          answer,
+          key,
+          `หยิบค่า ${key}`,
+          "นำค่าหน้าสุดออกจากรายการข้อมูล เพื่อหาตำแหน่งแทรกในรายการคำตอบ",
+          { sourcePicked: [0] },
+          compares,
+          moves
+        ));
+        remaining.shift();
+
+        let insertIndex = answer.length;
+        if (answer.length === 0) {
+          steps.push(createStep(
+            remaining,
+            answer,
+            key,
+            `คำตอบยังว่าง`,
+            `วาง ${key} เป็นคำตอบตัวแรกได้ทันที`,
+            { insertGap: 0 },
+            compares,
+            moves
+          ));
+        }
+
+        for (let i = 0; i < answer.length; i += 1) {
+          compares += 1;
+          const shouldInsert = key <= answer[i];
+          steps.push(createStep(
+            remaining,
+            answer,
+            key,
+            `เปรียบเทียบ ${key} กับ ${answer[i]}`,
+            shouldInsert ? `${key} ไม่มากกว่า ${answer[i]} จึงควรแทรกก่อนค่านี้` : `${key} มากกว่า ${answer[i]} จึงดูตำแหน่งถัดไป`,
+            { answerCompare: [i], insertGap: shouldInsert ? i : i + 1 },
+            compares,
+            moves
+          ));
+
+          if (shouldInsert) {
+            insertIndex = i;
+            break;
+          }
+        }
+
+        answer.splice(insertIndex, 0, key);
+        moves += 1;
+        steps.push(createStep(
+          remaining,
+          answer,
+          null,
+          `แทรก ${key}`,
+          `เพิ่ม ${key} ลงตำแหน่งที่ ${insertIndex + 1} ของรายการคำตอบ`,
+          { answerTarget: [insertIndex] },
+          compares,
+          moves
+        ));
+      }
+
+      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", "รายการข้อมูลหมดแล้ว และรายการคำตอบเรียงจากน้อยไปมาก", { answerTarget: range(0, answer.length - 1) }, compares, moves));
+      return steps;
+    }
+
+    function range(start, end) {
+      if (end < start) return [];
+      return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      els.selectionTab.classList.toggle("active", mode === "selection");
+      els.insertionTab.classList.toggle("active", mode === "insertion");
+      rebuild();
+    }
+
+    function rebuild() {
+      stopPlaying();
+      try {
+        state.input = parseNumbers(els.input.value);
+        state.steps = state.mode === "selection" ? buildSelectionSteps(state.input) : buildInsertionSteps(state.input);
+        state.index = 0;
+        render();
+      } catch (error) {
+        els.message.textContent = error.message;
+      }
+    }
+
+    function render() {
+      const step = state.steps[state.index];
+
+      els.flowBoard.innerHTML = `
+        <section class="tray" aria-label="รายการข้อมูล">
+          <h3>รายการข้อมูล</h3>
+          <div class="card-list">${renderCards(step.source, "source", step.highlights)}</div>
+        </section>
+        <section class="holding" aria-label="ข้อมูลที่กำลังหยิบ">
+          <h3>กำลังหยิบ</h3>
+          ${step.held === null ? "<div class=\"held-card empty\">ยังไม่มี</div>" : `<div class="held-card">${step.held}</div>`}
+          <div class="arrow-line">→</div>
+        </section>
+        <section class="tray" aria-label="รายการคำตอบ">
+          <h3>รายการคำตอบ</h3>
+          <div class="card-list">${renderAnswerCards(step.answer, step.highlights)}</div>
+        </section>
+      `;
+
+      els.stepNow.textContent = state.index;
+      els.compareNow.textContent = step.compares;
+      els.moveNow.textContent = step.moves;
+      els.message.textContent = `${step.event}: ${step.note}`;
+      renderTable();
+      updateButtons();
+    }
+
+    function renderCards(values, area, highlights) {
+      if (values.length === 0) {
+        return "<div class=\"empty-note\">ไม่มีข้อมูลเหลือ</div>";
+      }
+
+      return values.map((value, index) => {
+        const classes = ["number-card"];
+        if (area === "source" && (highlights.sourceCandidate || []).includes(index)) classes.push("candidate");
+        if (area === "source" && (highlights.sourceCompare || []).includes(index)) classes.push("compare");
+        if (area === "source" && (highlights.sourcePicked || []).includes(index)) classes.push("picked");
+        return `<div class="${classes.join(" ")}">${value}</div>`;
+      }).join("");
+    }
+
+    function renderAnswerCards(values, highlights) {
+      if (values.length === 0 && highlights.insertGap !== 0) {
+        return "<div class=\"empty-note\">รอรับคำตอบ</div>";
+      }
+
+      const cards = [];
+      for (let index = 0; index <= values.length; index += 1) {
+        if (highlights.insertGap === index) {
+          cards.push("<div class=\"insert-gap\" title=\"ตำแหน่งที่จะแทรก\"></div>");
+        }
+
+        if (index < values.length) {
+          const classes = ["number-card", "answer"];
+          if ((highlights.answerCompare || []).includes(index)) classes.push("compare");
+          if ((highlights.answerTarget || []).includes(index)) classes.push("target");
+          cards.push(`<div class="${classes.join(" ")}">${values[index]}</div>`);
+        }
+      }
+
+      return cards.join("");
+    }
+
+    function renderTable() {
+      els.table.innerHTML = state.steps.map((step, index) => {
+        const active = index === state.index ? "style=\"background:#fff7df\"" : "";
+        return `
+          <tr ${active}>
+            <td>${index}</td>
+            <td>${step.source.length ? step.source.join(", ") : "-"}</td>
+            <td>${step.answer.length ? step.answer.join(", ") : "-"}</td>
+            <td>${step.event}</td>
+            <td>${step.note}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const activeRow = els.table.children[state.index];
+      if (activeRow) {
+        activeRow.scrollIntoView({ block: "nearest" });
+      }
+    }
+
+    function updateButtons() {
+      els.prev.disabled = state.index === 0;
+      els.next.disabled = state.index >= state.steps.length - 1;
+      els.play.textContent = state.playing ? "Ⅱ" : "▶";
+    }
+
+    function nextStep() {
+      if (state.index < state.steps.length - 1) {
+        state.index += 1;
+        render();
+      } else {
+        stopPlaying();
+      }
+    }
+
+    function prevStep() {
+      if (state.index > 0) {
+        state.index -= 1;
+        render();
+      }
+    }
+
+    function reset() {
+      stopPlaying();
+      state.index = 0;
+      render();
+    }
+
+    function getSpeedInfo() {
+      const levels = {
+        1: { label: "ช้า", delay: 1400 },
+        2: { label: "ค่อนข้างช้า", delay: 1000 },
+        3: { label: "ปานกลาง", delay: 700 },
+        4: { label: "เร็ว", delay: 450 },
+        5: { label: "เร็วมาก", delay: 250 }
+      };
+      return levels[Number(els.speed.value)] || levels[3];
+    }
+
+    function updateSpeedText() {
+      const speed = getSpeedInfo();
+      els.speedText.textContent = `${speed.label} (${(speed.delay / 1000).toFixed(2)} วินาทีต่อขั้น)`;
+    }
+
+    function togglePlaying() {
+      if (state.playing) {
+        stopPlaying();
+        return;
+      }
+
+      state.playing = true;
+      updateButtons();
+      state.timer = window.setInterval(() => {
+        if (state.index >= state.steps.length - 1) {
+          stopPlaying();
+        } else {
+          nextStep();
+        }
+      }, getSpeedInfo().delay);
+    }
+
+    function stopPlaying() {
+      state.playing = false;
+      if (state.timer) {
+        window.clearInterval(state.timer);
+        state.timer = null;
+      }
+      updateButtons();
+    }
+
+    function randomize() {
+      const length = 6 + Math.floor(Math.random() * 3);
+      const values = Array.from({ length }, () => 1 + Math.floor(Math.random() * 14));
+      els.input.value = values.join(", ");
+      rebuild();
+    }
+
+    function setupQuiz() {
+      document.querySelectorAll(".quiz-card").forEach((card) => {
+        const answer = card.dataset.answer;
+        const feedback = card.querySelector(".feedback");
+        card.querySelectorAll(".choice").forEach((button) => {
+          button.addEventListener("click", () => {
+            card.querySelectorAll(".choice").forEach((item) => {
+              item.classList.remove("correct", "wrong");
+            });
+
+            const correct = button.dataset.choice === answer;
+            button.classList.add(correct ? "correct" : "wrong");
+            const rightButton = card.querySelector(`[data-choice="${answer}"]`);
+            rightButton.classList.add("correct");
+            feedback.textContent = correct
+              ? "ถูกต้อง แนวคิดนี้ตรงกับขั้นตอนของอัลกอริทึม"
+              : "ยังไม่ใช่ ลองสังเกตคำตอบที่ถูกและเทียบกับภาพจำของวิธีจัดเรียง";
+          });
+        });
+      });
+    }
+
+    els.selectionTab.addEventListener("click", () => setMode("selection"));
+    els.insertionTab.addEventListener("click", () => setMode("insertion"));
+    els.apply.addEventListener("click", rebuild);
+    els.next.addEventListener("click", nextStep);
+    els.prev.addEventListener("click", prevStep);
+    els.reset.addEventListener("click", reset);
+    els.play.addEventListener("click", togglePlaying);
+    els.random.addEventListener("click", randomize);
+    els.speed.addEventListener("input", () => {
+      updateSpeedText();
+      if (state.playing) {
+        stopPlaying();
+        togglePlaying();
+      }
+    });
+
+    setupQuiz();
+    updateSpeedText();
+    rebuild();
+  </script>
+</body>
+</html>
