@@ -763,7 +763,7 @@
 
     .table-wrap {
       margin-top: 0;
-      max-height: 250px;
+      max-height: 190px;
       overflow: auto;
       border: 1px solid rgba(23, 33, 43, 0.10);
       border-radius: 8px;
@@ -773,15 +773,17 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 620px;
+      min-width: 0;
+      table-layout: fixed;
     }
 
     th,
     td {
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-bottom: 1px solid rgba(23, 33, 43, 0.08);
       text-align: left;
       vertical-align: top;
+      overflow-wrap: anywhere;
     }
 
     th {
@@ -789,13 +791,22 @@
       top: 0;
       background: #f2f7f5;
       color: #344054;
-      font-size: 0.92rem;
+      font-size: 0.86rem;
       z-index: 1;
     }
 
     td {
       color: #475467;
-      font-size: 0.94rem;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .step-col {
+      width: 54px;
+    }
+
+    .answer-col {
+      width: 32%;
     }
 
     .compare-table {
@@ -1203,11 +1214,9 @@
                   <table>
                     <thead>
                       <tr>
-                        <th>ขั้นตอน</th>
-                        <th>รายการข้อมูล</th>
-                        <th>รายการคำตอบ</th>
+                        <th class="step-col">ขั้น</th>
                         <th>เหตุการณ์</th>
-                        <th>หมายเหตุ</th>
+                        <th class="answer-col">คำตอบ</th>
                       </tr>
                     </thead>
                     <tbody id="stepsTable"></tbody>
@@ -1642,23 +1651,29 @@
     }
 
     function renderTable() {
-      els.table.innerHTML = state.steps.map((step, index) => {
+      const compactSteps = state.steps
+        .map((step, index) => ({ step, index }))
+        .filter(({ step, index }) => isKeyLogStep(step) || index === state.index);
+
+      els.table.innerHTML = compactSteps.map(({ step, index }) => {
         const active = index === state.index ? "style=\"background:#fff7df\"" : "";
         return `
           <tr ${active}>
             <td>${index}</td>
-            <td>${step.source.length ? step.source.join(", ") : "-"}</td>
-            <td>${step.answer.length ? step.answer.join(", ") : "-"}</td>
             <td>${step.event}</td>
-            <td>${step.note}</td>
+            <td>${step.answer.length ? step.answer.join(", ") : "-"}</td>
           </tr>
         `;
       }).join("");
 
-      const activeRow = els.table.children[state.index];
+      const activeRow = Array.from(els.table.children).find((row) => row.style.background);
       if (activeRow) {
         activeRow.scrollIntoView({ block: "nearest" });
       }
+    }
+
+    function isKeyLogStep(step) {
+      return /เริ่มต้น|รอบที่|หยิบ|เพิ่ม|แทรก|เสร็จสิ้น/.test(step.event);
     }
 
     function updateButtons() {
