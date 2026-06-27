@@ -1135,11 +1135,11 @@
             <div class="algorithm-text">
               <article class="callout">
                 <h3>Selection Sort</h3>
-                <p>มองหาค่าที่น้อยที่สุดในส่วนที่ยังไม่เรียง แล้วนำไปวางไว้ด้านหน้า ทำซ้ำจนทุกตำแหน่งเรียบร้อย</p>
+                <p>มองหาค่าที่เหมาะสมที่สุดในส่วนที่ยังไม่เรียง เช่น ค่าน้อยที่สุดหรือค่ามากที่สุด แล้วนำไปวางในคำตอบทีละตำแหน่ง</p>
               </article>
               <ul class="compare-list">
-                <li><span class="dot"></span><span>รอบที่ 1 หาเลขน้อยสุดทั้งชุด แล้วเพิ่มลงรายการคำตอบเป็นตัวแรก</span></li>
-                <li><span class="dot"></span><span>รอบต่อไปหาเลขน้อยสุดในส่วนที่เหลือ</span></li>
+                <li><span class="dot"></span><span>รอบที่ 1 หาเลขที่เหมาะกับลำดับที่เลือก แล้วเพิ่มลงรายการคำตอบเป็นตัวแรก</span></li>
+                <li><span class="dot"></span><span>รอบต่อไปหาเลขที่เหมาะสมในส่วนที่เหลือ</span></li>
                 <li><span class="dot"></span><span>ส่วนหน้าของข้อมูลจะเป็นพื้นที่ที่เรียงเสร็จแล้ว</span></li>
               </ul>
             </div>
@@ -1165,7 +1165,7 @@
             <div>
               <h2 id="simulator-title">ทดลองจัดเรียง</h2>
             </div>
-            <p class="lead">เลือกวิธีจัดเรียง กรอกชุดตัวเลข แล้วดูการหยิบข้อมูลจากรายการซ้ายไปเติมในรายการคำตอบทางขวาทีละตัว</p>
+            <p class="lead">เลือกวิธีจัดเรียงและลำดับการเรียง กรอกชุดตัวเลข แล้วดูการหยิบข้อมูลจากรายการซ้ายไปเติมในรายการคำตอบทางขวาทีละตัว</p>
           </div>
 
           <div class="panel simulator">
@@ -1180,6 +1180,13 @@
                   <div class="mode-tabs" role="tablist" aria-label="เลือกวิธีจัดเรียง">
                     <button id="selectionTab" class="active" type="button">Selection</button>
                     <button id="insertionTab" type="button">Insertion</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>ลำดับการเรียง</label>
+                  <div class="mode-tabs" role="tablist" aria-label="เลือกลำดับการเรียง">
+                    <button id="ascendingTab" class="active" type="button">น้อย → มาก</button>
+                    <button id="descendingTab" type="button">มาก → น้อย</button>
                   </div>
                 </div>
                 <div class="field">
@@ -1390,6 +1397,7 @@
   <script>
     const state = {
       mode: "selection",
+      direction: "asc",
       input: [7, 3, 9, 1, 6, 2],
       steps: [],
       index: 0,
@@ -1403,6 +1411,8 @@
       speedText: document.getElementById("speedText"),
       selectionTab: document.getElementById("selectionTab"),
       insertionTab: document.getElementById("insertionTab"),
+      ascendingTab: document.getElementById("ascendingTab"),
+      descendingTab: document.getElementById("descendingTab"),
       apply: document.getElementById("applyBtn"),
       prev: document.getElementById("prevBtn"),
       play: document.getElementById("playBtn"),
@@ -1448,10 +1458,27 @@
       };
     }
 
+    function directionText() {
+      return state.direction === "asc" ? "น้อยไปมาก" : "มากไปน้อย";
+    }
+
+    function preferredValueLabel() {
+      return state.direction === "asc" ? "ค่าน้อยที่สุด" : "ค่ามากที่สุด";
+    }
+
+    function comesBefore(a, b) {
+      return state.direction === "asc" ? a < b : a > b;
+    }
+
+    function canStayBefore(left, right) {
+      return state.direction === "asc" ? left <= right : left >= right;
+    }
+
     function buildSelectionSteps(source) {
       const remaining = source.slice();
       const answer = [];
-      const steps = [createStep(remaining, answer, null, "เริ่มต้น", "รายการคำตอบยังว่าง ให้เลือกค่าน้อยที่สุดจากรายการข้อมูลมาเติมทีละตัว", {}, 0, 0)];
+      const pickLabel = preferredValueLabel();
+      const steps = [createStep(remaining, answer, null, "เริ่มต้น", `รายการคำตอบยังว่าง ให้เลือก${pickLabel}จากรายการข้อมูลมาเติมทีละตัว`, {}, 0, 0)];
       let compares = 0;
       let moves = 0;
 
@@ -1462,7 +1489,7 @@
           answer,
           null,
           `รอบที่ ${answer.length + 1}`,
-          "เริ่มหาค่าน้อยที่สุดในรายการข้อมูลที่เหลือ",
+          `เริ่มหา${pickLabel}ในรายการข้อมูลที่เหลือ`,
           { sourceCandidate: [minIndex] },
           compares,
           moves
@@ -1470,19 +1497,19 @@
 
         for (let j = 1; j < remaining.length; j += 1) {
           compares += 1;
-          const foundNewMin = remaining[j] < remaining[minIndex];
+          const foundBetter = comesBefore(remaining[j], remaining[minIndex]);
           steps.push(createStep(
             remaining,
             answer,
             null,
             `เปรียบเทียบ ${remaining[j]} กับ ${remaining[minIndex]}`,
-            foundNewMin ? `${remaining[j]} น้อยกว่า จึงเปลี่ยนตัวเลือกเป็นค่านี้` : `${remaining[minIndex]} ยังเป็นค่าน้อยที่สุดในรอบนี้`,
+            foundBetter ? `${remaining[j]} ควรมาก่อน จึงเปลี่ยนตัวเลือกเป็นค่านี้` : `${remaining[minIndex]} ยังเป็น${pickLabel}ในรอบนี้`,
             { sourceCandidate: [minIndex], sourceCompare: [j] },
             compares,
             moves
           ));
 
-          if (foundNewMin) {
+          if (foundBetter) {
             minIndex = j;
           }
         }
@@ -1493,7 +1520,7 @@
           answer,
           picked,
           `หยิบ ${picked}`,
-          "นำค่าน้อยที่สุดออกจากรายการข้อมูล",
+          `นำ${pickLabel}ออกจากรายการข้อมูล`,
           { sourcePicked: [minIndex] },
           compares,
           moves
@@ -1507,21 +1534,21 @@
           answer,
           null,
           `เพิ่ม ${picked} ในรายการคำตอบ`,
-          `คำตอบมี ${answer.length} ค่า และยังเรียงจากน้อยไปมาก`,
+          `คำตอบมี ${answer.length} ค่า และยังเรียงจาก${directionText()}`,
           { answerTarget: [answer.length - 1] },
           compares,
           moves
         ));
       }
 
-      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", "ย้ายข้อมูลครบทุกตัว รายการคำตอบเรียงจากน้อยไปมากแล้ว", { answerTarget: range(0, answer.length - 1) }, compares, moves));
+      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", `ย้ายข้อมูลครบทุกตัว รายการคำตอบเรียงจาก${directionText()}แล้ว`, { answerTarget: range(0, answer.length - 1) }, compares, moves));
       return steps;
     }
 
     function buildInsertionSteps(source) {
       const remaining = source.slice();
       const answer = [];
-      const steps = [createStep(remaining, answer, null, "เริ่มต้น", "หยิบข้อมูลจากหน้ารายการ แล้วแทรกลงในคำตอบให้ถูกตำแหน่ง", {}, 0, 0)];
+      const steps = [createStep(remaining, answer, null, "เริ่มต้น", `หยิบข้อมูลจากหน้ารายการ แล้วแทรกลงในคำตอบให้เรียงจาก${directionText()}`, {}, 0, 0)];
       let compares = 0;
       let moves = 0;
 
@@ -1555,13 +1582,13 @@
 
         for (let i = 0; i < answer.length; i += 1) {
           compares += 1;
-          const shouldInsert = key <= answer[i];
+          const shouldInsert = !canStayBefore(answer[i], key);
           steps.push(createStep(
             remaining,
             answer,
             key,
             `เปรียบเทียบ ${key} กับ ${answer[i]}`,
-            shouldInsert ? `${key} ไม่มากกว่า ${answer[i]} จึงควรแทรกก่อนค่านี้` : `${key} มากกว่า ${answer[i]} จึงดูตำแหน่งถัดไป`,
+            shouldInsert ? `${key} ควรอยู่ก่อน ${answer[i]} จึงแทรกก่อนค่านี้` : `${answer[i]} ยังอยู่ก่อน ${key} ได้ จึงดูตำแหน่งถัดไป`,
             { answerCompare: [i], insertGap: shouldInsert ? i : i + 1 },
             compares,
             moves
@@ -1587,7 +1614,7 @@
         ));
       }
 
-      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", "รายการข้อมูลหมดแล้ว และรายการคำตอบเรียงจากน้อยไปมาก", { answerTarget: range(0, answer.length - 1) }, compares, moves));
+      steps.push(createStep(remaining, answer, null, "เสร็จสิ้น", `รายการข้อมูลหมดแล้ว และรายการคำตอบเรียงจาก${directionText()}`, { answerTarget: range(0, answer.length - 1) }, compares, moves));
       return steps;
     }
 
@@ -1600,6 +1627,13 @@
       state.mode = mode;
       els.selectionTab.classList.toggle("active", mode === "selection");
       els.insertionTab.classList.toggle("active", mode === "insertion");
+      rebuild();
+    }
+
+    function setDirection(direction) {
+      state.direction = direction;
+      els.ascendingTab.classList.toggle("active", direction === "asc");
+      els.descendingTab.classList.toggle("active", direction === "desc");
       rebuild();
     }
 
@@ -1805,6 +1839,8 @@
 
     els.selectionTab.addEventListener("click", () => setMode("selection"));
     els.insertionTab.addEventListener("click", () => setMode("insertion"));
+    els.ascendingTab.addEventListener("click", () => setDirection("asc"));
+    els.descendingTab.addEventListener("click", () => setDirection("desc"));
     els.apply.addEventListener("click", rebuild);
     els.next.addEventListener("click", nextStep);
     els.prev.addEventListener("click", prevStep);
