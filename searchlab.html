@@ -1,0 +1,1965 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Search Lab | การค้นหาข้อมูล ม.4</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7fb;
+        --ink: #17202a;
+        --muted: #667085;
+        --line: #d7dde8;
+        --panel: #ffffff;
+        --soft: #eef3f8;
+        --navy: #1f2a44;
+        --teal: #0f766e;
+        --teal-dark: #0b5d56;
+        --blue: #2563eb;
+        --amber: #f59e0b;
+        --red: #dc5f45;
+        --green: #16a34a;
+        --violet: #7c3aed;
+        --shadow: 0 16px 40px rgba(31, 42, 68, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(15, 118, 110, 0.08), transparent 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      input,
+      button {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .app {
+        width: min(1220px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 36px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--teal-dark);
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 6px;
+        font-size: clamp(30px, 5vw, 54px);
+        line-height: 1.06;
+      }
+
+      .lead {
+        max-width: 760px;
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.65;
+      }
+
+      .teacher-line {
+        margin: 0 0 12px;
+        color: var(--teal-dark);
+        font-size: 16px;
+        font-weight: 850;
+      }
+
+      .badge {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px 12px;
+        color: var(--navy);
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .tabs {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 6px;
+        box-shadow: 0 12px 28px rgba(31, 42, 68, 0.08);
+        backdrop-filter: blur(12px);
+      }
+
+      .tab {
+        min-height: 42px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        font-weight: 850;
+        transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+      }
+
+      .tab:hover {
+        background: #dbeafe;
+        color: var(--blue);
+        transform: translateY(-1px);
+      }
+
+      .tab.is-active {
+        background: var(--navy);
+        color: #fff;
+      }
+
+      .tab.is-active:hover {
+        background: var(--teal);
+        color: #fff;
+      }
+
+      .view {
+        display: none;
+        padding-top: 18px;
+      }
+
+      .view.is-active {
+        display: block;
+      }
+
+      .lab-layout {
+        display: grid;
+        grid-template-columns: 330px minmax(0, 1fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .panel,
+      .stage,
+      .info-box,
+      .quiz-card,
+      .compare-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .panel {
+        display: grid;
+        align-content: start;
+        gap: 16px;
+        padding: 18px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label,
+      .mini-label {
+        color: var(--ink);
+        font-weight: 850;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+        padding: 11px 12px;
+        outline: none;
+      }
+
+      input:focus-visible,
+      button:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.24);
+        outline-offset: 2px;
+      }
+
+      .hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .segmented {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--soft);
+        padding: 4px;
+      }
+
+      .segment {
+        min-height: 40px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        font-weight: 850;
+        transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+      }
+
+      .segment:hover {
+        background: #dbeafe;
+        color: var(--blue);
+        transform: translateY(-1px);
+      }
+
+      .segment.is-active {
+        background: var(--teal);
+        color: #fff;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: 1fr 68px 52px 52px 52px;
+        gap: 8px;
+      }
+
+      .primary,
+      .secondary,
+      .icon {
+        min-height: 44px;
+        border: 0;
+        border-radius: 8px;
+        font-weight: 900;
+        transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .primary {
+        background: var(--teal);
+        color: #fff;
+      }
+
+      .primary:hover,
+      .segment.is-active:hover {
+        background: var(--teal-dark);
+      }
+
+      .secondary,
+      .icon {
+        background: var(--navy);
+        color: #fff;
+      }
+
+      .secondary:hover,
+      .icon:hover {
+        background: var(--blue);
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+        transform: translateY(-1px);
+      }
+
+      .primary:hover {
+        box-shadow: 0 10px 22px rgba(15, 118, 110, 0.22);
+        transform: translateY(-1px);
+      }
+
+      .secondary {
+        padding: 0 14px;
+        white-space: nowrap;
+      }
+
+      .icon {
+        display: grid;
+        place-items: center;
+        font-size: 19px;
+      }
+
+      .stage {
+        min-width: 0;
+        display: grid;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 14px;
+        padding: 20px;
+      }
+
+      .stage-header,
+      .status-band,
+      .tool-strip {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .stage-header {
+        align-items: flex-start;
+      }
+
+      .stage-header h2 {
+        margin: 0;
+        font-size: 25px;
+        line-height: 1.2;
+      }
+
+      .counter-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .counter-strip span,
+      .tool-pill {
+        border-radius: 8px;
+        background: var(--navy);
+        color: #fff;
+        padding: 9px 11px;
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .counter-strip strong {
+        color: #facc15;
+      }
+
+      .tool-strip {
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .tool-pill {
+        background: #eef2ff;
+        color: #24315b;
+      }
+
+      .target-display {
+        display: grid;
+        gap: 2px;
+        margin-left: auto;
+        border: 1px solid rgba(15, 118, 110, 0.22);
+        border-radius: 8px;
+        background: #f0fdfa;
+        color: var(--teal-dark);
+        padding: 8px 12px;
+        min-width: 142px;
+        text-align: center;
+      }
+
+      .target-display span {
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .target-display strong {
+        color: var(--ink);
+        font-size: 26px;
+        line-height: 1;
+      }
+
+      .legend-row {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        width: fit-content;
+        max-width: 100%;
+        align-self: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 5px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 6px;
+        background: #f8fafc;
+        padding: 4px 7px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 800;
+      }
+
+      .legend-dot {
+        width: 9px;
+        height: 9px;
+        flex: 0 0 9px;
+        border-radius: 50%;
+        background: var(--blue);
+      }
+
+      .legend-dot.current {
+        background: var(--amber);
+      }
+
+      .legend-dot.found {
+        background: var(--green);
+      }
+
+      .legend-dot.out {
+        background: #94a3b8;
+      }
+
+      .marker-row,
+      .array-board {
+        --cell-count: 9;
+        display: grid;
+        grid-template-columns: repeat(var(--cell-count), minmax(56px, 1fr));
+        gap: 8px;
+      }
+
+      .marker-row {
+        min-height: 28px;
+        margin-bottom: 8px;
+      }
+
+      .marker {
+        min-height: 28px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+        padding: 0 4px;
+        text-align: center;
+      }
+
+      .marker.left {
+        background: var(--blue);
+      }
+
+      .marker.mid {
+        background: var(--amber);
+        color: #241605;
+      }
+
+      .marker.right {
+        background: var(--red);
+      }
+
+      .array-board {
+        align-content: start;
+        min-height: 0;
+      }
+
+      .cell {
+        position: relative;
+        display: grid;
+        gap: 7px;
+        align-content: center;
+        min-height: 116px;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 12px 8px;
+        text-align: center;
+        transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, opacity 180ms ease;
+      }
+
+      .cell:hover {
+        transform: translateY(-5px);
+        border-color: var(--violet);
+        box-shadow: 0 12px 22px rgba(124, 58, 237, 0.14);
+      }
+
+      .cell.is-checked {
+        border-color: var(--blue);
+        background: #eff6ff;
+      }
+
+      .cell.is-current {
+        transform: translateY(-6px);
+        border-color: var(--amber);
+        background: #fffbeb;
+      }
+
+      .cell.is-found {
+        border-color: var(--green);
+        background: #ecfdf5;
+      }
+
+      .cell.is-out {
+        opacity: 0.26;
+      }
+
+      .value {
+        font-size: clamp(24px, 4vw, 36px);
+        font-weight: 950;
+      }
+
+      .index {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .status-band {
+        display: grid;
+        gap: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfe;
+        padding: 14px;
+      }
+
+      .status-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .status-label {
+        margin: 0 0 5px;
+        color: var(--teal-dark);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      #status-text {
+        margin: 0;
+        color: var(--ink);
+        font-weight: 780;
+        line-height: 1.5;
+      }
+
+      .step-list-wrap {
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+
+      .step-list-title {
+        margin: 0 0 8px;
+        color: var(--teal-dark);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .step-list {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .step-item {
+        display: grid;
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 8px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 8px 10px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .step-number {
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        color: var(--navy);
+        font-weight: 900;
+      }
+
+      .step-item.is-done {
+        background: #f0fdfa;
+        color: #30505a;
+      }
+
+      .step-item.is-active {
+        border-color: var(--amber);
+        background: #fffbeb;
+        color: var(--ink);
+        font-weight: 850;
+      }
+
+      .step-item.is-active .step-number {
+        background: var(--amber);
+        color: #241605;
+      }
+
+      .step-item.is-future {
+        opacity: 0.62;
+      }
+
+      .range-badge {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 9px 11px;
+        color: var(--navy);
+        font-weight: 850;
+        white-space: nowrap;
+      }
+
+      .lesson-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .info-box {
+        padding: 18px;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .info-box h3,
+      .quiz-card h3,
+      .compare-card h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .info-box p,
+      .compare-card p {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .code-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .code-card-header h3 {
+        margin: 0;
+      }
+
+      .code-toggle {
+        width: min(260px, 100%);
+      }
+
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 8px;
+        background: #17202a;
+        color: #f8fafc;
+        padding: 14px;
+        line-height: 1.55;
+        white-space: pre;
+      }
+
+      .compare-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .compare-card {
+        padding: 18px;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .compare-card:hover,
+      .quiz-card:hover,
+      .info-box:hover {
+        transform: translateY(-3px);
+        border-color: rgba(37, 99, 235, 0.5);
+        box-shadow: 0 18px 36px rgba(31, 42, 68, 0.14);
+      }
+
+      .compare-card.linear {
+        border-top: 5px solid var(--blue);
+      }
+
+      .compare-card.binary {
+        border-top: 5px solid var(--amber);
+      }
+
+      .compare-table {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .compare-table th,
+      .compare-table td {
+        border-bottom: 1px solid var(--line);
+        padding: 13px 14px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .compare-table th {
+        background: var(--navy);
+        color: #fff;
+      }
+
+      .compare-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .compare-table tbody tr:hover td {
+        background: #f0fdfa;
+      }
+
+      .quiz-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .quiz-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .quiz-card {
+        padding: 18px;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .choices {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .choice {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+        padding: 10px 12px;
+        text-align: left;
+        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+      }
+
+      .choice:hover {
+        border-color: var(--blue);
+        background: #eff6ff;
+        transform: translateX(3px);
+      }
+
+      .choice.is-selected {
+        border-color: var(--teal);
+        background: #ecfdf5;
+      }
+
+      .choice.is-correct {
+        border-color: var(--green);
+        background: #dcfce7;
+      }
+
+      .choice.is-wrong {
+        border-color: var(--red);
+        background: #fff1f2;
+      }
+
+      .quiz-score {
+        position: sticky;
+        top: 74px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .score-number {
+        margin: 0;
+        font-size: 46px;
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .feedback {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .empty-note {
+        margin: 0;
+        color: var(--red);
+        font-weight: 800;
+      }
+
+      .site-footer {
+        width: min(1220px, calc(100% - 32px));
+        margin: 22px auto 28px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .result-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        background: rgba(23, 32, 42, 0.42);
+        padding: 20px;
+      }
+
+      .result-modal[hidden] {
+        display: none;
+      }
+
+      .result-dialog {
+        width: min(460px, 100%);
+        border: 1px solid rgba(22, 163, 74, 0.35);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 28px 70px rgba(23, 32, 42, 0.26);
+        padding: 22px;
+      }
+
+      .result-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: var(--green);
+        font-size: 28px;
+        font-weight: 950;
+      }
+
+      .result-dialog h3 {
+        margin: 14px 0 8px;
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      .result-dialog p {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .result-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 16px 0;
+      }
+
+      .result-stat {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f8fafc;
+        padding: 11px;
+      }
+
+      .result-stat strong {
+        display: block;
+        color: var(--navy);
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .result-stat span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .result-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 18px;
+      }
+
+      @media (max-width: 960px) {
+        .topbar,
+        .lab-layout,
+        .lesson-grid,
+        .compare-grid,
+        .quiz-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .badge,
+        .range-badge {
+          white-space: normal;
+        }
+
+        .quiz-score {
+          position: static;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .app {
+          width: min(100% - 20px, 1220px);
+          padding-top: 14px;
+        }
+
+        .tabs {
+          grid-template-columns: 1fr;
+          position: static;
+        }
+
+        .field-row,
+        .action-row {
+          grid-template-columns: 1fr;
+        }
+
+        .stage-header,
+        .status-top,
+        .tool-strip {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .target-display {
+          margin-left: 0;
+          width: 100%;
+          text-align: left;
+        }
+
+        .legend-row {
+          width: 100%;
+        }
+
+        .legend-item {
+          flex: 1 1 110px;
+        }
+
+        .counter-strip {
+          justify-content: flex-start;
+        }
+
+        .marker-row,
+        .array-board {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .cell {
+          min-height: 98px;
+        }
+
+        .compare-table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">วิทยาการคำนวณ ม.4</p>
+          <h1>Search Lab: การค้นหาข้อมูล</h1>
+          <p class="teacher-line">โดยครูธนกฤชช์ โยมไธสง</p>
+          <p class="lead">
+            ห้องทดลองขนาดเล็กสำหรับสอน Linear Search และ Binary Search ด้วยการเห็นตำแหน่ง ค่ากลาง ช่วงที่ถูกตัดออก และจำนวนครั้งที่เปรียบเทียบแบบทีละขั้น
+          </p>
+        </div>
+        <div class="badge">Linear Search / Binary Search</div>
+      </header>
+
+      <nav class="tabs" aria-label="ส่วนของเว็บแอพ">
+        <button class="tab is-active" type="button" data-view="lab">ทดลองค้นหา</button>
+        <button class="tab" type="button" data-view="compare">เปรียบเทียบ</button>
+        <button class="tab" type="button" data-view="quiz">แบบฝึกหัด</button>
+      </nav>
+
+      <section id="lab-view" class="view is-active" aria-label="ห้องทดลองการค้นหา">
+        <div class="lab-layout">
+          <aside class="panel" aria-label="แผงควบคุม">
+            <div class="field">
+              <label>วิธีค้นหา</label>
+              <div class="segmented" role="group" aria-label="เลือกวิธีค้นหา">
+                <button class="segment is-active" type="button" data-mode="linear">ลำดับ</button>
+                <button class="segment" type="button" data-mode="binary">ทวิภาค</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>รูปแบบดัชนี</label>
+              <div class="segmented" role="group" aria-label="เลือกดัชนีเริ่มต้น">
+                <button class="segment is-active" type="button" data-index-base="0">เริ่มที่ 0</button>
+                <button class="segment" type="button" data-index-base="1">เริ่มที่ 1</button>
+              </div>
+              <p class="hint" id="index-hint">ใช้ตำแหน่ง [0] ถึง [n-1] ตามรูปแบบการเขียนโปรแกรมทั่วไป</p>
+            </div>
+
+            <div class="field">
+              <label for="dataset-input">ชุดข้อมูล</label>
+              <input id="dataset-input" type="text" value="7, 12, 18, 24, 31, 39, 45, 52, 68" />
+              <p class="hint">ใส่ตัวเลขคั่นด้วยเครื่องหมายจุลภาคหรือเว้นวรรค สูงสุด 12 ค่า</p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="target-input">ค่าที่ค้นหา (target)</label>
+                <input id="target-input" type="number" value="45" />
+              </div>
+              <button id="randomize-button" class="secondary" type="button">สุ่มข้อมูล</button>
+            </div>
+
+            <div class="action-row">
+              <button id="run-button" class="primary" type="button">เริ่มค้นหา</button>
+              <button id="play-button" class="secondary" type="button">เล่น</button>
+              <button id="prev-button" class="icon" type="button" aria-label="ย้อนขั้นตอน" title="ย้อนขั้นตอน">‹</button>
+              <button id="next-button" class="icon" type="button" aria-label="ขั้นตอนถัดไป" title="ขั้นตอนถัดไป">›</button>
+              <button id="reset-button" class="icon" type="button" aria-label="เริ่มใหม่" title="เริ่มใหม่">↺</button>
+            </div>
+          </aside>
+
+          <section class="stage" aria-label="พื้นที่แสดงผล">
+            <div class="stage-header">
+              <div>
+                <p class="eyebrow">ผลการจำลอง</p>
+                <h2 id="mode-title">การค้นหาแบบลำดับ</h2>
+              </div>
+              <div class="counter-strip" aria-label="สถิติการค้นหา">
+                <span><strong id="compare-count">0</strong> ครั้งที่เปรียบเทียบ</span>
+                <span><strong id="step-count">0/0</strong> ขั้นตอน</span>
+              </div>
+            </div>
+
+            <div class="tool-strip" aria-label="ข้อมูลประกอบการจำลอง">
+              <span class="tool-pill" id="data-rule">Linear Search ใช้กับข้อมูลที่ยังไม่เรียงลำดับได้</span>
+              <span class="tool-pill" id="sort-note">แสดงข้อมูลตามลำดับที่ใส่</span>
+              <div class="target-display" aria-label="ค่าที่ค้นหา target">
+                <span>ค่าที่ค้นหา (target)</span>
+                <strong id="target-display-value">45</strong>
+              </div>
+            </div>
+
+            <div class="legend-row" aria-label="คำอธิบายสี">
+              <span class="legend-item"><span class="legend-dot"></span>ตรวจแล้ว</span>
+              <span class="legend-item"><span class="legend-dot current"></span>กำลังตรวจ</span>
+              <span class="legend-item"><span class="legend-dot found"></span>พบข้อมูล</span>
+              <span class="legend-item"><span class="legend-dot out"></span>ตัดออก</span>
+            </div>
+
+            <div>
+              <div id="binary-marker" class="marker-row" aria-hidden="true"></div>
+              <div id="array-board" class="array-board" aria-live="polite"></div>
+            </div>
+
+            <div class="status-band">
+              <div class="status-top">
+                <div>
+                  <p class="status-label">สถานะ</p>
+                  <p id="status-text">เลือกวิธีค้นหาแล้วกดเริ่มค้นหา</p>
+                </div>
+                <div id="index-range" class="range-badge">[0] ถึง [n-1]</div>
+              </div>
+              <div class="step-list-wrap" aria-label="ลำดับขั้นตอนการทำงาน">
+                <p class="step-list-title">ลำดับขั้นตอนการทำงาน</p>
+                <ol id="step-list" class="step-list"></ol>
+              </div>
+            </div>
+
+            <p id="empty-note" class="empty-note" hidden>กรุณาใส่ชุดข้อมูลเป็นตัวเลขอย่างน้อย 1 ค่า</p>
+          </section>
+        </div>
+
+        <div class="lesson-grid" aria-label="เนื้อหาประกอบ">
+          <article class="info-box">
+            <h3>แนวคิดสำคัญ</h3>
+            <p id="concept-text">Linear Search ตรวจข้อมูลทีละตำแหน่งจากซ้ายไปขวา ใช้ได้แม้ข้อมูลยังไม่ได้เรียงลำดับ</p>
+          </article>
+
+          <article class="info-box">
+            <div class="code-card-header">
+              <h3>รหัสลำลอง</h3>
+              <div class="segmented code-toggle" role="group" aria-label="เลือกรูปแบบรหัสลำลอง">
+                <button class="segment is-active" type="button" data-code-mode="thai">ภาษาไทย</button>
+                <button class="segment" type="button" data-code-mode="code">แบบโค้ด</button>
+              </div>
+            </div>
+            <pre id="pseudocode">ทำซ้ำ i ตั้งแต่ 0 ถึง n-1
+    ถ้า A[i] เท่ากับ x
+        ส่งคืน i
+ส่งคืน ไม่พบข้อมูล</pre>
+          </article>
+        </div>
+      </section>
+
+      <section id="compare-view" class="view" aria-label="เปรียบเทียบวิธีค้นหา">
+        <div class="compare-grid">
+          <article class="compare-card linear">
+            <h3>การค้นหาแบบลำดับ</h3>
+            <p>
+              ตรวจข้อมูลจากตำแหน่งแรกไปทีละตำแหน่งจนกว่าจะพบค่าที่ต้องการ เหมาะกับข้อมูลจำนวนน้อย หรือข้อมูลที่ยังไม่ได้เรียงลำดับ
+            </p>
+          </article>
+          <article class="compare-card binary">
+            <h3>การค้นหาแบบทวิภาค</h3>
+            <p>
+              ใช้ค่ากลางแบ่งช่วงค้นหาออกครึ่งหนึ่งซ้ำ ๆ จึงเร็วกว่าเมื่อข้อมูลมีจำนวนมาก แต่ต้องใช้กับข้อมูลที่เรียงลำดับแล้ว
+            </p>
+          </article>
+        </div>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>ประเด็น</th>
+              <th>Linear Search</th>
+              <th>Binary Search</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>เงื่อนไขของข้อมูล</td>
+              <td>ไม่จำเป็นต้องเรียงลำดับ</td>
+              <td>ต้องเรียงลำดับก่อนค้นหา</td>
+            </tr>
+            <tr>
+              <td>แนวคิด</td>
+              <td>เปรียบเทียบทีละตำแหน่ง</td>
+              <td>เปรียบเทียบค่ากลางแล้วตัดช่วงค้นหาออกครึ่งหนึ่ง</td>
+            </tr>
+            <tr>
+              <td>กรณีแย่ที่สุด</td>
+              <td>อาจต้องตรวจครบทุกค่า</td>
+              <td>จำนวนรอบเพิ่มช้ากว่ามากเมื่อข้อมูลเยอะขึ้น</td>
+            </tr>
+            <tr>
+              <td>ตัวอย่างที่เหมาะ</td>
+              <td>ค้นหาชื่อในรายชื่อสั้น ๆ ที่ยังไม่จัดเรียง</td>
+              <td>ค้นหาเลขประจำตัวในรายชื่อที่เรียงแล้ว</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="quiz-view" class="view" aria-label="แบบฝึกหัด">
+        <div class="quiz-layout">
+          <div id="quiz-list" class="quiz-list"></div>
+          <aside class="quiz-card quiz-score">
+            <h3>คะแนน</h3>
+            <p id="score-number" class="score-number">0/5</p>
+            <p id="quiz-feedback" class="feedback">ตอบคำถามเพื่อเช็กความเข้าใจเรื่องการค้นหาข้อมูล</p>
+            <button id="check-quiz" class="primary" type="button">ตรวจคำตอบ</button>
+            <button id="clear-quiz" class="secondary" type="button">ล้างคำตอบ</button>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <div id="result-modal" class="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title" hidden>
+      <div class="result-dialog">
+        <div class="result-icon" aria-hidden="true">✓</div>
+        <h3 id="result-title">ค้นหาพบแล้ว</h3>
+        <p id="result-message">พบข้อมูลที่ต้องการ</p>
+        <div class="result-stats" aria-label="สรุปผลการค้นหา">
+          <div class="result-stat">
+            <strong id="result-comparisons">0</strong>
+            <span>ครั้งที่เปรียบเทียบ</span>
+          </div>
+          <div class="result-stat">
+            <strong id="result-steps">0</strong>
+            <span>ขั้นตอนการทำงาน</span>
+          </div>
+        </div>
+        <p id="result-detail">ระบบพบข้อมูลในชุดข้อมูลเรียบร้อยแล้ว</p>
+        <div class="result-actions">
+          <button id="result-close" class="primary" type="button">ตกลง</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">Designed by Thanakrit Yomthaisong</footer>
+
+    <script>
+      const state = {
+        mode: "linear",
+        codeMode: "thai",
+        indexBase: 0,
+        data: [7, 12, 18, 24, 31, 39, 45, 52, 68],
+        target: 45,
+        steps: [],
+        currentStep: -1,
+        playTimer: null,
+        resultPopupKey: "",
+      };
+
+      const defaultData = [7, 12, 18, 24, 31, 39, 45, 52, 68];
+
+      const quizItems = [
+        {
+          question: "ข้อใดเป็นลักษณะของ Linear Search",
+          choices: ["ตรวจข้อมูลทีละตำแหน่ง", "ต้องเริ่มจากค่ากลางเสมอ", "ใช้ได้เฉพาะข้อมูลที่เรียงแล้ว"],
+          answer: 0,
+        },
+        {
+          question: "Binary Search ใช้ได้เมื่อใด",
+          choices: ["ข้อมูลเรียงลำดับแล้ว", "ข้อมูลมีค่าน้อยกว่า 10 เสมอ", "ข้อมูลเป็นตัวอักษรเท่านั้น"],
+          answer: 0,
+        },
+        {
+          question: "ถ้าค่าที่ค้นหามากกว่าค่ากลางในการทำ Binary Search ควรทำอย่างไร",
+          choices: ["ค้นหาต่อฝั่งขวา", "ค้นหาต่อฝั่งซ้าย", "กลับไปเริ่มที่ตำแหน่งแรก"],
+          answer: 0,
+        },
+        {
+          question: "วิธีใดเหมาะกับข้อมูลที่ยังไม่ได้เรียงลำดับมากกว่า",
+          choices: ["Linear Search", "Binary Search", "ใช้ไม่ได้ทั้งสองวิธี"],
+          answer: 0,
+        },
+        {
+          question: "จุดเด่นสำคัญของ Binary Search คืออะไร",
+          choices: ["ลดช่วงค้นหาลงครึ่งหนึ่งในแต่ละรอบ", "ตรวจทุกตัวเพื่อความแน่นอน", "ไม่ต้องเปรียบเทียบค่า"],
+          answer: 0,
+        },
+      ];
+
+      const elements = {
+        tabs: [...document.querySelectorAll(".tab")],
+        views: [...document.querySelectorAll(".view")],
+        datasetInput: document.querySelector("#dataset-input"),
+        targetInput: document.querySelector("#target-input"),
+        arrayBoard: document.querySelector("#array-board"),
+        binaryMarker: document.querySelector("#binary-marker"),
+        modeTitle: document.querySelector("#mode-title"),
+        compareCount: document.querySelector("#compare-count"),
+        stepCount: document.querySelector("#step-count"),
+        statusText: document.querySelector("#status-text"),
+        stepList: document.querySelector("#step-list"),
+        indexHint: document.querySelector("#index-hint"),
+        indexRange: document.querySelector("#index-range"),
+        conceptText: document.querySelector("#concept-text"),
+        pseudocode: document.querySelector("#pseudocode"),
+        dataRule: document.querySelector("#data-rule"),
+        sortNote: document.querySelector("#sort-note"),
+        targetDisplayValue: document.querySelector("#target-display-value"),
+        emptyNote: document.querySelector("#empty-note"),
+        runButton: document.querySelector("#run-button"),
+        playButton: document.querySelector("#play-button"),
+        prevButton: document.querySelector("#prev-button"),
+        nextButton: document.querySelector("#next-button"),
+        resetButton: document.querySelector("#reset-button"),
+        randomizeButton: document.querySelector("#randomize-button"),
+        modeButtons: [...document.querySelectorAll("[data-mode]")],
+        codeModeButtons: [...document.querySelectorAll("[data-code-mode]")],
+        indexBaseButtons: [...document.querySelectorAll("[data-index-base]")],
+        quizList: document.querySelector("#quiz-list"),
+        scoreNumber: document.querySelector("#score-number"),
+        quizFeedback: document.querySelector("#quiz-feedback"),
+        checkQuiz: document.querySelector("#check-quiz"),
+        clearQuiz: document.querySelector("#clear-quiz"),
+        resultModal: document.querySelector("#result-modal"),
+        resultMessage: document.querySelector("#result-message"),
+        resultComparisons: document.querySelector("#result-comparisons"),
+        resultSteps: document.querySelector("#result-steps"),
+        resultDetail: document.querySelector("#result-detail"),
+        resultClose: document.querySelector("#result-close"),
+      };
+
+      function parseDataInput() {
+        const values = elements.datasetInput.value
+          .split(/[\s,]+/)
+          .map((value) => Number(value.trim()))
+          .filter((value) => Number.isFinite(value))
+          .slice(0, 12);
+
+        state.data = values;
+        state.target = Number(elements.targetInput.value);
+        elements.emptyNote.hidden = values.length > 0;
+      }
+
+      function displayIndex(internalIndex) {
+        return internalIndex + state.indexBase;
+      }
+
+      function displayIndexLabel(internalIndex) {
+        return `[${displayIndex(internalIndex)}]`;
+      }
+
+      function displayRangeLabel() {
+        return state.indexBase === 0 ? "[0] ถึง [n-1]" : "[1] ถึง [n]";
+      }
+
+      function hideResultPopup() {
+        elements.resultModal.hidden = true;
+      }
+
+      function activeData() {
+        if (state.mode === "binary") {
+          return [...state.data].sort((a, b) => a - b);
+        }
+
+        return [...state.data];
+      }
+
+      function generateLinearSteps(data) {
+        const steps = [];
+
+        data.forEach((value, index) => {
+          const found = value === state.target;
+
+          steps.push({
+            type: "linear",
+            current: index,
+            checked: [...Array(index + 1).keys()],
+            foundIndex: found ? index : null,
+            comparisons: index + 1,
+            done: found,
+            message: found
+              ? `พบค่า ${state.target} ที่ตำแหน่ง ${displayIndexLabel(index)} หลังเปรียบเทียบ ${index + 1} ครั้ง`
+              : `ตรวจตำแหน่ง ${displayIndexLabel(index)} ซึ่งมีค่า ${value} ยังไม่ตรงกับ ${state.target}`,
+          });
+        });
+
+        if (!steps.some((step) => step.done)) {
+          steps.push({
+            type: "linear",
+            current: null,
+            checked: [...Array(data.length).keys()],
+            foundIndex: null,
+            comparisons: data.length,
+            done: true,
+            message: `ตรวจครบทุกตำแหน่งแล้ว ไม่พบค่า ${state.target}`,
+          });
+        }
+
+        return stopAfterFound(steps);
+      }
+
+      function generateBinarySteps(data) {
+        const steps = [];
+        let left = 0;
+        let right = data.length - 1;
+        let comparisons = 0;
+
+        while (left <= right) {
+          const mid = Math.floor((left + right) / 2);
+          const value = data[mid];
+          comparisons += 1;
+
+          if (value === state.target) {
+            steps.push({
+              type: "binary",
+              left,
+              right,
+              mid,
+              foundIndex: mid,
+              comparisons,
+              done: true,
+              message: `พบค่า ${state.target} ที่ตำแหน่ง ${displayIndexLabel(mid)} โดยใช้ค่ากลางเปรียบเทียบ`,
+            });
+            return steps;
+          }
+
+          const goLeft = state.target < value;
+          steps.push({
+            type: "binary",
+            left,
+            right,
+            mid,
+            foundIndex: null,
+            comparisons,
+            done: false,
+            message: goLeft
+              ? `${state.target} น้อยกว่าค่าที่ตำแหน่ง ${displayIndexLabel(mid)} จึงค้นหาต่อในครึ่งซ้าย`
+              : `${state.target} มากกว่าค่าที่ตำแหน่ง ${displayIndexLabel(mid)} จึงค้นหาต่อในครึ่งขวา`,
+          });
+
+          if (goLeft) {
+            right = mid - 1;
+          } else {
+            left = mid + 1;
+          }
+        }
+
+        steps.push({
+          type: "binary",
+          left: null,
+          right: null,
+          mid: null,
+          foundIndex: null,
+          comparisons,
+          done: true,
+          message: `ช่วงค้นหาว่างแล้ว ไม่พบค่า ${state.target}`,
+        });
+
+        return steps;
+      }
+
+      function stopAfterFound(steps) {
+        const foundAt = steps.findIndex((step) => step.done && step.foundIndex !== null);
+        return foundAt >= 0 ? steps.slice(0, foundAt + 1) : steps;
+      }
+
+      function stopAutoPlay() {
+        if (!state.playTimer) return;
+        clearInterval(state.playTimer);
+        state.playTimer = null;
+        elements.playButton.textContent = "เล่น";
+      }
+
+      function rebuildSteps() {
+        stopAutoPlay();
+        hideResultPopup();
+        state.resultPopupKey = "";
+        parseDataInput();
+        const data = activeData();
+
+        if (!data.length) {
+          state.steps = [];
+          state.currentStep = -1;
+          render();
+          return;
+        }
+
+        state.steps = state.mode === "linear" ? generateLinearSteps(data) : generateBinarySteps(data);
+        state.currentStep = state.steps.length ? 0 : -1;
+        render();
+      }
+
+      function renderCells(data, step) {
+        const count = Math.max(data.length, 1);
+        elements.arrayBoard.style.setProperty("--cell-count", count);
+        elements.binaryMarker.style.setProperty("--cell-count", count);
+
+        if (!data.length) {
+          elements.arrayBoard.innerHTML = "";
+          return;
+        }
+
+        elements.arrayBoard.innerHTML = data
+          .map((value, index) => {
+            const classes = ["cell"];
+
+            if (step) {
+              if (step.type === "linear" && step.checked?.includes(index)) classes.push("is-checked");
+              if (step.type === "linear" && step.current === index) classes.push("is-current");
+              if (step.type === "binary" && step.mid === index) classes.push("is-current");
+              if (step.type === "binary" && step.left !== null && (index < step.left || index > step.right)) classes.push("is-out");
+              if (step.foundIndex === index) classes.push("is-found");
+            }
+
+            return `
+              <div class="${classes.join(" ")}">
+                <div class="value">${value}</div>
+                <div class="index">${displayIndexLabel(index)}</div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function renderMarkers(data, step) {
+        if (state.mode !== "binary" || !data.length) {
+          elements.binaryMarker.innerHTML = "";
+          elements.binaryMarker.setAttribute("aria-hidden", "true");
+          return;
+        }
+
+        elements.binaryMarker.setAttribute("aria-hidden", "false");
+        elements.binaryMarker.innerHTML = data
+          .map((_, index) => {
+            if (!step || step.left === null) return "<div></div>";
+
+            const labels = [];
+            if (step.left === index) labels.push("ซ้าย");
+            if (step.mid === index) labels.push("กลาง");
+            if (step.right === index) labels.push("ขวา");
+            if (!labels.length) return "<div></div>";
+
+            const markerClass = labels.includes("กลาง") ? "mid" : labels.includes("ซ้าย") ? "left" : "right";
+            return `<div class="marker ${markerClass}">${labels.join("/")} ${displayIndexLabel(index)}</div>`;
+          })
+          .join("");
+      }
+
+      function stepSummary(step, data) {
+        if (!step) return "ยังไม่มีขั้นตอน";
+
+        if (step.type === "linear") {
+          if (step.current !== null) {
+            const value = data[step.current];
+            return step.foundIndex !== null
+              ? `ตรวจ ${displayIndexLabel(step.current)} x = ${value} -> ${value} == target -> พบข้อมูล`
+              : `ตรวจ ${displayIndexLabel(step.current)} x = ${value} -> ${value} != target -> ยังไม่พบ`;
+          }
+
+          return `จบการค้นหา: ตรวจครบทุกตำแหน่งแล้ว -> ไม่พบข้อมูล`;
+        }
+
+        if (step.mid !== null) {
+          const value = data[step.mid];
+          const midFormula = `mid = floor((${displayIndex(step.left)} + ${displayIndex(step.right)}) / 2) = ${displayIndexLabel(step.mid)}`;
+
+          if (step.foundIndex !== null) {
+            return `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} == target -> พบข้อมูล`;
+          }
+
+          return state.target < value
+            ? `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} > target -> ไปครึ่งซ้าย`
+            : `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} < target -> ไปครึ่งขวา`;
+        }
+
+        return `จบการค้นหา: ช่วงค้นหาว่าง -> ไม่พบข้อมูล`;
+      }
+
+      function renderStepList(data) {
+        elements.stepList.innerHTML = "";
+
+        if (!state.steps.length) {
+          const item = document.createElement("li");
+          item.className = "step-item is-active";
+          const number = document.createElement("span");
+          number.className = "step-number";
+          number.textContent = "0";
+          const text = document.createElement("span");
+          text.textContent = "ยังไม่มีขั้นตอนการค้นหา";
+          item.append(number, text);
+          elements.stepList.append(item);
+          return;
+        }
+
+        state.steps.forEach((step, index) => {
+          const item = document.createElement("li");
+          item.className = "step-item";
+          if (index < state.currentStep) item.classList.add("is-done");
+          if (index === state.currentStep) item.classList.add("is-active");
+          if (index > state.currentStep) item.classList.add("is-future");
+
+          const number = document.createElement("span");
+          number.className = "step-number";
+          number.textContent = String(index + 1);
+
+          const text = document.createElement("span");
+          text.textContent = stepSummary(step, data);
+
+          item.append(number, text);
+          elements.stepList.append(item);
+        });
+      }
+
+      function resultPopupKey(step) {
+        return `${state.mode}|${state.indexBase}|${state.target}|${activeData().join(",")}|${state.currentStep}|${step.foundIndex}`;
+      }
+
+      function showResultPopup(step) {
+        const data = activeData();
+        const foundValue = data[step.foundIndex];
+        const totalSteps = state.currentStep + 1;
+
+        elements.resultMessage.textContent = `ค้นหาพบแล้ว: พบค่า ${foundValue} ที่ตำแหน่ง ${displayIndexLabel(step.foundIndex)}`;
+        elements.resultComparisons.textContent = step.comparisons;
+        elements.resultSteps.textContent = totalSteps;
+        elements.resultDetail.textContent =
+          state.mode === "binary"
+            ? `สรุป: การค้นหาแบบทวิภาคพบข้อมูลหลังเปรียบเทียบ ${step.comparisons} ครั้ง จากลำดับการทำงาน ${totalSteps} ขั้นตอน`
+            : `สรุป: การค้นหาแบบลำดับพบข้อมูลหลังตรวจและเปรียบเทียบ ${step.comparisons} ครั้ง จากลำดับการทำงาน ${totalSteps} ขั้นตอน`;
+        elements.resultModal.hidden = false;
+        elements.resultClose.focus();
+      }
+
+      function showResultPopupIfNeeded(step) {
+        if (!step || step.foundIndex === null) return;
+
+        const key = resultPopupKey(step);
+        if (state.resultPopupKey === key) return;
+
+        state.resultPopupKey = key;
+        showResultPopup(step);
+      }
+
+      function linearPseudocode(isBaseZero) {
+        if (state.codeMode === "thai") {
+          return isBaseZero
+            ? `ทำซ้ำ i ตั้งแต่ 0 ถึง n-1
+    ถ้า A[i] เท่ากับ x
+        ส่งคืน i
+ส่งคืน ไม่พบข้อมูล`
+            : `ทำซ้ำ i ตั้งแต่ 1 ถึง n
+    ถ้า A[i] เท่ากับ x
+        ส่งคืน i
+ส่งคืน ไม่พบข้อมูล`;
+        }
+
+        return isBaseZero
+          ? `for i = 0 to n-1
+    if A[i] == x
+        return i
+return not found`
+          : `for i = 1 to n
+    if A[i] == x
+        return i
+return not found`;
+      }
+
+      function binaryPseudocode(isBaseZero) {
+        if (state.codeMode === "thai") {
+          return isBaseZero
+            ? `กำหนด left = 0
+กำหนด right = n-1
+ตราบใดที่ left <= right
+    mid = ปัดลง((left + right) / 2)
+    ถ้า A[mid] เท่ากับ x
+        ส่งคืน mid
+    ถ้า x น้อยกว่า A[mid]
+        right = mid - 1
+    มิฉะนั้น
+        left = mid + 1
+ส่งคืน ไม่พบข้อมูล`
+            : `กำหนด left = 1
+กำหนด right = n
+ตราบใดที่ left <= right
+    mid = ปัดลง((left + right) / 2)
+    ถ้า A[mid] เท่ากับ x
+        ส่งคืน mid
+    ถ้า x น้อยกว่า A[mid]
+        right = mid - 1
+    มิฉะนั้น
+        left = mid + 1
+ส่งคืน ไม่พบข้อมูล`;
+        }
+
+        return isBaseZero
+          ? `left = 0
+right = n-1
+while left <= right
+    mid = floor((left + right) / 2)
+    if A[mid] == x
+        return mid
+    else if x < A[mid]
+        right = mid - 1
+    else
+        left = mid + 1
+return not found`
+          : `left = 1
+right = n
+while left <= right
+    mid = floor((left + right) / 2)
+    if A[mid] == x
+        return mid
+    else if x < A[mid]
+        right = mid - 1
+    else
+        left = mid + 1
+return not found`;
+      }
+
+      function renderLessonText() {
+        const isBaseZero = state.indexBase === 0;
+
+        elements.indexHint.textContent = isBaseZero
+          ? "ใช้ตำแหน่ง [0] ถึง [n-1] ตามรูปแบบการเขียนโปรแกรมทั่วไป"
+          : "ใช้ตำแหน่ง [1] ถึง [n] ให้ตรงกับตัวอย่างในหนังสือเรียน";
+
+        elements.indexRange.textContent = displayRangeLabel();
+
+        if (state.mode === "linear") {
+          elements.modeTitle.textContent = "การค้นหาแบบลำดับ";
+          elements.conceptText.textContent =
+            "Linear Search ตรวจข้อมูลทีละตำแหน่งจากซ้ายไปขวา ใช้ได้แม้ข้อมูลยังไม่ได้เรียงลำดับ และจะหยุดเมื่อพบค่าที่ต้องการ";
+          elements.dataRule.textContent = "Linear Search ใช้กับข้อมูลที่ยังไม่เรียงลำดับได้";
+          elements.sortNote.textContent = "แสดงข้อมูลตามลำดับที่ใส่";
+          elements.pseudocode.textContent = linearPseudocode(isBaseZero);
+          return;
+        }
+
+        elements.modeTitle.textContent = "การค้นหาแบบทวิภาค";
+        elements.conceptText.textContent =
+          "Binary Search ใช้กับข้อมูลที่เรียงลำดับแล้ว โดยเปรียบเทียบค่ากลางของช่วงค้นหาแล้วตัดข้อมูลครึ่งหนึ่งออกในแต่ละรอบ";
+        elements.dataRule.textContent = "Binary Search ต้องใช้ข้อมูลที่เรียงลำดับแล้ว";
+        elements.sortNote.textContent = "ระบบเรียงข้อมูลจากน้อยไปมากเพื่อจำลองการค้นหา";
+        elements.pseudocode.textContent = binaryPseudocode(isBaseZero);
+      }
+
+      function render() {
+        const data = activeData();
+        const step = state.steps[state.currentStep];
+
+        renderLessonText();
+        renderMarkers(data, step);
+        renderCells(data, step);
+        renderStepList(data);
+
+        elements.compareCount.textContent = step ? step.comparisons : "0";
+        elements.stepCount.textContent = state.steps.length ? `${state.currentStep + 1}/${state.steps.length}` : "0/0";
+        elements.statusText.textContent = step ? step.message : "เลือกวิธีค้นหาแล้วกดเริ่มค้นหา";
+        elements.targetDisplayValue.textContent = Number.isFinite(state.target) ? state.target : "-";
+
+        elements.prevButton.disabled = state.currentStep <= 0;
+        elements.nextButton.disabled = state.currentStep >= state.steps.length - 1;
+        elements.playButton.disabled = state.steps.length <= 1;
+        elements.playButton.textContent = state.playTimer ? "หยุด" : "เล่น";
+
+        showResultPopupIfNeeded(step);
+      }
+
+      function setActiveButton(buttons, key, value) {
+        buttons.forEach((button) => {
+          button.classList.toggle("is-active", button.dataset[key] === String(value));
+        });
+      }
+
+      function setMode(mode) {
+        state.mode = mode;
+        setActiveButton(elements.modeButtons, "mode", mode);
+        rebuildSteps();
+      }
+
+      function setCodeMode(codeMode) {
+        state.codeMode = codeMode;
+        setActiveButton(elements.codeModeButtons, "codeMode", codeMode);
+        renderLessonText();
+      }
+
+      function setIndexBase(indexBase) {
+        state.indexBase = indexBase;
+        setActiveButton(elements.indexBaseButtons, "indexBase", indexBase);
+        rebuildSteps();
+      }
+
+      function randomizeData() {
+        stopAutoPlay();
+        const values = [...Array(9)].map(() => Math.floor(Math.random() * 90) + 5);
+        values.sort((a, b) => a - b);
+        state.data = values;
+        elements.datasetInput.value = values.join(", ");
+        elements.targetInput.value = values[Math.min(values.length - 1, Math.floor(values.length / 2) + 2)];
+        rebuildSteps();
+      }
+
+      function resetData() {
+        stopAutoPlay();
+        elements.datasetInput.value = defaultData.join(", ");
+        elements.targetInput.value = 45;
+        state.mode = "linear";
+        state.codeMode = "thai";
+        state.indexBase = 0;
+        setActiveButton(elements.modeButtons, "mode", "linear");
+        setActiveButton(elements.codeModeButtons, "codeMode", "thai");
+        setActiveButton(elements.indexBaseButtons, "indexBase", 0);
+        rebuildSteps();
+      }
+
+      function switchView(viewName) {
+        stopAutoPlay();
+        elements.tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.view === viewName));
+        elements.views.forEach((view) => view.classList.toggle("is-active", view.id === `${viewName}-view`));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function advanceStep() {
+        if (state.currentStep >= state.steps.length - 1) {
+          stopAutoPlay();
+          render();
+          return;
+        }
+
+        state.currentStep += 1;
+        render();
+
+        if (state.currentStep >= state.steps.length - 1) {
+          stopAutoPlay();
+          render();
+        }
+      }
+
+      function toggleAutoPlay() {
+        if (state.playTimer) {
+          stopAutoPlay();
+          render();
+          return;
+        }
+
+        if (state.steps.length <= 1) return;
+
+        if (state.currentStep >= state.steps.length - 1) {
+          hideResultPopup();
+          state.resultPopupKey = "";
+          state.currentStep = 0;
+          render();
+        }
+
+        state.playTimer = setInterval(advanceStep, 900);
+        render();
+      }
+
+      function renderQuiz() {
+        elements.quizList.innerHTML = quizItems
+          .map((item, index) => {
+            const choices = item.choices
+              .map(
+                (choice, choiceIndex) => `
+                  <button class="choice" type="button" data-question="${index}" data-choice="${choiceIndex}">
+                    ${choice}
+                  </button>
+                `,
+              )
+              .join("");
+
+            return `
+              <article class="quiz-card" data-quiz-card="${index}">
+                <h3>${index + 1}. ${item.question}</h3>
+                <div class="choices">${choices}</div>
+              </article>
+            `;
+          })
+          .join("");
+
+        elements.quizList.querySelectorAll(".choice").forEach((button) => {
+          button.addEventListener("click", () => {
+            const question = button.dataset.question;
+            elements.quizList
+              .querySelectorAll(`[data-question="${question}"]`)
+              .forEach((choice) => choice.classList.remove("is-selected", "is-correct", "is-wrong"));
+            button.classList.add("is-selected");
+          });
+        });
+      }
+
+      function checkQuiz() {
+        let score = 0;
+
+        quizItems.forEach((item, index) => {
+          const selected = elements.quizList.querySelector(`[data-question="${index}"].is-selected`);
+          const choices = elements.quizList.querySelectorAll(`[data-question="${index}"]`);
+
+          choices.forEach((choice) => choice.classList.remove("is-correct", "is-wrong"));
+
+          if (!selected) return;
+
+          const selectedIndex = Number(selected.dataset.choice);
+          if (selectedIndex === item.answer) {
+            score += 1;
+            selected.classList.add("is-correct");
+          } else {
+            selected.classList.add("is-wrong");
+            choices[item.answer].classList.add("is-correct");
+          }
+        });
+
+        elements.scoreNumber.textContent = `${score}/${quizItems.length}`;
+        elements.quizFeedback.textContent =
+          score === quizItems.length
+            ? "เยี่ยมมาก เข้าใจเงื่อนไขและขั้นตอนของการค้นหาทั้งสองแบบครบถ้วน"
+            : "ลองกลับไปดูหน้าทดลองค้นหา แล้วสังเกตจำนวนครั้งที่เปรียบเทียบกับเงื่อนไขของข้อมูล";
+      }
+
+      function clearQuiz() {
+        elements.quizList.querySelectorAll(".choice").forEach((choice) => {
+          choice.classList.remove("is-selected", "is-correct", "is-wrong");
+        });
+        elements.scoreNumber.textContent = `0/${quizItems.length}`;
+        elements.quizFeedback.textContent = "ตอบคำถามเพื่อเช็กความเข้าใจเรื่องการค้นหาข้อมูล";
+      }
+
+      elements.tabs.forEach((tab) => {
+        tab.addEventListener("click", () => switchView(tab.dataset.view));
+      });
+
+      elements.modeButtons.forEach((button) => {
+        button.addEventListener("click", () => setMode(button.dataset.mode));
+      });
+
+      elements.codeModeButtons.forEach((button) => {
+        button.addEventListener("click", () => setCodeMode(button.dataset.codeMode));
+      });
+
+      elements.indexBaseButtons.forEach((button) => {
+        button.addEventListener("click", () => setIndexBase(Number(button.dataset.indexBase)));
+      });
+
+      elements.runButton.addEventListener("click", rebuildSteps);
+      elements.playButton.addEventListener("click", toggleAutoPlay);
+      elements.randomizeButton.addEventListener("click", randomizeData);
+      elements.resetButton.addEventListener("click", resetData);
+      elements.prevButton.addEventListener("click", () => {
+        stopAutoPlay();
+        hideResultPopup();
+        state.resultPopupKey = "";
+        state.currentStep = Math.max(0, state.currentStep - 1);
+        render();
+      });
+      elements.nextButton.addEventListener("click", () => {
+        stopAutoPlay();
+        advanceStep();
+      });
+      elements.datasetInput.addEventListener("change", rebuildSteps);
+      elements.targetInput.addEventListener("change", rebuildSteps);
+      elements.checkQuiz.addEventListener("click", checkQuiz);
+      elements.clearQuiz.addEventListener("click", clearQuiz);
+      elements.resultClose.addEventListener("click", hideResultPopup);
+      elements.resultModal.addEventListener("click", (event) => {
+        if (event.target === elements.resultModal) hideResultPopup();
+      });
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !elements.resultModal.hidden) hideResultPopup();
+      });
+
+      renderQuiz();
+      rebuildSteps();
+    </script>
+  </body>
+</html>
