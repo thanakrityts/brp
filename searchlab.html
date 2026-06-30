@@ -587,6 +587,17 @@
         font-weight: 850;
       }
 
+      .step-list-columns {
+        display: grid;
+        grid-template-columns: 34px minmax(120px, 0.9fr) minmax(190px, 1.35fr) minmax(75px, 0.55fr) minmax(115px, 0.85fr) minmax(110px, 0.75fr);
+        gap: 8px;
+        margin-bottom: 6px;
+        padding: 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
       .step-list {
         display: grid;
         gap: 6px;
@@ -597,9 +608,9 @@
 
       .step-item {
         display: grid;
-        grid-template-columns: 30px minmax(0, 1fr);
+        grid-template-columns: 30px minmax(120px, 0.9fr) minmax(190px, 1.35fr) minmax(75px, 0.55fr) minmax(115px, 0.85fr) minmax(110px, 0.75fr);
         gap: 8px;
-        align-items: start;
+        align-items: center;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: #fff;
@@ -607,6 +618,18 @@
         color: var(--muted);
         font-size: 13px;
         line-height: 1.45;
+      }
+
+      .step-list-wrap.is-linear .step-list-columns {
+        grid-template-columns: 34px minmax(120px, 1.1fr) minmax(90px, 0.65fr) minmax(140px, 1fr) minmax(120px, 0.85fr);
+      }
+
+      .step-list-wrap.is-linear .step-item {
+        grid-template-columns: 30px minmax(120px, 1.1fr) minmax(90px, 0.65fr) minmax(140px, 1fr) minmax(120px, 0.85fr);
+      }
+
+      .step-list-wrap.is-linear .step-formula {
+        display: none;
       }
 
       .step-number {
@@ -618,6 +641,24 @@
         background: #e2e8f0;
         color: var(--navy);
         font-weight: 900;
+      }
+
+      .step-cell {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .step-cell strong {
+        color: var(--ink);
+      }
+
+      .step-result {
+        color: var(--teal-dark);
+        font-weight: 900;
+      }
+
+      .step-empty {
+        grid-column: 2 / -1;
       }
 
       .step-item.is-done {
@@ -639,6 +680,29 @@
 
       .step-item.is-future {
         opacity: 0.62;
+      }
+
+      @media (max-width: 820px) {
+        .step-list-columns {
+          display: none;
+        }
+
+        .step-item {
+          grid-template-columns: 30px minmax(0, 1fr);
+        }
+
+        .step-cell {
+          grid-column: 2;
+        }
+
+        .step-cell::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 2px;
+          color: var(--muted);
+          font-size: 11px;
+          font-weight: 900;
+        }
       }
 
       .range-badge {
@@ -1117,6 +1181,14 @@
               </div>
               <div class="step-list-wrap" aria-label="ลำดับขั้นตอนการทำงาน">
                 <p class="step-list-title">ลำดับขั้นตอนการทำงาน</p>
+                <div class="step-list-columns" aria-hidden="true">
+                  <span>ขั้น</span>
+                  <span>ตำแหน่ง / ช่วง</span>
+                  <span class="step-formula">สูตร mid</span>
+                  <span>ค่า x</span>
+                  <span>เทียบกับ target</span>
+                  <span>ผลลัพธ์</span>
+                </div>
                 <ol id="step-list" class="step-list"></ol>
               </div>
             </div>
@@ -1536,18 +1608,38 @@
           .join("");
       }
 
-      function stepSummary(step, data) {
-        if (!step) return "ยังไม่มีขั้นตอน";
+      function stepColumns(step, data) {
+        if (!step) {
+          return {
+            position: "-",
+            formula: "-",
+            value: "-",
+            comparison: "-",
+            result: "รอเริ่มค้นหา",
+          };
+        }
 
         if (step.type === "linear") {
           if (step.current !== null) {
             const value = data[step.current];
-            return step.foundIndex !== null
-              ? `ตรวจ ${displayIndexLabel(step.current)} x = ${value} -> ${value} == target -> พบข้อมูล`
-              : `ตรวจ ${displayIndexLabel(step.current)} x = ${value} -> ${value} != target -> ยังไม่พบ`;
+            const found = step.foundIndex !== null;
+
+            return {
+              position: `ตรวจ ${displayIndexLabel(step.current)}`,
+              formula: "-",
+              value: `x = ${value}`,
+              comparison: `${value} ${found ? "==" : "!="} ${state.target}`,
+              result: found ? "พบข้อมูล" : "ยังไม่พบ",
+            };
           }
 
-          return `จบการค้นหา: ตรวจครบทุกตำแหน่งแล้ว -> ไม่พบข้อมูล`;
+          return {
+            position: `ตรวจครบ ${data.length} ตำแหน่ง`,
+            formula: "-",
+            value: "-",
+            comparison: `ไม่มีค่าใดเท่ากับ ${state.target}`,
+            result: "ไม่พบข้อมูล",
+          };
         }
 
         if (step.mid !== null) {
@@ -1555,19 +1647,45 @@
           const midFormula = `mid = floor((${displayIndex(step.left)} + ${displayIndex(step.right)}) / 2) = ${displayIndexLabel(step.mid)}`;
 
           if (step.foundIndex !== null) {
-            return `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} == target -> พบข้อมูล`;
+            return {
+              position: `ช่วง ${displayIndexLabel(step.left)} ถึง ${displayIndexLabel(step.right)}`,
+              formula: midFormula,
+              value: `x = ${value}`,
+              comparison: `${value} == ${state.target}`,
+              result: "พบข้อมูล",
+            };
           }
 
-          return state.target < value
-            ? `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} > target -> ไปครึ่งซ้าย`
-            : `${midFormula}; ตรวจ ${displayIndexLabel(step.mid)} x = ${value} -> ${value} < target -> ไปครึ่งขวา`;
+          const goLeft = state.target < value;
+          return {
+            position: `ช่วง ${displayIndexLabel(step.left)} ถึง ${displayIndexLabel(step.right)}`,
+            formula: midFormula,
+            value: `x = ${value}`,
+            comparison: `${value} ${goLeft ? ">" : "<"} ${state.target}`,
+            result: goLeft ? "ไปครึ่งซ้าย" : "ไปครึ่งขวา",
+          };
         }
 
-        return `จบการค้นหา: ช่วงค้นหาว่าง -> ไม่พบข้อมูล`;
+        return {
+          position: "ช่วงค้นหาว่าง",
+          formula: "-",
+          value: "-",
+          comparison: "left > right",
+          result: "ไม่พบข้อมูล",
+        };
+      }
+
+      function createStepCell(label, text, className = "") {
+        const cell = document.createElement("span");
+        cell.className = `step-cell ${className}`.trim();
+        cell.dataset.label = label;
+        cell.textContent = text;
+        return cell;
       }
 
       function renderStepList(data) {
         elements.stepList.innerHTML = "";
+        elements.stepList.closest(".step-list-wrap")?.classList.toggle("is-linear", state.mode === "linear");
 
         if (!state.steps.length) {
           const item = document.createElement("li");
@@ -1576,6 +1694,7 @@
           number.className = "step-number";
           number.textContent = "0";
           const text = document.createElement("span");
+          text.className = "step-empty";
           text.textContent = "ยังไม่มีขั้นตอนการค้นหา";
           item.append(number, text);
           elements.stepList.append(item);
@@ -1593,10 +1712,14 @@
           number.className = "step-number";
           number.textContent = String(index + 1);
 
-          const text = document.createElement("span");
-          text.textContent = stepSummary(step, data);
+          const columns = stepColumns(step, data);
+          const position = createStepCell("ตำแหน่ง / ช่วง", columns.position);
+          const formula = createStepCell("สูตร mid", columns.formula, "step-formula");
+          const value = createStepCell("ค่า x", columns.value);
+          const comparison = createStepCell("เทียบกับ target", columns.comparison);
+          const result = createStepCell("ผลลัพธ์", columns.result, "step-result");
 
-          item.append(number, text);
+          item.append(number, position, formula, value, comparison, result);
           elements.stepList.append(item);
         });
       }
