@@ -20,8 +20,8 @@
       --white: #ffffff;
       --shadow: 0 18px 45px rgba(23, 33, 43, 0.12);
       --radius: 8px;
-      --font-body: "LINE Seed Sans TH", "Noto Sans Thai", "Sarabun", "Thonburi", Tahoma, Arial, sans-serif;
-      --font-display: "Kanit", "LINE Seed Sans TH", "Noto Sans Thai", "Sarabun", Tahoma, Arial, sans-serif;
+      --font-body: "Prompt", "IBM Plex Sans Thai", "LINE Seed Sans TH", "Noto Sans Thai", "Sarabun", Tahoma, Arial, sans-serif;
+      --font-display: "LINE Seed Sans TH", "Prompt", "Kanit", "IBM Plex Sans Thai", "Noto Sans Thai", Tahoma, Arial, sans-serif;
     }
 
     * {
@@ -40,9 +40,11 @@
         linear-gradient(315deg, rgba(255, 200, 87, 0.20), transparent 38%),
         var(--paper);
       font-family: var(--font-body);
+      font-size: 16px;
       line-height: 1.6;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
+      font-variant-ligatures: common-ligatures;
     }
 
     button,
@@ -109,8 +111,9 @@
     .brand-title {
       min-width: 0;
       max-width: 760px;
-      line-height: 1.28;
-      font-size: 1.02rem;
+      line-height: 1.34;
+      font-size: 1.04rem;
+      font-weight: 900;
       overflow-wrap: anywhere;
     }
 
@@ -127,7 +130,7 @@
       color: #334155;
       font-size: 0.95rem;
       font-family: var(--font-display);
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .nav a:hover {
@@ -163,6 +166,7 @@
       font-family: var(--font-display);
       font-weight: 800;
       font-size: 0.92rem;
+      line-height: 1.35;
     }
 
     .spark {
@@ -184,8 +188,8 @@
     h1 {
       margin: 18px 0 16px;
       max-width: 760px;
-      font-size: clamp(2.35rem, 6vw, 5.3rem);
-      line-height: 1.04;
+      font-size: clamp(2.35rem, 5.7vw, 5.05rem);
+      line-height: 1.08;
       letter-spacing: 0;
       font-family: var(--font-display);
       font-weight: 900;
@@ -195,7 +199,8 @@
       max-width: 650px;
       color: #425466;
       font-size: clamp(1.02rem, 2vw, 1.22rem);
-      font-weight: 500;
+      font-weight: 600;
+      line-height: 1.78;
     }
 
     .hero-actions {
@@ -330,7 +335,7 @@
     h2 {
       margin: 0;
       font-size: clamp(1.75rem, 4vw, 3rem);
-      line-height: 1.14;
+      line-height: 1.2;
       letter-spacing: 0;
       font-family: var(--font-display);
       font-weight: 900;
@@ -341,12 +346,14 @@
       font-size: 1.22rem;
       letter-spacing: 0;
       font-family: var(--font-display);
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .lead {
       color: var(--muted);
       margin: 0;
+      font-weight: 500;
+      line-height: 1.75;
     }
 
     .lesson-grid {
@@ -1388,7 +1395,7 @@
 
     <footer>
       <div class="footer-inner">
-        <span>SortLab สื่อการสอน เรื่อง การจัดเรียงข้อมูล โดยครูธนกฤชช์ โยมไธสง</span>
+        <span>Sort Lab สื่อการสอน เรื่อง การจัดเรียงข้อมูล โดยครูธนกฤชช์ โยมไธสง</span>
         <span class="credit">Designed by Thanakrit Yomthaisong</span>
       </div>
     </footer>
