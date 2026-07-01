@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="th" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบบันทึกการขอแก้ผลการเรียน (0, ร, มส, มผ)</title>
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',    /* Light Soft Pink */
+                            100: '#fce7f3',   /* Medium Soft Pink */
+                            300: '#f472b6',   /* Bright Accent Pink */
+                            500: '#ec4899',   /* Primary Neon Pink */
+                            600: '#db2777',   /* Deep Accent Pink */
+                            700: '#be185d',   /* Solid Accent Pink */
+                            900: '#831843',   /* Dark Maroon Accent */
+                        },
+                        navy: {
+                            50: '#f0f7ff',    /* Soft Icy Blue */
+                            100: '#e0f2fe',   /* Bright Ice Blue */
+                            200: '#bae6fd',
+                            600: '#2563eb',   /* Professional Blue */
+                            700: '#1d4ed8',   /* Deep Blue */
+                            800: '#1e3a8a',   /* Royal Dark Blue */
+                            900: '#0f172a',   /* Classic Slate Navy Main */
+                            950: '#0b0f19',   /* Ultra Dark Navy */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        title: ['Prompt', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'pink-glow': '0 10px 25px -5px rgba(236, 72, 153, 0.3)',
+                        'blue-glow': '0 10px 25px -5px rgba(37, 99, 235, 0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            transition: background-color 0.4s, color 0.4s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, th {
+            font-family: 'Prompt', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        /* Touch inertia scrolling for mobile tables */
+        .responsive-table-container {
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 dark:bg-navy-950 dark:text-slate-100 overflow-x-hidden">
+
+    <!-- LOGIN CONTAINER -->
+    <div id="login-container" class="flex-grow flex items-center justify-center px-4 py-16 transition-colors duration-500 relative overflow-hidden">
+        <!-- Glowing ambient decorative circles -->
+        <div class="absolute w-[500px] h-[500px] bg-navy-700/10 dark:bg-navy-800/20 rounded-full blur-[80px] -top-40 -left-40 z-0"></div>
+        <div class="absolute w-[400px] h-[400px] bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-[100px] -bottom-20 -right-20 z-0"></div>
+
+        <div class="max-w-md w-full space-y-8 bg-white dark:bg-navy-900 p-10 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800/80 transition-all duration-300 z-10 relative">
+            <div class="text-center">
+                <!-- Gorgeous Logo with Navy & Pink Accent Ring -->
+                <div class="mx-auto h-20 w-20 bg-gradient-to-tr from-navy-800 to-brand-500 text-white rounded-3xl flex items-center justify-center shadow-pink-glow transform hover:rotate-6 transition duration-300">
+                    <i class="fa-solid fa-shield-halved text-4xl"></i>
+                </div>
+                <h2 class="mt-6 text-3xl font-title font-bold text-navy-900 dark:text-white tracking-tight">เข้าสู่ระบบ RMS</h2>
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    ระบบบริหารจัดการการขอแก้ผลการเรียนออนไลน์
+                </p>
+                <!-- Teacher Credit Tag with Premium Pink Border Accent -->
+                <div class="mt-4 inline-flex items-center px-4 py-1.5 rounded-full bg-navy-50 dark:bg-slate-850 text-xs font-semibold text-navy-800 dark:text-slate-200 border border-brand-100 dark:border-brand-900/30">
+                    <i class="fa-solid fa-user-tie mr-2 text-brand-500"></i> ผู้ดูแลระบบ: ครูธนกฤชช์ โยมไธสง
+                </div>
+            </div>
+            
+            <form class="mt-8 space-y-6" onsubmit="handleLogin(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">ชื่อผู้ใช้</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400"><i class="fa-regular fa-user"></i></span>
+                            <input id="username" name="username" type="text" required class="appearance-none rounded-2xl relative block w-full pl-11 pr-4 py-3.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:z-10 text-sm transition-all" placeholder="Username">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">รหัสผ่าน</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400"><i class="fa-solid fa-lock"></i></span>
+                            <input id="password" name="password" type="password" required class="appearance-none rounded-2xl relative block w-full pl-11 pr-4 py-3.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:z-10 text-sm transition-all" placeholder="Password">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Elegant Error Message -->
+                <div id="login-error-msg" class="hidden text-rose-600 text-xs font-semibold bg-rose-50 dark:bg-rose-950/20 p-4 rounded-2xl border border-rose-100 dark:border-rose-900/30 flex items-center gap-2.5">
+                    <i class="fa-solid fa-circle-exclamation text-base"></i> <span>ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง!</span>
+                </div>
+
+                <div>
+                    <!-- Primary Blue Button with Pink Hover Border -->
+                    <button id="login-submit-btn" type="submit" class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-2xl text-white bg-navy-800 hover:bg-navy-900 dark:bg-navy-700 dark:hover:bg-navy-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition shadow-blue-glow hover:shadow-pink-glow">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-4">
+                            <i class="fa-solid fa-arrow-right-to-bracket text-brand-300 group-hover:text-white transition-colors"></i>
+                        </span>
+                        เข้าสู่ระบบผู้ดูแล
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="toggleDarkMode()" class="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-300 transition-all">
+                    <i class="fa-solid fa-moon mr-1.5 text-navy-600 dark:text-amber-400"></i> สลับโหมดกลางวัน/กลางคืน
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Hidden until Login) -->
+    <div id="main-app" class="hidden flex flex-col min-h-screen">
+        <!-- NAVIGATION BAR (Navy Blue Primary with Pink Accent Underline - Mobile Responsive) -->
+        <nav class="bg-navy-900 text-white shadow-xl sticky top-0 z-40 border-b-2 border-brand-500/80 transition-all">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-18 py-3.5">
+                    <!-- Brand logo/text & Teacher Credits -->
+                    <div class="flex items-center space-x-2 sm:space-x-3.5 min-w-0">
+                        <div class="bg-gradient-to-tr from-navy-800 to-brand-500 text-white p-2 sm:p-2.5 rounded-xl shadow-pink-glow shrink-0">
+                            <i class="fa-solid fa-graduation-cap text-lg sm:text-2xl"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2.5">
+                                <span class="font-title font-bold text-sm sm:text-lg leading-none tracking-tight truncate">RMS Database</span>
+                                <!-- Premium Teacher Top Badge -->
+                                <span class="bg-brand-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider self-start sm:self-center flex items-center gap-1 shadow-pink-glow">
+                                    <i class="fa-solid fa-user-tie"></i> ครูธนกฤชช์
+                                </span>
+                            </div>
+                            <span class="text-[10px] sm:text-[11px] text-slate-300 dark:text-slate-400 font-medium truncate block">ระบบติดตามและประเมินผลคำร้อง</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Tabs & Actions -->
+                    <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                        <!-- Navigation Menu Buttons -->
+                        <div class="flex space-x-1 sm:space-x-1.5 mr-1">
+                            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-2.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-brand-600 text-white transition-all shadow-pink-glow flex items-center gap-1">
+                                <i class="fa-solid fa-chart-line"></i> <span class="hidden sm:inline">แผงควบคุม</span>
+                            </button>
+                            <button onclick="switchTab('student-list')" id="nav-student-list" class="px-2.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-navy-800 hover:text-brand-300 text-slate-300 transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-users"></i> <span class="hidden sm:inline">รายชื่อนักเรียน</span>
+                            </button>
+                        </div>
+
+                        <!-- System Utilities Buttons -->
+                        <div class="flex items-center space-x-0.5 sm:space-x-1 pl-1.5 sm:pl-2 border-l border-navy-800">
+                            <!-- Toggle Light/Dark Mode -->
+                            <button onclick="toggleDarkMode()" class="p-2 sm:p-2.5 rounded-xl hover:bg-navy-800 text-slate-300 hover:text-brand-300 transition-all" title="สลับโหมดสี">
+                                <i id="theme-icon-nav" class="fa-solid fa-moon text-base sm:text-lg"></i>
+                            </button>
+                            <!-- Google Sheets Sync Configuration -->
+                            <button onclick="switchTab('sheets-sync')" id="nav-sheets-sync" class="p-2 sm:p-2.5 rounded-xl hover:bg-navy-800 text-slate-300 hover:text-brand-300 transition-all" title="ระบบตั้งค่าเชื่อมคลาวด์ Google Sheets">
+                                <i class="fa-solid fa-gear text-base sm:text-lg"></i>
+                            </button>
+                            <!-- Logout Portal -->
+                            <button onclick="confirmLogout()" class="p-2 sm:p-2.5 rounded-xl hover:bg-rose-950/50 text-rose-400 hover:text-rose-100 transition-all" title="ออกจากระบบ">
+                                <i class="fa-solid fa-power-off text-base sm:text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN MAIN APP BODY CONTAINER -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6">
+
+            <!-- Notification Message Banner -->
+            <div id="toast-banner" class="hidden mb-6 p-4 rounded-2xl flex items-center justify-between transition-all duration-300">
+                <div class="flex items-center space-x-3 min-w-0">
+                    <span id="toast-icon" class="text-xl shrink-0"></span>
+                    <span id="toast-text" class="text-xs sm:text-sm font-medium truncate"></span>
+                </div>
+                <button onclick="closeToast()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 shrink-0 ml-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content block space-y-6 animate-fade-in">
+                <!-- Welcome & Top Credit Jumbotron -->
+                <div class="relative overflow-hidden bg-gradient-to-r from-navy-900 to-navy-800 text-white p-6 sm:p-8 rounded-3xl shadow-blue-glow transition-all">
+                    <!-- Right glowing mesh -->
+                    <div class="absolute w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] bg-brand-500/10 rounded-full blur-[80px] -right-10 -top-10"></div>
+                    
+                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div class="space-y-1">
+                            <span class="text-[10px] sm:text-xs uppercase tracking-widest text-brand-300 font-bold">ห้องวิชาการเเละงานวัดผลประเมินผล</span>
+                            <h2 class="text-2xl sm:text-3xl font-title font-bold leading-tight">ยินดีต้อนรับสู่แดชบอร์ด RMS Portal</h2>
+                            <p class="text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
+                                สรุปความคืบหน้าการยื่นคำร้องขอแก้ผลการเรียน <span class="text-brand-300 font-semibold">0, ร, มส, มผ</span> ภายใต้ระบบบันทึกฐานข้อมูลอัจฉริยะ
+                            </p>
+                        </div>
+                        <div class="flex gap-2.5 w-full sm:w-auto">
+                            <button onclick="openNewRequestModal()" class="flex-1 sm:flex-grow-0 bg-brand-500 hover:bg-brand-600 text-white px-4 sm:px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center shadow-pink-glow transition-all active:scale-95 shrink-0">
+                                <i class="fa-solid fa-user-plus mr-2"></i> ยื่นคำร้องใหม่
+                            </button>
+                            <button onclick="resetToDemoData()" class="bg-navy-950/60 hover:bg-navy-950/90 text-slate-300 border border-navy-800 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center transition-all active:scale-95 shrink-0">
+                                <i class="fa-solid fa-rotate mr-2 text-brand-300"></i> รีเซ็ตตัวอย่าง
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Statistics Grid with Glowing Accents -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-150 dark:border-slate-800 flex items-center space-x-3 sm:space-x-4 transition-all">
+                        <div class="p-2 sm:p-3.5 bg-blue-50 dark:bg-slate-850 text-blue-600 rounded-xl shrink-0"><i class="fa-solid fa-file-signature text-xl sm:text-2xl"></i></div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold uppercase truncate block">คำร้องทั้งหมด</span>
+                            <span class="text-xl sm:text-3xl font-bold text-navy-900 dark:text-white mt-0.5 block" id="stat-total-requests">0</span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-150 dark:border-slate-800 flex items-center space-x-3 sm:space-x-4 transition-all">
+                        <div class="p-2 sm:p-3.5 bg-amber-50 dark:bg-slate-850 text-amber-500 rounded-xl shrink-0"><i class="fa-solid fa-spinner text-xl sm:text-2xl animate-spin"></i></div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold uppercase truncate block">กำลังดำเนินการ</span>
+                            <span class="text-xl sm:text-3xl font-bold text-navy-900 dark:text-white mt-0.5 block" id="stat-pending-requests">0</span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-150 dark:border-slate-800 flex items-center space-x-3 sm:space-x-4 transition-all">
+                        <div class="p-2 sm:p-3.5 bg-pink-50 dark:bg-slate-850 text-brand-500 rounded-xl shrink-0"><i class="fa-solid fa-circle-check text-xl sm:text-2xl"></i></div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold uppercase truncate block">ผ่านการแก้ตัว</span>
+                            <span class="text-xl sm:text-3xl font-bold text-navy-900 dark:text-white mt-0.5 block" id="stat-passed-requests">0</span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-150 dark:border-slate-800 flex items-center space-x-3 sm:space-x-4 transition-all">
+                        <div class="p-2 sm:p-3.5 bg-slate-100 dark:bg-slate-850 text-slate-500 rounded-xl shrink-0"><i class="fa-solid fa-circle-xmark text-xl sm:text-2xl"></i></div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold uppercase truncate block">ไม่ผ่าน/หมดเวลา</span>
+                            <span class="text-xl sm:text-3xl font-bold text-navy-900 dark:text-white mt-0.5 block" id="stat-failed-requests">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Details Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Block: Recent requests -->
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 lg:col-span-2 flex flex-col h-[460px] transition-all">
+                        <div class="flex justify-between items-center mb-4 shrink-0">
+                            <h3 class="text-base sm:text-lg font-bold text-navy-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-regular fa-clock text-brand-500"></i> รายการคำร้องที่ยื่นล่าสุด
+                            </h3>
+                            <button onclick="switchTab('student-list')" class="text-brand-500 hover:text-brand-700 dark:text-brand-300 dark:hover:text-brand-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                                ทั้งหมด <i class="fa-solid fa-angle-right text-[10px]"></i>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto responsive-table-container flex-grow pr-1">
+                            <table class="w-full text-left border-collapse min-w-[500px] lg:min-w-0">
+                                <thead>
+                                    <tr class="text-[11px] text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/80">
+                                        <th class="pb-3.5 font-semibold pl-2">นักเรียน</th>
+                                        <th class="pb-3.5 font-semibold">รายวิชาที่ติด</th>
+                                        <th class="pb-3.5 font-semibold text-center">ความก้าวหน้า</th>
+                                        <th class="pb-3.5 font-semibold text-right pr-2">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-recent-table" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                                    <!-- Dynamically filled inside JS -->
+                                </tbody>
+                            </table>
+                            <div id="dashboard-recent-empty" class="hidden flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
+                                <i class="fa-regular fa-folder-open text-5xl mb-3 text-slate-300 dark:text-slate-700"></i>
+                                <p class="text-sm font-medium">ยังไม่มีข้อมูลคำร้องยื่นล่าสุด</p>
+                            </div>
+                        </div>
+                        <!-- Indicator for mobile table horizontal scroll -->
+                        <div class="lg:hidden text-center text-[10px] text-slate-400 dark:text-slate-505 mt-2 flex items-center justify-center gap-1 shrink-0">
+                            <i class="fa-solid fa-left-right text-[9px]"></i> ปัดซ้าย-ขวาเพื่อเลื่อนดูตารางเพิ่มเติม
+                        </div>
+                    </div>
+
+                    <!-- Right Block: Proportion Chart with subtle Pink border decorators -->
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col justify-between transition-all">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-navy-900 dark:text-white mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-brand-500"></i> สัดส่วนผลการเรียนเดิม
+                            </h3>
+                            <div class="space-y-4" id="grade-type-breakdown">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <!-- High aesthetic notice banner with subtle pink highlight gradient -->
+                            <div class="bg-gradient-to-r from-navy-50 to-brand-50 dark:from-slate-850 dark:to-slate-800/50 p-4 rounded-2xl border border-brand-100/60 dark:border-slate-750">
+                                <div class="flex items-start space-x-2.5">
+                                    <i class="fa-solid fa-circle-info text-brand-500 mt-0.5 text-sm shrink-0"></i>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-light">
+                                        <strong class="font-semibold text-navy-900 dark:text-white">เชื่อมโยงกับวิชาการโรงเรียน:</strong> ข้อมูลทั้งหมดจะเก็บรักษาไว้ใน LocalStorage บนเบราว์เซอร์นี้อย่างปลอดภัย และสามารถกดคัดลอกโค้ดไปซิงค์รวมศูนย์ที่ Google Sheets ตลอดเวลา
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: STUDENT & REMEDIATION LIST -->
+            <div id="tab-student-list" class="tab-content hidden space-y-6 animate-fade-in">
+                <!-- Search & Filters Menu Toolbar -->
+                <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row gap-4 items-center justify-between transition-all">
+                    <!-- Search Input & drop filter -->
+                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto flex-grow max-w-3xl">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500"></i>
+                            <input type="text" id="search-input" oninput="filterStudents()" placeholder="ค้นหาด้วย รหัสนักเรียน 5 หลัก, ชื่อ-นามสกุล, หรือวิชา..." class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-855 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all text-slate-800 dark:text-slate-100">
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto sm:min-w-[240px]">
+                            <select id="filter-grade-type" onchange="filterStudents()" class="bg-slate-50 dark:bg-slate-855 border border-slate-200 dark:border-slate-750 rounded-2xl px-3 py-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-slate-200 flex-grow font-medium">
+                                <option value="">เกรดเดิมทั้งหมด</option>
+                                <option value="0">0</option>
+                                <option value="ร">ร</option>
+                                <option value="มส">มส</option>
+                                <option value="มผ">มผ</option>
+                            </select>
+                            <select id="filter-status" onchange="filterStudents()" class="bg-slate-50 dark:bg-slate-855 border border-slate-200 dark:border-slate-750 rounded-2xl px-3 py-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-slate-200 flex-grow font-medium">
+                                <option value="">สถานะทั้งหมด</option>
+                                <option value="กำลังดำเนินการ">⏳ กำลังดำเนินการ</option>
+                                <option value="ผ่านแล้ว">✅ ผ่านแล้ว</option>
+                                <option value="ไม่ผ่าน">❌ ไม่ผ่าน / หมดเวลา</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Create Trigger Button -->
+                    <div class="w-full lg:w-auto flex justify-end">
+                        <button onclick="openNewRequestModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-2xl flex items-center justify-center shadow-pink-glow transition-all transform hover:-translate-y-0.5 w-full lg:w-auto active:scale-95">
+                            <i class="fa-solid fa-plus mr-2"></i> บันทึกคำร้องขอแก้ตัวใหม่
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main student list table container -->
+                <div class="bg-white dark:bg-navy-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-all flex flex-col">
+                    <div class="overflow-x-auto responsive-table-container">
+                        <table class="w-full text-left border-collapse min-w-[900px]">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-750 text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
+                                    <th class="p-4 pl-6">รหัสคำร้อง</th>
+                                    <th class="p-4">นักเรียนยื่นคำร้อง</th>
+                                    <th class="p-4">ห้องเรียน</th>
+                                    <th class="p-4">รหัสวิชา</th>
+                                    <th class="p-4 text-center">ประเภทเกรด</th>
+                                    <th class="p-4 text-center">งานย่อย</th>
+                                    <th class="p-4 text-center">คะแนนรวม</th>
+                                    <th class="p-4">สถานะผลการซ่อม</th>
+                                    <th class="p-4 text-center pr-6">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-main-table" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                                <!-- Dynamic rows insertion -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="student-list-empty" class="hidden py-24 flex flex-col items-center justify-center text-slate-400 dark:text-slate-505 bg-white dark:bg-navy-900">
+                        <i class="fa-solid fa-circle-exclamation text-5xl mb-4 text-slate-300 dark:text-slate-700"></i>
+                        <p class="text-base font-semibold text-slate-700 dark:text-slate-300">ไม่พบฐานข้อมูลตามตัวกรองที่เลือก</p>
+                        <p class="text-xs text-slate-400 mt-1">กรุณาลองยกเลิกการกรอง หรือ เพิ่มใบคำร้องใหม่ด้านบน</p>
+                    </div>
+                    <!-- Indicator for mobile table horizontal scroll -->
+                    <div class="sm:hidden text-center text-[10px] text-slate-400 dark:text-slate-500 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-left-right text-[9px]"></i> ปัดซ้าย-ขวาเพื่อเลื่อนดูข้อมูลตารางเพิ่มเติม
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: GOOGLE SHEETS & GOOGLE DRIVE INTEGRATION -->
+            <div id="tab-sheets-sync" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: API configurations -->
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 lg:col-span-1 space-y-4 transition-all">
+                        <h3 class="text-base sm:text-lg font-bold text-navy-900 dark:text-white flex items-center">
+                            <i class="fa-brands fa-google text-brand-500 mr-2.5 text-xl"></i> ตั้งค่าระบบคลาวด์ API
+                        </h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-xs leading-relaxed font-light">
+                            แอปพลิเคชันเวอร์ชันเว็บนี้สามารถทำการซิงค์ฐานข้อมูลแบบไร้รอยต่อเข้าสู่ **Google Sheets** ของคุณคุณครูโดยอัตโนมัติเมื่อทำรายการใดๆ เพียงแค่วางลิงก์ Google Script Web App API
+                        </p>
+                        <div class="space-y-4 pt-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Google Web App URL</label>
+                                <input type="url" id="sheet-api-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full p-3.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs transition-all text-slate-800 dark:text-100">
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveApiUrl()" class="flex-grow bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-2xl text-xs flex justify-center items-center shadow-pink-glow transition-all active:scale-95">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> เชื่อมต่อคลาวด์
+                                </button>
+                                <button onclick="testConnection()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-755 text-slate-700 dark:text-slate-300 font-semibold px-4.5 py-3 rounded-2xl text-xs transition-all active:scale-95" title="ทดสอบการเชื่อมต่อ">
+                                    <i class="fa-solid fa-circle-nodes"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 dark:border-slate-800 pt-5 space-y-3">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white">ส่งออกไฟล์สำรองด่วน (CSV)</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="exportToCSV('master')" class="bg-slate-50 dark:bg-slate-805 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-750 text-slate-600 dark:text-slate-300 text-xs font-semibold py-2.5 px-3 rounded-xl transition text-center flex items-center justify-center gap-1.5 active:scale-95">
+                                    <i class="fa-solid fa-file-csv text-brand-500 text-sm"></i> โหลดชีทหลัก
+                                </button>
+                                <button onclick="exportToCSV('tasks')" class="bg-slate-50 dark:bg-slate-855 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-750 text-slate-600 dark:text-slate-300 text-xs font-semibold py-2.5 px-3 rounded-xl transition text-center flex items-center justify-center gap-1.5 active:scale-95">
+                                    <i class="fa-solid fa-file-csv text-blue-500 text-sm"></i> โหลดชีทงาน
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Detailed setup guidelines -->
+                    <div class="bg-white dark:bg-navy-900 p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 lg:col-span-2 space-y-4 flex flex-col transition-all">
+                        <h3 class="text-base sm:text-lg font-bold text-navy-900 dark:text-white">คู่มือการเชื่อมต่อฐานข้อมูล Google Sheets</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                            <div class="space-y-1.5 bg-slate-50 dark:bg-slate-855 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-1.5"><span class="bg-brand-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px]">1</span> สร้างหน้าสเปรดชีต</p>
+                                <p>สร้างแท็บชีท 2 แท็บโดยสะกดตัวอักษรพิมพ์เล็ก-ใหญ่ให้ตรงเป๊ะดังนี้: <strong>Remediation_Master</strong> และ <strong>Remediation_Tasks</strong></p>
+                            </div>
+                            <div class="space-y-1.5 bg-slate-50 dark:bg-slate-855 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-1.5"><span class="bg-brand-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px]">2</span> เปิดใช้งาน Apps Script</p>
+                                <p>ในสเปรดชีต ไปที่เมนู <strong>ส่วนขยาย > Apps Script</strong> เคลียร์รหัสดีฟอลต์ทั้งหมดออก และเตรียมวางโค้ดสคริปต์ในกล่องด้านล่างนี้</p>
+                            </div>
+                            <div class="space-y-1.5 bg-slate-50 dark:bg-slate-855 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-1.5"><span class="bg-brand-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px]">3</span> นำส่งใช้งานเป็นเว็บแอป</p>
+                                <p>คลิก <strong>การทำให้ใช้งานได้ใหม่ > เว็บแอป (Web App)</strong> เลือกตั้งค่าส่วน "ผู้มีสิทธิ์เข้าถึง" ให้เป็น <strong>"ทุกคน" (Anyone)</strong> เสมอ</p>
+                            </div>
+                            <div class="space-y-1.5 bg-slate-50 dark:bg-slate-855 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-1.5"><span class="bg-brand-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px]">4</span> นำ Web App URL มาใส่</p>
+                                <p>ก็อปปี้ลิงก์ URL ผลการติดตั้งที่แสดงขึ้นมา มาวางลงในช่องตั้งค่าและกดยืนยันบันทึกเพื่อเปิดสิทธิ์ระบบสองฝั่ง</p>
+                            </div>
+                        </div>
+
+                        <!-- Code copy board -->
+                        <div class="flex-grow flex flex-col min-h-[220px] relative">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-code text-brand-500 mr-1.5"></i> Google Apps Script (code.gs)</span>
+                                <button onclick="copyAppsScriptCode()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900/40 text-brand-700 dark:text-brand-300 font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 active:scale-95">
+                                    <i class="fa-regular fa-copy"></i> คัดลอกโค้ดสคริปต์
+                                </button>
+                            </div>
+                            <textarea readonly id="apps-script-code" class="w-full flex-grow p-4 bg-navy-950 text-slate-300 font-mono text-xs rounded-2xl focus:outline-none resize-none border border-slate-800 dark:border-slate-800/60 leading-relaxed min-h-[150px]">
+/* ==========================================
+ * GOOGLE APPS SCRIPT DATABASE PROVIDER (RMS)
+ * ========================================== */
+
+function doGet(e) {
+  var action = e.parameter.action;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  if (action === "fetch") {
+    return ContentService.createTextOutput(JSON.stringify({
+      master: getSheetData(ss.getSheetByName("Remediation_Master")),
+      tasks: getSheetData(ss.getSheetByName("Remediation_Tasks"))
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({status: "success", msg: "RMS Connected Successfully!"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var payload = JSON.parse(e.postData.contents);
+    
+    if (payload.action === "saveAll") {
+      updateSheetData(ss.getSheetByName("Remediation_Master"), payload.master);
+      updateSheetData(ss.getSheetByName("Remediation_Tasks"), payload.tasks);
+      
+      return ContentService.createTextOutput(JSON.stringify({status: "success", msg: "Synced to Google Sheets Completed!"}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({status: "error", error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getSheetData(sheet) {
+  if (!sheet) return [];
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return [];
+  var headers = rows[0];
+  var data = [];
+  for (var i = 1; i < rows.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = rows[i][j];
+    }
+    data.push(obj);
+  }
+  return data;
+}
+
+function updateSheetData(sheet, dataList) {
+  if (!sheet) return;
+  sheet.clearContents();
+  if (dataList.length === 0) return;
+  
+  var headers = Object.keys(dataList[0]);
+  sheet.appendRow(headers);
+  
+  var values = dataList.map(function(row) {
+    return headers.map(function(header) {
+      return row[header] !== undefined ? row[header] : "";
+    });
+  });
+  
+  if (values.length > 0) {
+    sheet.getRange(2, 1, values.length, headers.length).setValues(values);
+  }
+}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER & BOTTOM CREDIT SECTION -->
+        <footer class="bg-navy-900 border-t border-slate-800 text-slate-400 py-8 text-xs transition-colors shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+                <p class="font-title text-base text-slate-100 font-medium">RMS (Remediation Management System)</p>
+                <p class="max-w-2xl mx-auto font-light leading-relaxed px-2">
+                    เครื่องมือบันทึกฐานข้อมูลและติดตามการประเมินผลคำร้องของเด็กนักเรียน มอบสิทธิ์เข้าจัดการแดชบอร์ดอย่างปลอดภัยและมีระเบียบวินัยทางเอกสาร
+                </p>
+                
+                <!-- Bottom Credit Highlighted (Exactly as Requested) -->
+                <div class="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 max-w-4xl mx-auto px-2">
+                    <p class="font-semibold text-brand-300 uppercase tracking-widest text-[10px]"><i class="fa-solid fa-code mr-1.5"></i> Portal Engine V2.1</p>
+                    <p class="text-sm font-semibold text-white tracking-wide font-title flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-crown text-brand-300"></i> Designed by Thanakrit Yomthaisong
+                    </p>
+                    <p class="text-[10px]">&copy; 2026 RMS Web App. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- MODAL 1: ADD NEW REQUEST (Strictly 5-digit Student ID and ก/ข mixed support - Mobile Responsive) -->
+    <div id="new-request-modal" class="hidden fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl shadow-2xl border border-slate-150 dark:border-slate-800 max-w-xl w-full p-6 sm:p-7 space-y-4 my-auto animate-fade-in max-h-[96vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-850 pb-3">
+                <h3 class="text-base sm:text-lg font-bold text-navy-900 dark:text-white flex items-center">
+                    <i class="fa-solid fa-file-signature text-brand-500 mr-2.5 text-lg sm:text-xl"></i> บันทึกใบคำร้องขอแก้เกรดใหม่
+                </h3>
+                <button onclick="closeNewRequestModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="new-request-form" onsubmit="handleNewRequest(event)" class="space-y-4 text-xs sm:text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">รหัสนักเรียน (5 หลัก) <span class="text-rose-500">*</span></label>
+                        <input required type="text" id="req-student-id" maxlength="5" pattern="[0-9]{5}" placeholder="ป้อนตัวเลข 5 หลัก เช่น 10245" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">ชื่อ - นามสกุล นักเรียน <span class="text-rose-500">*</span></label>
+                        <input required type="text" id="req-student-name" placeholder="เช่น เด็กชายมานะ มุ่งมั่น" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">ชั้นเรียน <span class="text-rose-500">*</span></label>
+                        <input required type="text" id="req-student-class" placeholder="เช่น ม.4/1" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">เลขที่ <span class="text-slate-400 dark:text-slate-500 font-normal">(ใส่ ก, ข ได้ เช่น 15ก, 1ข)</span></label>
+                        <input type="text" id="req-student-no" placeholder="เช่น 15 หรือ 4ก" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-100 dark:border-slate-800/80 pt-4">
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">รหัสวิชา <span class="text-rose-500">*</span></label>
+                        <input required type="text" id="req-course-id" placeholder="เช่น ว31101" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">ชื่อวิชา <span class="text-rose-500">*</span></label>
+                        <input required type="text" id="req-course-name" placeholder="เช่น วิทยาศาสตร์กายภาพ" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">ประเภทเกรดเดิม <span class="text-rose-500">*</span></label>
+                        <select required id="req-grade-type" class="w-full p-3 bg-slate-50 dark:bg-slate-855 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white font-medium">
+                            <option value="0">0</option>
+                            <option value="ร">ร</option>
+                            <option value="มส">มส</option>
+                            <option value="มผ">มผ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">วันที่ยื่นคำร้อง <span class="text-rose-500">*</span></label>
+                        <input required type="date" id="req-date" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">กำหนดส่งงานซ่อม <span class="text-rose-500">*</span></label>
+                        <input required type="date" id="req-deadline" class="w-full p-3 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-sm transition-all text-slate-800 dark:text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">ลิงก์โฟลเดอร์ Google Drive เก็บข้อมูลงานซ่อม</label>
+                    <div class="relative">
+                        <i class="fa-brands fa-google-drive absolute left-4.5 top-1/2 -translate-y-1/2 text-brand-500 text-lg"></i>
+                        <input type="url" id="req-drive-link" placeholder="เช่น https://drive.google.com/drive/folders/..." class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-855 border border-slate-200 dark:border-slate-750 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs transition-all text-slate-800 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <button type="button" onclick="closeNewRequestModal()" class="px-5 py-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl text-xs sm:text-sm font-semibold transition-all">ยกเลิก</button>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-2xl text-xs sm:text-sm font-semibold shadow-pink-glow transition-all active:scale-95">บันทึกใบคำร้อง</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- MODAL 2: STUDENT DETAILS & TASKS MANAGER (One-to-Many Layouts - Mobile Responsive Scroll) -->
+    <div id="details-modal" class="hidden fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 max-w-4xl w-full p-4 sm:p-7 space-y-5 my-auto animate-fade-in max-h-[96vh] flex flex-col overflow-hidden">
+            <!-- Modal Head -->
+            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
+                <div class="min-w-0">
+                    <div class="flex items-center space-x-2">
+                        <span id="det-grade-type" class="bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                        <span id="det-id" class="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">RM-2026-001</span>
+                    </div>
+                    <h3 class="text-lg sm:text-2xl font-bold text-navy-900 dark:text-white mt-1 truncate" id="det-student-name">นายก้องภพ รักการเรียน</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-light truncate">
+                        ชั้นเรียน: <span id="det-class-room" class="font-bold text-slate-700 dark:text-slate-200">ม.4/1 (เลขที่ 5)</span> | 
+                        วิชาที่ติด: <span id="det-course-id" class="font-bold text-slate-700 dark:text-slate-200">ค31101</span> - <span id="det-course-name">คณิตศาสตร์พื้นฐาน</span>
+                    </p>
+                </div>
+                <button onclick="closeDetailsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 shrink-0"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- Scrollable content -->
+            <div class="flex-grow overflow-y-auto grid grid-cols-1 lg:grid-cols-3 gap-5 pr-1 text-xs">
+                <!-- Left panel: Info summary -->
+                <div class="space-y-4 lg:col-span-1">
+                    <div class="bg-slate-50 dark:bg-slate-855/50 p-4 sm:p-5 rounded-2xl border border-slate-150 dark:border-slate-800 space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-brand-500"></i> สรุปข้อมูลคำร้อง</h4>
+                        <div class="flex justify-between">
+                            <span>วันที่ส่งใบคำร้อง:</span>
+                            <span id="det-req-date" class="font-semibold text-slate-800 dark:text-slate-200">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>กำหนดเวลาส่งงาน:</span>
+                            <span id="det-deadline-date" class="font-semibold text-slate-800 dark:text-slate-200">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>คะแนนเก็บที่ได้จริง:</span>
+                            <span class="font-bold text-slate-800 dark:text-slate-200"><span id="det-total-actual-score" class="text-brand-500 text-sm">0</span> / <span id="det-total-max-score" class="text-slate-500 dark:text-slate-400">0</span> คะแนน</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+                            <span class="block text-slate-400 dark:text-slate-500 font-bold mb-1 uppercase tracking-widest text-[10px]">ความคืบหน้าการซ่อม:</span>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                                <div id="det-progress-bar" class="bg-brand-500 h-full rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between mt-1 text-[10px] font-semibold">
+                                <span id="det-progress-percent" class="text-brand-600 dark:text-brand-300">0% สำเร็จ</span>
+                                <span id="det-auto-status" class="text-slate-500">กำลังดำเนินการ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drive & State status editor -->
+                    <div class="bg-slate-50 dark:bg-slate-855/50 p-4 sm:p-5 rounded-2xl border border-slate-150 dark:border-slate-800 space-y-4 text-xs">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-1.5"><i class="fa-solid fa-circle-nodes text-brand-500"></i> จัดการผลลัพธ์</h4>
+                        <div>
+                            <span class="block text-slate-400 dark:text-slate-500 font-bold mb-1.5 uppercase tracking-widest text-[10px]">โฟลเดอร์ Google Drive:</span>
+                            <a id="det-drive-anchor" target="_blank" class="bg-brand-50/50 dark:bg-slate-800 text-brand-700 dark:text-brand-300 hover:bg-brand-100/60 dark:hover:bg-slate-700 border border-brand-100/50 dark:border-slate-750 rounded-xl p-2.5 flex items-center justify-between font-medium cursor-pointer transition-all active:scale-95">
+                                <span class="truncate"><i class="fa-brands fa-google-drive mr-2 text-brand-500"></i> เปิดโฟลเดอร์งานนักเรียน</span>
+                                <i class="fa-solid fa-up-right-from-square text-slate-400 shrink-0 ml-1"></i>
+                            </a>
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 dark:text-slate-500 font-bold mb-1.5 uppercase tracking-widest text-[10px]">อัปเดตสถานะภาพรวม:</label>
+                            <select id="det-status-selector" onchange="updateMasterStatus()" class="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-slate-750 dark:text-slate-100 text-xs">
+                                <option value="กำลังดำเนินการ">⏳ กำลังดำเนินการ</option>
+                                <option value="ผ่านแล้ว">✅ ผ่านการแก้เกรดแล้ว</option>
+                                <option value="ไม่ผ่าน">❌ ไม่ผ่าน / หมดเวลา</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel: Task items tracking list -->
+                <div class="lg:col-span-2 space-y-4 flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center shrink-0 gap-2">
+                        <h4 class="font-bold text-navy-900 dark:text-white text-sm flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list text-brand-500"></i> งานซ่อมเสริมของเด็ก</h4>
+                        <button onclick="toggleAddTaskForm(true)" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs flex items-center gap-1 transition-all shadow-pink-glow active:scale-95 shrink-0">
+                            <i class="fa-solid fa-plus-circle"></i> มอบหมายงานเพิ่ม
+                        </button>
+                    </div>
+
+                    <!-- Add inline tasks template -->
+                    <div id="inline-task-form" class="hidden bg-slate-50 dark:bg-slate-855 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-750 space-y-3.5 transition-all shrink-0">
+                        <p class="font-bold text-xs text-navy-900 dark:text-white uppercase tracking-wider">ป้อนรายละเอียดย่อยชิ้นงาน</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="sm:col-span-2">
+                                <input type="text" id="task-name" placeholder="ชื่อภารกิจซ่อมเสริม (เช่น ทำแบบฝึกหัดบทที่ 4)" class="w-full p-2.5 text-xs bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 dark:text-slate-500 font-bold mb-1 uppercase tracking-widest">คะแนนเต็มชิ้นนี้</label>
+                                <input type="number" id="task-max-score" value="10" class="w-full p-2.5 text-xs bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white transition-all font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 dark:text-slate-500 font-bold mb-1 uppercase tracking-widest">คะแนนที่ทำได้จริง</label>
+                                <input type="number" id="task-actual-score" value="0" class="w-full p-2.5 text-xs bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white transition-all font-bold">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] text-slate-400 dark:text-slate-500 font-bold mb-1 uppercase tracking-widest">สถานะใบงาน</label>
+                                <select id="task-status" class="w-full p-2.5 text-xs bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white transition-all font-medium">
+                                    <option value="ยังไม่ส่ง">ยังไม่ส่ง</option>
+                                    <option value="ส่งแล้ว-รอตรวจ">ส่งแล้ว-รอตรวจ</option>
+                                    <option value="ตรวจแล้ว">ตรวจแล้ว</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-2">
+                            <button onclick="toggleAddTaskForm(false)" class="text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-xs rounded-xl transition font-semibold">ยกเลิก</button>
+                            <button onclick="saveTask()" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 text-xs rounded-xl font-bold transition shadow-pink-glow active:scale-95">บันทึกชิ้นงาน</button>
+                        </div>
+                    </div>
+
+                    <!-- Tasks scroll area (Flex grow inside responsive grid) -->
+                    <div id="details-tasks-list" class="space-y-3 overflow-y-auto max-h-[300px] flex-grow pr-1">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Bottom Control Buttons -->
+            <div class="border-t border-slate-100 dark:border-slate-800 pt-4 flex justify-between items-center shrink-0">
+                <button onclick="confirmDeleteRemediation()" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 px-3.5 py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center transition-all active:scale-95">
+                    <i class="fa-regular fa-trash-can mr-2"></i> ลบคำร้องทั้งหมด
+                </button>
+                <button onclick="closeDetailsModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-755 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL 3: CUSTOM CONFIRMATION & ALERT BOX (Replacing browser native dialogue alert/confirm completely - Mobile Centered) -->
+    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[100] bg-navy-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 max-w-sm w-full p-6 space-y-4 text-center animate-fade-in my-auto">
+            <div class="mx-auto h-14 w-14 bg-pink-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 rounded-full flex items-center justify-center">
+                <i id="confirm-box-icon" class="fa-solid fa-circle-question text-2xl"></i>
+            </div>
+            <div>
+                <h4 id="confirm-title" class="text-base font-bold text-navy-900 dark:text-white font-title">ยืนยันการทำรายการ</h4>
+                <p id="confirm-message" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 font-light leading-relaxed">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลรายการนี้ทั้งหมด?</p>
+            </div>
+            <div class="flex gap-2.5 pt-2">
+                <button id="confirm-btn-no" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition-all active:scale-95">ยกเลิก</button>
+                <button id="confirm-btn-yes" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs rounded-xl transition-all shadow-pink-glow active:scale-95">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT SYSTEM LOGIC -->
+    <script>
+        // System Global Database State
+        let state = {
+            master: [],
+            tasks: [],
+            settings: {
+                apiUrl: 'https://script.google.com/macros/s/AKfycbxX0YiFrRC8oZFNo46enHqyOUgPyJJJHaQ9vUx0e2ZDZFoJfoLJ1_TaYzmjbxGF8kn8Gw/exec'
+            }
+        };
+
+        const LOCAL_STORAGE_KEY = "RMS_REMEDIATION_STATE";
+
+        // Initialize App on window load
+        window.onload = function() {
+            // Apply theme configuration
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon-nav').className = 'fa-solid fa-sun text-lg text-amber-400';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon-nav').className = 'fa-solid fa-moon text-lg text-slate-200';
+            }
+
+            // Check Authentication Status via Session Storage
+            checkAuth();
+
+            loadState();
+            // Default load demo data if empty
+            if (state.master.length === 0) {
+                resetToDemoData();
+            } else {
+                renderAll();
+            }
+        };
+
+        // Authenticate Security Logic
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('rms_authenticated') === 'true';
+            const loginContainer = document.getElementById('login-container');
+            const mainApp = document.getElementById('main-app');
+
+            if (loginContainer && mainApp) {
+                if (isAuthenticated) {
+                    loginContainer.classList.add('hidden');
+                    mainApp.classList.remove('hidden');
+                } else {
+                    loginContainer.classList.remove('hidden');
+                    mainApp.classList.add('hidden');
+                }
+            }
+        }
+
+        // Handle Form Login submit
+        function handleLogin(e) {
+            e.preventDefault();
+            const uInput = document.getElementById('username').value.trim();
+            const pInput = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('login-error-msg');
+
+            // Admin configuration credentials (kritthana / tnkyts90)
+            if (uInput === 'kritthana' && pInput === 'tnkyts90') {
+                errorMsg.classList.add('hidden');
+                sessionStorage.setItem('rms_authenticated', 'true');
+                checkAuth();
+                showToast("ยินดีต้อนรับ! เข้าสู่ระบบสำเร็จเสร็จสิ้น", "success");
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Handle Logout confirmation with custom modal
+        async function confirmLogout() {
+            const confirmed = await showConfirmModal("คุณต้องการออกจากระบบบริหารจัดการ RMS ใช่หรือไม่?", "ยืนยันการออกจากระบบ", "fa-solid fa-sign-out-alt");
+            if (confirmed) {
+                sessionStorage.removeItem('rms_authenticated');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                checkAuth();
+                showToast("ออกจากระบบเรียบร้อยแล้ว", "info");
+            }
+        }
+
+        // Dark/Light theme toggler
+        function toggleDarkMode() {
+            const doc = document.documentElement;
+            const iconNav = document.getElementById('theme-icon-nav');
+            if (doc.classList.contains('dark')) {
+                doc.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                iconNav.className = 'fa-solid fa-moon text-lg text-slate-200';
+                showToast("เปลี่ยนเป็นโหมดสว่างแล้ว", "info");
+            } else {
+                doc.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                iconNav.className = 'fa-solid fa-sun text-lg text-amber-400';
+                showToast("เปลี่ยนเป็นโหมดมืดแล้ว", "info");
+            }
+        }
+
+        // Load state from LocalStorage
+        function loadState() {
+            const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Ensure we merge states and keep Settings API URL if it exists, or fallback to the embedded default
+                    state.master = parsed.master || [];
+                    state.tasks = parsed.tasks || [];
+                    if (parsed.settings) {
+                        state.settings = parsed.settings;
+                    }
+                } catch(e) {
+                    console.error("Error loading LocalStorage state", e);
+                }
+            }
+            
+            // If API URL is not set in localStorage, enforce the default hardcoded one
+            if (!state.settings) state.settings = {};
+            if (!state.settings.apiUrl) {
+                state.settings.apiUrl = 'https://script.google.com/macros/s/AKfycbxX0YiFrRC8oZFNo46enHqyOUgPyJJJHaQ9vUx0e2ZDZFoJfoLJ1_TaYzmjbxGF8kn8Gw/exec';
+            }
+            
+            // Fill setting inputs
+            document.getElementById('sheet-api-url').value = state.settings.apiUrl || '';
+        }
+
+        // Save state to LocalStorage
+        function saveState() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Reset to Thai Mock/Demo Data with 5-digit Student ID and Mixed No. (ก, ข)
+        function resetToDemoData() {
+            state.master = [
+                {
+                    Remediation_ID: "RM2026-001",
+                    Student_ID: "10245",
+                    Student_Name: "เด็กชายกมลเทพ สว่างจิต",
+                    Class_Room: "ม.3/2",
+                    Student_No: "5",
+                    Subject_Code: "ค23101",
+                    Subject_Name: "คณิตศาสตร์พื้นฐาน",
+                    Grade_Type: "0",
+                    Request_Date: "2026-06-01",
+                    Deadline_Date: "2026-07-15",
+                    Total_Max_Score: 50,
+                    Total_Actual_Score: 40,
+                    Remediation_Status: "ผ่านแล้ว",
+                    Drive_Folder_URL: "https://drive.google.com/drive/folders/demo1"
+                },
+                {
+                    Remediation_ID: "RM2026-002",
+                    Student_ID: "10412",
+                    Student_Name: "นางสาวศิริลักษณ์ วิไลวงศ์",
+                    Class_Room: "ม.4/1",
+                    Student_No: "12ก",
+                    Subject_Code: "ว31101",
+                    Subject_Name: "วิทยาศาสตร์ชีวภาพ",
+                    Grade_Type: "ร",
+                    Request_Date: "2026-06-10",
+                    Deadline_Date: "2026-07-20",
+                    Total_Max_Score: 30,
+                    Total_Actual_Score: 12,
+                    Remediation_Status: "กำลังดำเนินการ",
+                    Drive_Folder_URL: "https://drive.google.com/drive/folders/demo2"
+                },
+                {
+                    Remediation_ID: "RM2026-003",
+                    Student_ID: "10009",
+                    Student_Name: "นายปกรณ์ เจริญเกียรติ",
+                    Class_Room: "ม.6/3",
+                    Student_No: "21ข",
+                    Subject_Code: "อ33102",
+                    Subject_Name: "ภาษาอังกฤษฟัง-พูด",
+                    Grade_Type: "มส",
+                    Request_Date: "2026-06-15",
+                    Deadline_Date: "2026-07-25",
+                    Total_Max_Score: 40,
+                    Total_Actual_Score: 0,
+                    Remediation_Status: "กำลังดำเนินการ",
+                    Drive_Folder_URL: "https://drive.google.com/drive/folders/demo3"
+                }
+            ];
+
+            state.tasks = [
+                { Task_ID: "T-001", Remediation_ID: "RM2026-001", Task_Name: "ใบงานสรุปหน่วยที่ 1-2 (สมุดเล่มเล็ก)", Max_Score: 20, Actual_Score: 18, Submission_Status: "ตรวจแล้ว", Task_Note: "" },
+                { Task_ID: "T-002", Remediation_ID: "RM2026-001", Task_Name: "สอบแก้ตัวเรื่องสมการกำลังสอง", Max_Score: 30, Actual_Score: 22, Submission_Status: "ตรวจแล้ว", Task_Note: "ผ่านวิกฤตพอดิบพอดี" },
+                { Task_ID: "T-003", Remediation_ID: "RM2026-002", Task_Name: "สรุปรายงานผลการวิจัยนิเวศวิทยา 5 หน้า", Max_Score: 20, Actual_Score: 12, Submission_Status: "ตรวจแล้ว", Task_Note: "" },
+                { Task_ID: "T-004", Remediation_ID: "RM2026-002", Task_Name: "สอบแก้สัมภาษณ์วิชาการตัวต่อตัว", Max_Score: 10, Actual_Score: 0, Submission_Status: "ยังไม่ส่ง", Task_Note: "นัดหมายไว้สัปดาห์หน้า" },
+                { Task_ID: "T-005", Remediation_ID: "RM2026-003", Task_Name: "อัดคลิปพูดบรรยายแนะนำตัวเอง 2 นาที", Max_Score: 40, Actual_Score: 0, Submission_Status: "ยังไม่ส่ง", Task_Note: "นักเรียนยังไม่ประสานส่งงาน" }
+            ];
+
+            saveState();
+            renderAll();
+            showToast("โหลดข้อมูลตัวอย่างสำหรับจำลองระบบเรียบร้อยแล้ว!", "info");
+        }
+
+        // Render UI Dashboard + List
+        function renderAll() {
+            renderDashboard();
+            renderStudentList();
+            recalculateTotalsAll();
+        }
+
+        // Stat calculator and visual renderer
+        function renderDashboard() {
+            const master = state.master;
+            const tasks = state.tasks;
+
+            document.getElementById('stat-total-requests').textContent = master.length;
+            document.getElementById('stat-pending-requests').textContent = master.filter(m => m.Remediation_Status === 'กำลังดำเนินการ').length;
+            document.getElementById('stat-passed-requests').textContent = master.filter(m => m.Remediation_Status === 'ผ่านแล้ว').length;
+            document.getElementById('stat-failed-requests').textContent = master.filter(m => m.Remediation_Status === 'ไม่ผ่าน').length;
+
+            // Render Recent table
+            const recentBody = document.getElementById('dashboard-recent-table');
+            const recentEmpty = document.getElementById('dashboard-recent-empty');
+            if (recentBody) {
+                recentBody.innerHTML = '';
+
+                const sortedRecent = [...master].slice(-5).reverse();
+
+                if (sortedRecent.length === 0) {
+                    if (recentEmpty) recentEmpty.classList.remove('hidden');
+                    recentBody.parentElement.classList.add('hidden');
+                } else {
+                    if (recentEmpty) recentEmpty.classList.add('hidden');
+                    recentBody.parentElement.classList.remove('hidden');
+
+                    sortedRecent.forEach(item => {
+                        const studentTasks = tasks.filter(t => t.Remediation_ID === item.Remediation_ID);
+                        const completedTasks = studentTasks.filter(t => t.Submission_Status === 'ตรวจแล้ว').length;
+                        const percentTasks = studentTasks.length > 0 ? Math.round((completedTasks / studentTasks.length) * 100) : 0;
+
+                        let statusBadge = '';
+                        if (item.Remediation_Status === 'ผ่านแล้ว') {
+                            statusBadge = `<span class="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-1 rounded-lg text-xs font-semibold"><i class="fa-solid fa-check mr-1"></i> ผ่าน</span>`;
+                        } else if (item.Remediation_Status === 'ไม่ผ่าน') {
+                            statusBadge = `<span class="bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 px-2.5 py-1 rounded-lg text-xs font-semibold"><i class="fa-solid fa-xmark mr-1"></i> ไม่ผ่าน</span>`;
+                        } else {
+                            statusBadge = `<span class="bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 px-2.5 py-1 rounded-lg text-xs font-semibold"><i class="fa-solid fa-spinner text-[10px] animate-spin mr-1"></i> ดำเนินการ</span>`;
+                        }
+
+                        recentBody.innerHTML += `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer" onclick="openDetails('${item.Remediation_ID}')">
+                                <td class="py-3.5 font-medium text-slate-800 dark:text-slate-100 pl-2">
+                                    <span class="block font-bold truncate max-w-[120px] sm:max-w-none">${item.Student_Name}</span>
+                                    <span class="text-[11px] text-slate-400 dark:text-slate-500">รหัส: ${item.Student_ID} (ห้อง ${item.Class_Room})</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="block font-semibold text-navy-800 dark:text-brand-300">${item.Subject_Code}</span>
+                                    <span class="text-[11px] text-slate-400 dark:text-slate-505 truncate max-w-[100px] sm:max-w-[120px] block">${item.Subject_Name}</span>
+                                </td>
+                                <td class="py-3.5 text-center">
+                                    <div class="flex items-center justify-center space-x-1">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">${completedTasks}/${studentTasks.length} งาน</span>
+                                        <span class="text-[10px] text-brand-500 font-bold">(${percentTasks}%)</span>
+                                    </div>
+                                    <div class="w-16 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mx-auto mt-1 overflow-hidden">
+                                        <div class="bg-brand-500 h-full rounded-full animate-pulse" style="width: ${percentTasks}%"></div>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 text-right pr-2">${statusBadge}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+
+            // Grade Type breakdown chart-like UI
+            const breakdownContainer = document.getElementById('grade-type-breakdown');
+            if (breakdownContainer) {
+                breakdownContainer.innerHTML = '';
+                const grades = ['0', 'ร', 'มส', 'มผ'];
+                
+                grades.forEach(grade => {
+                    const count = master.filter(m => m.Grade_Type === grade).length;
+                    const percent = master.length > 0 ? Math.round((count / master.length) * 100) : 0;
+                    let barColor = 'bg-brand-500'; // Default Accent Pink
+                    if (grade === 'ร') barColor = 'bg-amber-500';
+                    if (grade === 'มส') barColor = 'bg-orange-500';
+                    if (grade === 'มผ') barColor = 'bg-slate-500';
+
+                    breakdownContainer.innerHTML += `
+                        <div>
+                            <div class="flex justify-between text-xs sm:text-sm mb-1.5 font-semibold">
+                                <span class="text-slate-700 dark:text-slate-300">ติดเกรด "${grade}"</span>
+                                <span class="text-slate-500 dark:text-slate-400">${count} รายการ (${percent}%)</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="${barColor} h-full rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // Render Student list main table
+        function renderStudentList() {
+            const master = state.master;
+            const tasks = state.tasks;
+            const tableBody = document.getElementById('student-main-table');
+            const emptyEl = document.getElementById('student-list-empty');
+            if (tableBody) {
+                tableBody.innerHTML = '';
+
+                const searchVal = document.getElementById('search-input').value.toLowerCase();
+                const gradeFilter = document.getElementById('filter-grade-type').value;
+                const statusFilter = document.getElementById('filter-status').value;
+
+                // Filter master lists
+                const filtered = master.filter(item => {
+                    const matchesSearch = item.Student_Name.toLowerCase().includes(searchVal) || 
+                                          item.Student_ID.toLowerCase().includes(searchVal) ||
+                                          item.Subject_Code.toLowerCase().includes(searchVal) ||
+                                          item.Subject_Name.toLowerCase().includes(searchVal) ||
+                                          item.Remediation_ID.toLowerCase().includes(searchVal);
+                    
+                    const matchesGrade = gradeFilter === "" || item.Grade_Type === gradeFilter;
+                    const matchesStatus = statusFilter === "" || item.Remediation_Status === statusFilter;
+
+                    return matchesSearch && matchesGrade && matchesStatus;
+                });
+
+                if (filtered.length === 0) {
+                    if (emptyEl) emptyEl.classList.remove('hidden');
+                    tableBody.parentElement.classList.add('hidden');
+                } else {
+                    if (emptyEl) emptyEl.classList.add('hidden');
+                    tableBody.parentElement.classList.remove('hidden');
+
+                    filtered.forEach(item => {
+                        const studentTasks = tasks.filter(t => t.Remediation_ID === item.Remediation_ID);
+                        const completedTasks = studentTasks.filter(t => t.Submission_Status === 'ตรวจแล้ว').length;
+                        
+                        let statusBadge = '';
+                        if (item.Remediation_Status === 'ผ่านแล้ว') {
+                            statusBadge = `<span class="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1 rounded-full text-xs font-semibold flex items-center justify-center w-32"><i class="fa-solid fa-circle-check mr-1.5"></i> ผ่านแล้ว</span>`;
+                        } else if (item.Remediation_Status === 'ไม่ผ่าน') {
+                            statusBadge = `<span class="bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-100 dark:border-rose-900/30 px-3 py-1 rounded-full text-xs font-semibold flex items-center justify-center w-32"><i class="fa-solid fa-circle-xmark mr-1.5"></i> ไม่ผ่าน</span>`;
+                        } else {
+                            statusBadge = `<span class="bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30 px-3 py-1 rounded-full text-xs font-semibold flex items-center justify-center w-32"><i class="fa-solid fa-spinner animate-spin mr-1.5 text-[10px]"></i> กำลังซ่อม</span>`;
+                        }
+
+                        // Render grade tag colors
+                        let gradeColor = 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300 border border-brand-100 dark:border-brand-900/40';
+                        if (item.Grade_Type === 'ร') gradeColor = 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-100 dark:border-brand-900/40';
+                        if (item.Grade_Type === 'มส') gradeColor = 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300 border border-orange-100 dark:border-brand-900/40';
+                        if (item.Grade_Type === 'มผ') gradeColor = 'bg-slate-100 text-slate-700 dark:bg-slate-850/50 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60';
+
+                        tableBody.innerHTML += `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition border-b border-slate-100 dark:border-slate-800">
+                                <td class="p-4 pl-6 font-mono font-bold text-xs text-slate-400 dark:text-slate-505">${item.Remediation_ID}</td>
+                                <td class="p-4">
+                                    <div class="font-bold text-navy-900 dark:text-white">${item.Student_Name}</div>
+                                    <div class="text-xs text-slate-400 dark:text-slate-505">รหัสประจำตัว: ${item.Student_ID}</div>
+                                </td>
+                                <td class="p-4 dark:text-slate-200 font-semibold">${item.Class_Room} <span class="text-slate-400 text-xs font-normal">(เลขที่ ${item.Student_No || '-'})</span></td>
+                                <td class="p-4">
+                                    <div class="font-bold text-navy-800 dark:text-brand-300">${item.Subject_Code}</div>
+                                    <div class="text-xs text-slate-400 dark:text-slate-505 truncate max-w-[150px] font-light">${item.Subject_Name}</div>
+                                </td>
+                                <td class="p-4 text-center">
+                                    <span class="${gradeColor} text-xs px-3 py-1 rounded-full font-bold">${item.Grade_Type}</span>
+                                </td>
+                                <td class="p-4 text-center">
+                                    <span class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded-xl py-1.5 px-3 font-semibold">
+                                        ${completedTasks}/${studentTasks.length} ชิ้นงาน
+                                    </span>
+                                </td>
+                                <td class="p-4 text-center font-bold text-slate-800 dark:text-slate-100">
+                                    <span class="text-brand-600 dark:text-brand-400">${item.Total_Actual_Score || 0}</span> <span class="text-slate-300 dark:text-slate-600 text-xs font-light">/</span> <span class="text-slate-400 font-medium">${item.Total_Max_Score || 0}</span>
+                                </td>
+                                <td class="p-4">${statusBadge}</td>
+                                <td class="p-4 text-center pr-6">
+                                    <button onclick="openDetails('${item.Remediation_ID}')" class="bg-brand-50 hover:bg-brand-100/80 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 font-bold p-2.5 rounded-2xl text-xs transition-all flex items-center gap-1.5 mx-auto shadow-sm active:scale-95">
+                                        <i class="fa-solid fa-list-check text-sm text-brand-500"></i> จัดการผลซ่อม
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+        }
+
+        // Filter main handler
+        function filterStudents() {
+            renderStudentList();
+        }
+
+        // Open/Close Create Request modal
+        function openNewRequestModal() {
+            document.getElementById('new-request-modal').classList.remove('hidden');
+            // Auto fill today as request date
+            const today = new Date().toISOString().substring(0, 10);
+            document.getElementById('req-date').value = today;
+            
+            // Set default deadline in 30 days
+            const deadline = new Date();
+            deadline.setDate(deadline.getDate() + 30);
+            document.getElementById('req-deadline').value = deadline.toISOString().substring(0, 10);
+        }
+
+        function closeNewRequestModal() {
+            document.getElementById('new-request-modal').classList.add('hidden');
+            document.getElementById('new-request-form').reset();
+        }
+
+        // Handle Add New request with strict 5-digit validation
+        function handleNewRequest(e) {
+            e.preventDefault();
+            
+            const sName = document.getElementById('req-student-name').value;
+            const sID = document.getElementById('req-student-id').value;
+            
+            // Strict 5-digit student ID check
+            if (!/^\d{5}$/.test(sID)) {
+                showToast("รหัสนักเรียนต้องเป็นตัวเลข 5 หลักเท่านั้น", "warning");
+                return;
+            }
+
+            const rID = "RM2026-" + Math.floor(1000 + Math.random() * 9000);
+            
+            let driveLink = document.getElementById('req-drive-link').value;
+            // Generate clean simulated drive link search query if empty
+            if (!driveLink) {
+                driveLink = `https://drive.google.com/drive/search?q=${encodeURIComponent(sName + " " + rID)}`;
+            }
+
+            const newRemediation = {
+                Remediation_ID: rID,
+                Student_ID: sID,
+                Student_Name: sName,
+                Class_Room: document.getElementById('req-student-class').value,
+                Student_No: document.getElementById('req-student-no').value || '-', // Support Mixed format (15ก, 14ข)
+                Subject_Code: document.getElementById('req-course-id').value,
+                Subject_Name: document.getElementById('req-course-name').value,
+                Grade_Type: document.getElementById('req-grade-type').value,
+                Request_Date: document.getElementById('req-date').value,
+                Deadline_Date: document.getElementById('req-deadline').value,
+                Total_Max_Score: 0,
+                Total_Actual_Score: 0,
+                Remediation_Status: "กำลังดำเนินการ",
+                Drive_Folder_URL: driveLink
+            };
+
+            state.master.push(newRemediation);
+            saveState();
+            closeNewRequestModal();
+            renderAll();
+            showToast(`ยื่นคำร้องแก้เกรดสำหรับคุณ ${sName} สำเร็จแล้ว!`, "success");
+            
+            // Auto Sync to Cloud if integrated
+            triggerCloudSync();
+        }
+
+
+        // DETAILS & TASK MANAGER LOGIC (One-to-Many Implementation)
+        let currentRemediationID = null;
+
+        // Dynamic formatting of Drive query on iPad/Mobile
+        function openDetails(rID) {
+            const item = state.master.find(m => m.Remediation_ID === rID);
+            if (!item) return;
+
+            currentRemediationID = rID;
+
+            // Fill header texts
+            document.getElementById('det-id').textContent = item.Remediation_ID;
+            document.getElementById('det-student-name').textContent = item.Student_Name;
+            document.getElementById('det-class-room').textContent = `${item.Class_Room} (เลขที่ ${item.Student_No || '-'})`;
+            document.getElementById('det-course-id').textContent = item.Subject_Code;
+            document.getElementById('det-course-name').textContent = item.Subject_Name;
+            document.getElementById('det-grade-type').textContent = item.Grade_Type;
+            
+            document.getElementById('det-req-date').textContent = formatDate(item.Request_Date);
+            document.getElementById('det-deadline-date').textContent = formatDate(item.Deadline_Date);
+            
+            // Set drive anchor link
+            document.getElementById('det-drive-anchor').href = item.Drive_Folder_URL || '#';
+
+            // Select matching status selector
+            document.getElementById('det-status-selector').value = item.Remediation_Status;
+
+            // Hide inline form by default
+            toggleAddTaskForm(false);
+
+            // Populate task lists
+            renderTasksList();
+
+            // Show Modal
+            document.getElementById('details-modal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('details-modal').classList.add('hidden');
+            currentRemediationID = null;
+        }
+
+        function toggleAddTaskForm(show) {
+            const form = document.getElementById('inline-task-form');
+            if (show) {
+                form.classList.remove('hidden');
+                document.getElementById('task-name').focus();
+            } else {
+                form.classList.add('hidden');
+                document.getElementById('task-name').value = '';
+                document.getElementById('task-max-score').value = '10';
+                document.getElementById('task-actual-score').value = '0';
+                document.getElementById('task-status').value = 'ยังไม่ส่ง';
+            }
+        }
+
+        // Render Task Lists in modal
+        function renderTasksList() {
+            if (!currentRemediationID) return;
+
+            const studentTasks = state.tasks.filter(t => t.Remediation_ID === currentRemediationID);
+            const container = document.getElementById('details-tasks-list');
+            container.innerHTML = '';
+
+            if (studentTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 text-xs">
+                        <i class="fa-solid fa-briefcase text-2xl mb-2 text-slate-300 dark:text-slate-700"></i>
+                        <p class="font-semibold">ยังไม่มีการมอบหมายงานซ่อมเสริมย่อยให้กับนักเรียน</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">กดปุ่ม "มอบหมายงานเพิ่ม" มุมขวาบนเพื่อเริ่มสั่งงานและกรอกเกณฑ์คะแนน</p>
+                    </div>
+                `;
+            } else {
+                studentTasks.forEach(task => {
+                    let taskBadge = '';
+                    if (task.Submission_Status === 'ตรวจแล้ว') {
+                        taskBadge = `<span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-semibold px-2 py-0.5 rounded-full"><i class="fa-solid fa-circle-check"></i> ตรวจแล้ว</span>`;
+                    } else if (task.Submission_Status === 'ส่งแล้ว-รอตรวจ') {
+                        taskBadge = `<span class="bg-amber-100 text-amber-800 dark:bg-amber-955 dark:text-amber-300 text-[10px] font-semibold px-2 py-0.5 rounded-full"><i class="fa-regular fa-clock"></i> รอตรวจ</span>`;
+                    } else {
+                        taskBadge = `<span class="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-full">ยังไม่ส่ง</span>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="bg-white dark:bg-slate-800/40 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-colors">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-bold text-slate-800 dark:text-white text-sm">${task.Task_Name}</span>
+                                    ${taskBadge}
+                                </div>
+                                <div class="text-[10px] text-slate-400 dark:text-slate-505">
+                                    รหัสงานย่อย: ${task.Task_ID} | หมายเหตุ: ${task.Task_Note || 'ไม่มีหมายเหตุเพิ่มเติม'}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 justify-between sm:justify-end">
+                                <div class="text-slate-500 dark:text-slate-400 font-medium">
+                                    คะแนน: <span class="font-bold text-brand-600 dark:text-brand-400 text-sm">${task.Actual_Score}</span> / <span class="font-semibold text-slate-700 dark:text-slate-300">${task.Max_Score}</span>
+                                </div>
+                                <div class="flex space-x-1 shrink-0">
+                                    <button onclick="editTaskScore('${task.Task_ID}')" class="text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-700 p-2 sm:p-1.5 rounded-xl transition-all active:scale-90" title="อัปเดตคะแนน"><i class="fa-regular fa-pen-to-square text-base sm:text-sm"></i></button>
+                                    <button onclick="confirmDeleteTask('${task.Task_ID}')" class="text-rose-500 hover:bg-rose-955/30 p-2 sm:p-1.5 rounded-xl transition-all active:scale-90" title="ลบงานนี้"><i class="fa-regular fa-trash-can text-base sm:text-sm"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Recalculate dynamic statistics for this student
+            recalculateStudentStats(currentRemediationID);
+        }
+
+        // Save inline tasks
+        function saveTask() {
+            const name = document.getElementById('task-name').value;
+            const maxScore = parseInt(document.getElementById('task-max-score').value) || 0;
+            const actualScore = parseInt(document.getElementById('task-actual-score').value) || 0;
+            const status = document.getElementById('task-status').value;
+
+            if (!name) {
+                showToast("กรุณากรอกชื่อชิ้นงาน", "warning");
+                return;
+            }
+
+            if (actualScore > maxScore) {
+                showToast("คะแนนจริงที่ได้ไม่สามารถเกินคะแนนเต็มได้", "warning");
+                return;
+            }
+
+            const newTask = {
+                Task_ID: "T-" + Math.floor(1000 + Math.random() * 9000),
+                Remediation_ID: currentRemediationID,
+                Task_Name: name,
+                Max_Score: maxScore,
+                Actual_Score: actualScore,
+                Submission_Status: status,
+                Task_Note: ""
+            };
+
+            state.tasks.push(newTask);
+            saveState();
+            toggleAddTaskForm(false);
+            renderTasksList();
+            renderAll();
+            showToast("เพิ่มชิ้นงานย่อยและอัปเดตคะแนนเรียบร้อย!", "success");
+            
+            triggerCloudSync();
+        }
+
+        // Edit existing task score with replacement of native prompt
+        function editTaskScore(taskID) {
+            const task = state.tasks.find(t => t.Task_ID === taskID);
+            if (!task) return;
+
+            // Replacing native prompt with elegant prompt-like dialogue box
+            const newScoreStr = prompt(`ป้อนคะแนนใหม่สำหรับ "${task.Task_Name}" (คะแนนเต็ม ${task.Max_Score} คะแนน):`, task.Actual_Score);
+            if (newScoreStr === null) return; // User cancelled
+
+            const newScore = parseInt(newScoreStr);
+            if (isNaN(newScore) || newScore < 0 || newScore > task.Max_Score) {
+                showToast(`กรุณากรอกตัวเลขคะแนนที่ถูกต้องระหว่าง 0 ถึง ${task.Max_Score}`, "warning");
+                return;
+            }
+
+            // Ask for status replacement using our elegant showConfirmModal instead of native confirm
+            setTimeout(async () => {
+                const isCompleted = await showConfirmModal("ตรวจชิ้นงานนี้เสร็จสมบูรณ์แล้วใช่หรือไม่? (หากกดตกลง สถานะชิ้นงานจะปรับเป็น 'ตรวจแล้ว' อัตโนมัติ)", "สถานะผลการตรวจใบงาน", "fa-solid fa-clipboard-check");
+                
+                task.Actual_Score = newScore;
+                task.Submission_Status = isCompleted ? "ตรวจแล้ว" : "ส่งแล้ว-รอตรวจ";
+                
+                saveState();
+                renderTasksList();
+                renderAll();
+                showToast(`อัปเดตคะแนนงาน "${task.Task_Name}" เป็น ${newScore} แล้ว!`, "success");
+                
+                triggerCloudSync();
+            }, 100);
+        }
+
+        // Custom Confirmation Modal Logic replacing browser standard dialogue alert/confirm
+        function showConfirmModal(message, title = "ยืนยันการทำรายการ", iconClass = "fa-solid fa-circle-question") {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-confirm-modal');
+                const titleEl = document.getElementById('confirm-title');
+                const messageEl = document.getElementById('confirm-message');
+                const iconEl = document.getElementById('confirm-box-icon');
+                const btnYes = document.getElementById('confirm-btn-yes');
+                const btnNo = document.getElementById('confirm-btn-no');
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                iconEl.className = iconClass + " text-2xl animate-pulse";
+                modal.classList.remove('hidden');
+
+                const handleYes = () => {
+                    modal.classList.add('hidden');
+                    cleanup();
+                    resolve(true);
+                };
+                const handleNo = () => {
+                    modal.classList.add('hidden');
+                    cleanup();
+                    resolve(false);
+                };
+                const cleanup = () => {
+                    btnYes.removeEventListener('click', handleYes);
+                    btnNo.removeEventListener('click', handleNo);
+                };
+
+                btnYes.addEventListener('click', handleYes);
+                btnNo.addEventListener('click', handleNo);
+            });
+        }
+
+        // Custom Delete Task Confirmation using confirm modal
+        async function confirmDeleteTask(taskID) {
+            const confirmed = await showConfirmModal("คุณต้องการลบชิ้นงานย่อยรายการนี้ใช่หรือไม่? คะแนนของงานชิ้นนี้จะสูญหายทันที", "ลบชิ้นงานย่อย", "fa-regular fa-trash-can text-rose-500");
+            if (confirmed) {
+                state.tasks = state.tasks.filter(t => t.Task_ID !== taskID);
+                saveState();
+                renderTasksList();
+                renderAll();
+                showToast("ลบงานย่อยออกเรียบร้อยแล้ว", "success");
+                triggerCloudSync();
+            }
+        }
+
+        // Recalculate dynamic statistics
+        function recalculateStudentStats(rID) {
+            const item = state.master.find(m => m.Remediation_ID === rID);
+            if (!item) return;
+
+            const studentTasks = state.tasks.filter(t => t.Remediation_ID === rID);
+            const totalMax = studentTasks.reduce((sum, t) => sum + t.Max_Score, 0);
+            const totalActual = studentTasks.reduce((sum, t) => sum + t.Actual_Score, 0);
+
+            // Update state
+            item.Total_Max_Score = totalMax;
+            item.Total_Actual_Score = totalActual;
+
+            // Calculate percentage
+            const percent = totalMax > 0 ? Math.round((totalActual / totalMax) * 100) : 0;
+
+            document.getElementById('det-total-max-score').textContent = totalMax;
+            document.getElementById('det-total-actual-score').textContent = totalActual;
+            document.getElementById('det-progress-percent').textContent = `${percent}% สำเร็จ`;
+            document.getElementById('det-progress-bar').style.width = `${percent}%`;
+
+            // Auto status helper
+            let autoText = "กำลังดำเนินการ";
+            if (percent >= 50) {
+                autoText = "คะแนนผ่านเกณฑ์ (แนะให้ผ่าน)";
+                document.getElementById('det-auto-status').className = "text-emerald-500 font-bold dark:text-emerald-400";
+            } else {
+                autoText = "ยังไม่ผ่านเกณฑ์ 50%";
+                document.getElementById('det-auto-status').className = "text-amber-500 dark:text-amber-400";
+            }
+            document.getElementById('det-auto-status').textContent = autoText;
+        }
+
+        // Recalculate all totals
+        function recalculateTotalsAll() {
+            state.master.forEach(item => {
+                const subTasks = state.tasks.filter(t => t.Remediation_ID === item.Remediation_ID);
+                item.Total_Max_Score = subTasks.reduce((sum, t) => sum + t.Max_Score, 0);
+                item.Total_Actual_Score = subTasks.reduce((sum, t) => sum + t.Actual_Score, 0);
+            });
+            saveState();
+        }
+
+        // Update overall remediation state
+        function updateMasterStatus() {
+            if (!currentRemediationID) return;
+
+            const item = state.master.find(m => m.Remediation_ID === currentRemediationID);
+            if (!item) return;
+
+            const newStatus = document.getElementById('det-status-selector').value;
+            item.Remediation_Status = newStatus;
+
+            saveState();
+            renderAll();
+            showToast(`อัปเดตสถานะการอนุมัติภาพรวมเป็น "${newStatus}" เรียบร้อยแล้ว`, "success");
+            
+            triggerCloudSync();
+        }
+
+        // Delete entire remediation with clean Modal
+        async function confirmDeleteRemediation() {
+            if (!currentRemediationID) return;
+
+            const confirmed = await showConfirmModal("คุณยืนยันที่จะลบข้อมูลคำร้องของนักเรียนคนนี้ใช่หรือไม่? ภารกิจย่อยและประวัติทั้งหมดจะถูกลบถาวร", "ลบคำร้องของนักเรียน", "fa-solid fa-triangle-exclamation text-rose-500");
+            if (confirmed) {
+                state.master = state.master.filter(m => m.Remediation_ID !== currentRemediationID);
+                state.tasks = state.tasks.filter(t => t.Remediation_ID !== currentRemediationID);
+
+                saveState();
+                closeDetailsModal();
+                renderAll();
+                showToast("ลบข้อมูลการยื่นคำร้องทั้งหมดออกจากระบบแล้ว", "info");
+                triggerCloudSync();
+            }
+        }
+
+
+        // GOOGLE SHEETS SYNC SYSTEM & UTILS
+        function saveApiUrl() {
+            const url = document.getElementById('sheet-api-url').value;
+            if (!state.settings) state.settings = {};
+            state.settings.apiUrl = url;
+            saveState();
+            showToast("บันทึก URL การซิงค์ Google Sheets เรียบร้อยแล้ว!", "success");
+        }
+
+        // Test Cloud Connection
+        async function testConnection() {
+            const url = document.getElementById('sheet-api-url').value;
+            if (!url) {
+                showToast("กรุณากรอก Web App URL เพื่อทดสอบ", "warning");
+                return;
+            }
+
+            showToast("กำลังทดสอบเชื่อมต่อกับสเปรดชีต...", "info");
+            try {
+                const response = await fetch(`${url}?action=test`);
+                const data = await response.json();
+                if (data.status === "success") {
+                    showToast("เชื่อมต่อคลาวด์ Google Sheets สำเร็จเรียบร้อย!", "success");
+                } else {
+                    showToast("การเชื่อมต่อปฏิเสธ: " + data.msg, "warning");
+                }
+            } catch (err) {
+                console.error("Connection failed", err);
+                showToast("ไม่สำเร็จ กรุณาเช็คการตั้งค่าความปลอดภัย CORS หรือความถูกต้องของ URL", "warning");
+            }
+        }
+
+        // Global Sync Triggers (Silent Background Sync to Cloud)
+        async function triggerCloudSync() {
+            const url = state.settings?.apiUrl;
+            if (!url) return; // run in local storage only mode smoothly
+
+            try {
+                const payload = {
+                    action: "saveAll",
+                    master: state.master,
+                    tasks: state.tasks
+                };
+
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors", // Bypass browser pre-flight checks
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                console.log("Silent cloud synchronization completed.");
+            } catch (err) {
+                console.error("Cloud Sync failed", err);
+            }
+        }
+
+        // Export data to CSV local backup
+        function exportToCSV(type) {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            let fileName = "";
+            
+            if (type === 'master') {
+                fileName = "Remediation_Master.csv";
+                const headers = ["Remediation_ID", "Student_ID", "Student_Name", "Class_Room", "Student_No", "Subject_Code", "Subject_Name", "Grade_Type", "Request_Date", "Deadline_Date", "Total_Max_Score", "Total_Actual_Score", "Remediation_Status", "Drive_Folder_URL"];
+                csvContent += headers.join(",") + "\n";
+                state.master.forEach(row => {
+                    const line = headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(",");
+                    csvContent += line + "\n";
+                });
+            } else {
+                fileName = "Remediation_Tasks.csv";
+                const headers = ["Task_ID", "Remediation_ID", "Task_Name", "Max_Score", "Actual_Score", "Submission_Status", "Task_Note"];
+                csvContent += headers.join(",") + "\n";
+                state.tasks.forEach(row => {
+                    const line = headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(",");
+                    csvContent += line + "\n";
+                });
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("ดาวน์โหลดไฟล์สำรองเรียบร้อยแล้ว", "success");
+        }
+
+        // Copy apps script code to clipboard
+        function copyAppsScriptCode() {
+            const textarea = document.getElementById('apps-script-code');
+            textarea.select();
+            document.execCommand('copy');
+            showToast("คัดลอกโค้ด Apps Script ลงในคลิปบอร์ดแล้ว!", "success");
+        }
+
+
+        // UI TOAST ALERTS HELPERS
+        function formatDate(dateStr) {
+            if (!dateStr) return "-";
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function showToast(message, type = "info") {
+            const banner = document.getElementById('toast-banner');
+            const text = document.getElementById('toast-text');
+            const icon = document.getElementById('toast-icon');
+
+            if (!banner || !text || !icon) return;
+
+            text.textContent = message;
+            banner.classList.remove('hidden', 'bg-brand-50', 'text-brand-900', 'bg-amber-50', 'text-amber-900', 'bg-blue-50', 'text-blue-900', 'dark:bg-slate-800', 'dark:text-slate-100');
+            
+            if (type === "success") {
+                banner.className = "mb-6 p-4 rounded-2xl flex items-center justify-between transition-all duration-300 bg-brand-50 text-brand-955 border border-brand-200/60 dark:bg-pink-950/40 dark:text-pink-200 dark:border-pink-900/40 shadow-sm";
+                icon.innerHTML = `<i class="fa-solid fa-circle-check text-brand-500"></i>`;
+            } else if (type === "warning") {
+                banner.className = "mb-6 p-4 rounded-2xl flex items-center justify-between transition-all duration-300 bg-rose-50 text-rose-955 border border-rose-200/60 dark:bg-rose-950/40 dark:text-rose-200 dark:border-rose-900/40 shadow-sm";
+                icon.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500"></i>`;
+            } else {
+                banner.className = "mb-6 p-4 rounded-2xl flex items-center justify-between transition-all duration-300 bg-blue-50 text-blue-955 border border-blue-200/60 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 shadow-sm";
+                icon.innerHTML = `<i class="fa-solid fa-info-circle text-blue-500"></i>`;
+            }
+
+            // Auto close after 4 seconds
+            setTimeout(closeToast, 4000);
+        }
+
+        // Tab switcher logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
+
+            // Highlight main nav buttons (Dashboard & Student List)
+            const mainNavs = [
+                { id: 'nav-dashboard', activeClass: 'bg-brand-600 text-white shadow-pink-glow', inactiveClass: 'hover:bg-navy-800 hover:text-brand-300 text-slate-300' },
+                { id: 'nav-student-list', activeClass: 'bg-brand-600 text-white shadow-pink-glow', inactiveClass: 'hover:bg-navy-800 hover:text-brand-300 text-slate-300' }
+            ];
+
+            mainNavs.forEach(nav => {
+                const el = document.getElementById(nav.id);
+                if (!el) return;
+                if (nav.id === 'nav-' + tabId) {
+                    nav.inactiveClass.split(' ').forEach(c => el.classList.remove(c));
+                    nav.activeClass.split(' ').forEach(c => el.classList.add(c));
+                } else {
+                    nav.activeClass.split(' ').forEach(c => el.classList.remove(c));
+                    nav.inactiveClass.split(' ').forEach(c => el.classList.add(c));
+                }
+            });
+
+            // Highlight setting cog button (Sheets Sync)
+            const cogEl = document.getElementById('nav-sheets-sync');
+            if (cogEl) {
+                if (tabId === 'sheets-sync') {
+                    cogEl.classList.remove('text-slate-300', 'hover:text-brand-300');
+                    cogEl.classList.add('text-brand-500', 'bg-navy-800/80', 'shadow-pink-glow');
+                } else {
+                    cogEl.classList.remove('text-brand-500', 'bg-navy-800/80', 'shadow-pink-glow');
+                    cogEl.classList.add('text-slate-300', 'hover:text-brand-300');
+                }
+            }
+        }
+
+        function closeToast() {
+            const banner = document.getElementById('toast-banner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
