@@ -28,6 +28,7 @@
     --seat-disabled: rgba(255, 56, 96, 0.25);
     --seat-locked: rgba(255, 204, 0, 0.3);
     --seat-assigned: linear-gradient(135deg, #00e5ff 0%, #00b4d8 100%);
+    --sidebar-width: 380px;
   }
 
   [data-theme="light"] {
@@ -79,7 +80,19 @@
     z-index: 0;
   }
 
-  .app { display: grid; grid-template-columns: 380px 1fr; min-height: 100vh; position: relative; z-index: 1; }
+  .app { 
+    display: grid; 
+    grid-template-columns: var(--sidebar-width) 1fr; 
+    min-height: 100vh; 
+    position: relative; 
+    z-index: 1;
+    transition: grid-template-columns 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ===== Sidebar Hidden State ===== */
+  .app.sidebar-hidden {
+    grid-template-columns: 0px 1fr;
+  }
 
   .sidebar {
     background: var(--surface);
@@ -88,11 +101,20 @@
     border-right: 1px solid var(--border);
     padding: 24px 20px;
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: 100vh;
     position: sticky;
     top: 0;
     display: flex;
     flex-direction: column;
+    width: var(--sidebar-width);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  }
+
+  .app.sidebar-hidden .sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .sidebar::-webkit-scrollbar { width: 6px; }
@@ -101,13 +123,21 @@
 
   .sidebar-content { flex: 1; display: flex; flex-direction: column; }
 
+  /* ===== Sidebar Header with Close Button ===== */
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
   .brand {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
+    flex: 1;
   }
 
   .brand-icon {
@@ -137,6 +167,71 @@
   }
 
   .brand-credit .name { color: var(--text-dim); font-weight: 500; font-style: normal; }
+
+  /* ===== Sidebar Toggle Button (inside sidebar) ===== */
+  .sidebar-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .sidebar-close-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .sidebar-close-btn i { width: 18px; height: 18px; }
+
+  /* ===== Floating Menu Button (when sidebar hidden) ===== */
+  .floating-menu-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px var(--accent-glow), 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 50;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .floating-menu-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 28px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .floating-menu-btn:active {
+    transform: scale(0.95);
+  }
+
+  .floating-menu-btn i { width: 22px; height: 22px; }
+
+  .app.sidebar-hidden .floating-menu-btn {
+    display: flex;
+    animation: floatIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes floatIn {
+    0% { opacity: 0; transform: scale(0.5) rotate(-90deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
 
   .section { margin-bottom: 22px; }
 
@@ -234,7 +329,6 @@
   }
 
   .mode-option:hover { border-color: var(--border-strong); }
-
   .mode-option.active { border-color: var(--accent); background: var(--accent-glow); }
   .mode-option input { display: none; }
 
@@ -308,6 +402,11 @@
     z-index: 10;
     gap: 12px;
     flex-wrap: wrap;
+    transition: padding 0.35s ease;
+  }
+
+  .app.sidebar-hidden .topbar {
+    padding-left: 80px;
   }
 
   .topbar-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
@@ -341,50 +440,31 @@
 
   .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
   .icon-btn i { width: 18px; height: 18px; }
-  .menu-toggle { display: none; }
 
-  .font-controls {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 4px;
+  /* ===== Toggle Sidebar Button in Topbar ===== */
+  .toggle-sidebar-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-
-  .font-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 7px;
-    background: transparent;
-    border: none;
     color: var(--text);
     cursor: pointer;
-    font-weight: 700;
-    font-family: inherit;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    transition: all 0.2s;
+    flex-shrink: 0;
   }
 
-  .font-btn:hover { background: var(--surface-solid); color: var(--accent); }
-
-  .font-btn.reset {
-    width: auto;
-    padding: 0 8px;
-    font-size: 11px;
-    color: var(--text-dim);
-    font-family: 'Consolas', monospace;
+  .toggle-sidebar-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
-  .font-btn.reset:hover { color: var(--accent); }
+  .toggle-sidebar-btn i { width: 18px; height: 18px; }
 
-  .font-sep { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
-
-  .main { padding: 24px; overflow-y: auto; max-height: 100vh; }
+  .main { padding: 24px; overflow-y: auto; max-height: 100vh; transition: padding 0.35s ease; }
 
   .classroom-area {
     background: var(--surface);
@@ -393,6 +473,40 @@
     border-radius: 16px;
     padding: 28px;
     box-shadow: var(--shadow);
+    transition: padding 0.35s ease;
+  }
+
+  /* ===== Fullscreen Mode: Larger seats and names ===== */
+  .app.sidebar-hidden .classroom-area {
+    padding: 32px;
+  }
+
+  .app.sidebar-hidden .seat {
+    padding: 10px 8px;
+    gap: 4px;
+  }
+
+  .app.sidebar-hidden .seat .seat-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .app.sidebar-hidden .seat .seat-name {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+  }
+
+  .app.sidebar-hidden .seat .seat-num {
+    font-size: 12px;
+  }
+
+  .app.sidebar-hidden .seat.assigned .seat-name {
+    font-size: 15px !important;
+  }
+
+  .app.sidebar-hidden .seat.assigned .seat-icon {
+    width: 26px;
+    height: 26px;
   }
 
   .front-board {
@@ -651,13 +765,16 @@
       border-right: 1px solid var(--border);
     }
     .sidebar.open { transform: translateX(0); }
-    .menu-toggle { display: flex; }
+    .app.sidebar-hidden .sidebar { transform: translateX(-100%); }
     .main { padding: 16px; max-height: none; }
     .topbar { padding: 12px 16px; }
+    .app.sidebar-hidden .topbar { padding-left: 16px; }
     .classroom-area { padding: 16px; }
     .front-board h2 { font-size: 14px; letter-spacing: 1px; }
     .stats { grid-template-columns: repeat(2, 1fr); }
     .topbar-title span { display: none; }
+    .floating-menu-btn { display: none !important; }
+    .toggle-sidebar-btn { display: none; }
   }
 
   @media (max-width: 480px) {
@@ -670,8 +787,8 @@
 
   @media print {
     body { background: white !important; color: black !important; }
-    .sidebar, .topbar, .menu-toggle, .sidebar-overlay, .toast, .font-controls { display: none !important; }
-    .app { grid-template-columns: 1fr; }
+    .sidebar, .topbar, .sidebar-overlay, .toast, .font-controls, .floating-menu-btn, .toggle-sidebar-btn { display: none !important; }
+    .app { grid-template-columns: 1fr !important; }
     .main { padding: 0; max-height: none; }
     .classroom-area { background: white !important; border: 2px solid #333 !important; box-shadow: none !important; padding: 20px; }
     .front-board { background: #f0f0f0 !important; border: 2px solid #333 !important; color: black !important; }
@@ -690,16 +807,22 @@
 </head>
 <body data-theme="dark">
 
-<div class="app">
+<div class="app" id="app">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-content">
-      <div class="brand">
-        <div class="brand-icon"><i data-lucide="graduation-cap"></i></div>
-        <div class="brand-text">
-          <h1>Exam Seating</h1>
-          <p>Smart Randomizer v1.0</p>
-          <p class="brand-credit">Designed by <span class="name">Thanakrit Yomthaisong</span></p>
+      <!-- ===== Sidebar Header with Close Button ===== -->
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon"><i data-lucide="graduation-cap"></i></div>
+          <div class="brand-text">
+            <h1>Exam Seating</h1>
+            <p>Smart Randomizer v1.0</p>
+            <p class="brand-credit">Designed by <span class="name">Thanakrit Yomthaisong</span></p>
+          </div>
         </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" title="ซ่อนเมนู">
+          <i data-lucide="panel-left-close"></i>
+        </button>
       </div>
 
       <div class="section">
@@ -779,7 +902,7 @@
           <strong style="color:var(--accent);">💡 เคล็ดลับ:</strong><br>
           • คลิกที่เก้าอี้เพื่อ <b>ปิดใช้งาน</b> (ชำรุด)<br>
           • กด <b>Shift + คลิก</b> เพื่อ <b>ล็อก</b> นักเรียน<br>
-          • ใช้ปุ่ม <b>A- / A+</b> บนแถบเมนูเพื่อปรับขนาดอักษร
+          • กดปุ่ม <i data-lucide="panel-left-close" style="width:12px;height:12px;display:inline;vertical-align:middle"></i> เพื่อซ่อนเมนูและดูเต็มจอ
         </div>
       </div>
 
@@ -793,12 +916,19 @@
     </div>
   </aside>
 
+  <!-- ===== Floating Menu Button (appears when sidebar is hidden) ===== -->
+  <button class="floating-menu-btn" id="floatingMenuBtn" title="แสดงเมนู">
+    <i data-lucide="panel-left-open"></i>
+  </button>
+
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <main class="main">
     <div class="topbar">
       <div class="topbar-left">
-        <button class="icon-btn menu-toggle" id="menuToggle"><i data-lucide="menu"></i></button>
+        <button class="toggle-sidebar-btn" id="toggleSidebarBtn" title="ซ่อน/แสดงเมนู">
+          <i data-lucide="panel-left"></i>
+        </button>
         <div class="topbar-title">
           แผนผังห้องสอบ
           <span id="roomInfo">• ห้องเรียนทั่วไป • 6×6</span>
@@ -863,6 +993,7 @@ const state = {
 let fontScale = 1;
 
 const $ = id => document.getElementById(id);
+const app = $('app');
 const grid = $('classroomGrid');
 const rowsInput = $('rowsInput');
 const colsInput = $('colsInput');
@@ -1032,17 +1163,12 @@ function shuffle(arr) {
   return arr;
 }
 
-/* ============================================================
-   RANDOMIZE - เคลียร์ที่นั่งที่สุ่มไว้ทั้งหมดก่อนทุกครั้ง
-   (คงไว้เฉพาะ locked และ disabled)
-   ============================================================ */
 function randomize() {
   const raw = studentsInput.value.trim();
   if (!raw) { showToast('กรุณาใส่รายชื่อนักเรียน', 'error'); return; }
   const students = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
   if (students.length === 0) { showToast('ไม่พบรายชื่อนักเรียน', 'error'); return; }
 
-  // ===== ขั้นตอนที่ 1: เคลียร์ที่นั่งที่ถูกสุ่มไว้ (assigned) ทั้งหมด =====
   let clearedCount = 0;
   state.seats.forEach(s => {
     if (s.status === 'assigned') {
@@ -1052,7 +1178,6 @@ function randomize() {
     }
   });
 
-  // ===== ขั้นตอนที่ 2: รีเซ็ต UI ทันทีให้เป็นที่นั่งว่าง =====
   renderGrid();
   updateStats();
 
@@ -1060,13 +1185,11 @@ function randomize() {
     showToast(`เคลียร์ที่นั่งเก่า ${clearedCount} ที่นั่ง → เริ่มสุ่มใหม่...`, 'info');
   }
 
-  // ===== ขั้นตอนที่ 3: รอสั้นๆ ให้ UI อัพเดต แล้วค่อยเริ่มสุ่มใหม่ =====
   setTimeout(() => {
     doRandomize(students);
   }, 400);
 }
 
-/* ฟังก์ชันสุ่มที่นั่งแยกออกมา (ทำงานหลังเคลียร์แล้ว) */
 function doRandomize(students) {
   const lockedNames = new Set(state.seats.filter(s => s.status === 'locked').map(s => s.student));
   const studentsToPlace = students.filter(s => !lockedNames.has(s));
@@ -1104,8 +1227,31 @@ function doRandomize(students) {
 }
 
 /* ============================================================
-   EXPORT PNG - แนวนอน (Landscape)
+   SIDEBAR TOGGLE
    ============================================================ */
+function toggleSidebar() {
+  app.classList.toggle('sidebar-hidden');
+  const isHidden = app.classList.contains('sidebar-hidden');
+  
+  // Rebuild grid to recalculate sizes after transition
+  setTimeout(() => {
+    recalcGridSize();
+  }, 380);
+
+  // Update toggle button icon
+  const icon = $('toggleSidebarBtn').querySelector('i');
+  icon.setAttribute('data-lucide', isHidden ? 'panel-left-open' : 'panel-left');
+  lucide.createIcons();
+}
+
+function recalcGridSize() {
+  const viewportHeight = window.innerHeight;
+  const availableHeight = Math.max(400, viewportHeight * 0.55);
+  const seatHeight = Math.floor((availableHeight - (state.rows * 10) - 40) / state.rows);
+  const clampedHeight = clamp(seatHeight, 70, 160);
+  grid.style.gridAutoRows = `${clampedHeight}px`;
+}
+
 async function exportPNG() {
   const btn = $('exportBtn');
   const originalHTML = btn.innerHTML;
@@ -1477,7 +1623,21 @@ function bindEvents() {
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(buildGrid, 200);
+    resizeTimer = setTimeout(() => {
+      buildGrid();
+    }, 200);
+  });
+
+  // ===== Sidebar Toggle Events =====
+  $('sidebarCloseBtn').addEventListener('click', toggleSidebar);
+  $('toggleSidebarBtn').addEventListener('click', toggleSidebar);
+  $('floatingMenuBtn').addEventListener('click', toggleSidebar);
+
+  // Keyboard shortcut: Escape to toggle sidebar
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !app.classList.contains('sidebar-hidden')) {
+      toggleSidebar();
+    }
   });
 
   document.querySelectorAll('#roomToggle button').forEach(btn => {
@@ -1535,7 +1695,6 @@ function bindEvents() {
   });
 
   $('exportBtn').addEventListener('click', exportPNG);
-
   $('printBtn').addEventListener('click', () => window.print());
 
   $('themeToggle').addEventListener('click', () => {
@@ -1557,7 +1716,7 @@ function bindEvents() {
   $('fontInc').addEventListener('click', () => setFontScale(fontScale + 0.1));
   $('fontReset').addEventListener('click', () => setFontScale(1));
 
-  $('menuToggle').addEventListener('click', () => {
+  $('menuToggle')?.addEventListener('click', () => {
     $('sidebar').classList.add('open');
     $('sidebarOverlay').classList.add('show');
   });
