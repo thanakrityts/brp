@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบสุ่มที่นั่งสอบอัจฉริยะ | Smart Exam Seating Randomizer</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  :root {
+    --bg: #070b17;
+    --bg-grad: radial-gradient(ellipse at top, #0f1629 0%, #070b17 60%);
+    --surface: rgba(20, 27, 48, 0.7);
+    --surface-solid: #141b30;
+    --surface-2: rgba(30, 40, 68, 0.6);
+    --border: rgba(100, 120, 180, 0.25);
+    --border-strong: rgba(100, 120, 180, 0.5);
+    --text: #e8ecf7;
+    --text-dim: #8892b0;
+    --text-muted: #5a6485;
+    --accent: #00e5ff;
+    --accent-2: #ff2bd6;
+    --accent-glow: rgba(0, 229, 255, 0.4);
+    --success: #00ff9d;
+    --danger: #ff3860;
+    --warning: #ffcc00;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --seat-empty: rgba(30, 40, 68, 0.6);
+    --seat-disabled: rgba(255, 56, 96, 0.25);
+    --seat-locked: rgba(255, 204, 0, 0.3);
+    --seat-assigned: linear-gradient(135deg, #00e5ff 0%, #00b4d8 100%);
+  }
+
+  [data-theme="light"] {
+    --bg: #f5f7fb;
+    --bg-grad: linear-gradient(135deg, #f5f7fb 0%, #e8edf7 100%);
+    --surface: rgba(255, 255, 255, 0.9);
+    --surface-solid: #ffffff;
+    --surface-2: #f0f3fa;
+    --border: rgba(20, 30, 60, 0.12);
+    --border-strong: rgba(20, 30, 60, 0.25);
+    --text: #1a2035;
+    --text-dim: #5a6485;
+    --text-muted: #8892b0;
+    --accent: #0891b2;
+    --accent-2: #c026d3;
+    --accent-glow: rgba(8, 145, 178, 0.2);
+    --success: #059669;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --shadow: 0 4px 20px rgba(20, 30, 60, 0.08);
+    --seat-empty: #f0f3fa;
+    --seat-disabled: rgba(220, 38, 38, 0.15);
+    --seat-locked: rgba(217, 119, 6, 0.2);
+    --seat-assigned: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  
+  body {
+    font-family: 'Segoe UI', 'Sarabun', -apple-system, sans-serif;
+    background: var(--bg-grad);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  [data-theme="dark"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { display: grid; grid-template-columns: 380px 1fr; min-height: 100vh; position: relative; z-index: 1; }
+
+  .sidebar {
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+  .sidebar-content { flex: 1; display: flex; flex-direction: column; }
+
+  .brand {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    flex-shrink: 0;
+  }
+
+  .brand-text h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+  .brand-text p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  .brand-credit {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.3;
+  }
+
+  .brand-credit .name { color: var(--text-dim); font-weight: 500; font-style: normal; }
+
+  .section { margin-bottom: 22px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title i { width: 14px; height: 14px; color: var(--accent); }
+
+  .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .control { display: flex; flex-direction: column; gap: 6px; }
+  .control label { font-size: 12px; color: var(--text-dim); font-weight: 500; }
+
+  .control input, .control select, .control textarea {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s;
+    outline: none;
+    width: 100%;
+  }
+
+  .control input:focus, .control select:focus, .control textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .control textarea {
+    resize: vertical;
+    min-height: 110px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .room-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: var(--surface-2);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .room-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 10px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .room-toggle button.active {
+    background: var(--surface-solid);
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .room-toggle button i { width: 16px; height: 16px; }
+
+  .mode-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .mode-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-option:hover { border-color: var(--border-strong); }
+
+  .mode-option.active { border-color: var(--accent); background: var(--accent-glow); }
+  .mode-option input { display: none; }
+
+  .mode-radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .mode-option.active .mode-radio { border-color: var(--accent); }
+
+  .mode-option.active .mode-radio::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .mode-label { flex: 1; }
+  .mode-label strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 1px; }
+  .mode-label span { font-size: 11px; color: var(--text-dim); }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    color: white;
+  }
+
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn i { width: 18px; height: 18px; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+
+  .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
+
+  .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn-icon { padding: 10px 12px; }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+
+  .topbar-title {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-title span { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 8px; }
+
+  .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .icon-btn i { width: 18px; height: 18px; }
+  .menu-toggle { display: none; }
+
+  .font-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .font-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 700;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .font-btn:hover { background: var(--surface-solid); color: var(--accent); }
+
+  .font-btn.reset {
+    width: auto;
+    padding: 0 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Consolas', monospace;
+  }
+
+  .font-btn.reset:hover { color: var(--accent); }
+
+  .font-sep { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
+
+  .main { padding: 24px; overflow-y: auto; max-height: 100vh; }
+
+  .classroom-area {
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .front-board {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(255, 43, 214, 0.08) 100%);
+    border: 2px dashed var(--accent);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  [data-theme="dark"] .front-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0.3;
+  }
+
+  .front-board-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .front-board i { width: 24px; height: 24px; color: var(--accent); }
+
+  .front-board h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .front-board p { font-size: 11px; color: var(--text-dim); margin-top: 4px; letter-spacing: 1px; }
+
+  .grid-wrapper { display: flex; flex-direction: column; gap: 12px; }
+  .classroom-grid { display: grid; gap: 10px; width: 100%; padding: 8px; }
+
+  .seat {
+    background: var(--seat-empty);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 6px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .seat:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 16px var(--accent-glow); z-index: 2; }
+
+  .seat .seat-icon { width: 26px; height: 26px; color: var(--text-dim); transition: all 0.2s; flex-shrink: 0; }
+
+  .seat .seat-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: 'Consolas', monospace;
+    line-height: 1;
+  }
+
+  .seat .seat-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 4px;
+    display: none;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .seat.disabled { background: var(--seat-disabled); border-color: var(--danger); cursor: not-allowed; }
+  .seat.disabled .seat-icon { color: var(--danger); }
+
+  .seat.disabled::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255, 56, 96, 0.15) 4px, rgba(255, 56, 96, 0.15) 8px);
+  }
+
+  .seat.locked { background: var(--seat-locked); border-color: var(--warning); }
+  .seat.locked .seat-icon { color: var(--warning); }
+
+  .seat.locked::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    background: var(--warning);
+    border-radius: 50%;
+    z-index: 3;
+  }
+
+  .seat.assigned {
+    background: var(--seat-assigned);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .seat.assigned .seat-icon { color: white; width: 22px; height: 22px; }
+  .seat.assigned .seat-num { color: rgba(255,255,255,0.85); font-size: 10px; }
+  .seat.assigned .seat-name { display: block; color: white; font-size: 13px; font-weight: 700; }
+
+  .seat.animate-in { animation: seatPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+  @keyframes seatPop {
+    0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    justify-content: center;
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
+  .legend-dot.empty { background: var(--seat-empty); border-color: var(--border); }
+  .legend-dot.assigned { background: var(--accent); border-color: var(--accent); }
+  .legend-dot.locked { background: var(--warning); border-color: var(--warning); }
+  .legend-dot.disabled { background: var(--danger); border-color: var(--danger); opacity: 0.6; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+
+  .stat {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--accent); font-family: 'Consolas', monospace; }
+  .stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .credit {
+    margin-top: 24px;
+    padding: 14px 12px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.04) 0%, rgba(255, 43, 214, 0.04) 100%);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+  }
+
+  .credit::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .credit-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .credit-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .credit-name i { width: 12px; height: 12px; color: var(--accent); opacity: 0.7; }
+
+  .credit-name .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    transform: translateX(calc(100% + 30px));
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    max-width: 360px;
+  }
+
+  .toast.show { transform: translateX(0); }
+  .toast.error { border-left-color: var(--danger); }
+  .toast.success { border-left-color: var(--success); }
+  .toast i { width: 20px; height: 20px; color: var(--accent); }
+  .toast.error i { color: var(--danger); }
+  .toast.success i { color: var(--success); }
+
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 99; }
+  .sidebar-overlay.show { display: block; }
+
+  @media (max-width: 960px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 340px;
+      max-width: 85vw;
+      z-index: 100;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .menu-toggle { display: flex; }
+    .main { padding: 16px; max-height: none; }
+    .topbar { padding: 12px 16px; }
+    .classroom-area { padding: 16px; }
+    .front-board h2 { font-size: 14px; letter-spacing: 1px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .topbar-title span { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .legend { gap: 8px; }
+    .legend-item { font-size: 10px; }
+    .font-controls { padding: 3px; }
+    .font-btn { width: 28px; height: 28px; font-size: 12px; }
+    .font-btn.reset { padding: 0 6px; font-size: 10px; }
+  }
+
+  @media print {
+    body { background: white !important; color: black !important; }
+    .sidebar, .topbar, .menu-toggle, .sidebar-overlay, .toast, .font-controls { display: none !important; }
+    .app { grid-template-columns: 1fr; }
+    .main { padding: 0; max-height: none; }
+    .classroom-area { background: white !important; border: 2px solid #333 !important; box-shadow: none !important; padding: 20px; }
+    .front-board { background: #f0f0f0 !important; border: 2px solid #333 !important; color: black !important; }
+    .front-board h2 { color: black !important; text-shadow: none !important; }
+    .seat { background: white !important; border: 2px solid #333 !important; color: black !important; box-shadow: none !important; }
+    .seat.assigned { background: #e0f2fe !important; }
+    .seat.assigned .seat-name, .seat.assigned .seat-num, .seat.assigned .seat-icon { color: black !important; }
+    .seat.disabled { background: #f5f5f5 !important; border-style: dashed !important; }
+    .stat-value, .stat-label { color: black !important; }
+    .legend-item { color: black !important; }
+    .credit { background: #fafafa !important; border: 1px solid #ccc !important; }
+    .credit-name, .credit-label { color: #555 !important; }
+    .credit-name .highlight { -webkit-text-fill-color: #333 !important; color: #333 !important; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+      <div class="brand">
+        <div class="brand-icon"><i data-lucide="graduation-cap"></i></div>
+        <div class="brand-text">
+          <h1>Exam Seating</h1>
+          <p>Smart Randomizer v1.0</p>
+          <p class="brand-credit">Designed by <span class="name">Thanakrit Yomthaisong</span></p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i data-lucide="layout-grid"></i><span>ประเภทห้องเรียน</span></div>
+        <div class="room-toggle" id="roomToggle">
+          <button class="active" data-room="classroom"><i data-lucide="armchair"></i><span>ห้องเรียนทั่วไป</span></button>
+          <button data-room="computer"><i data-lucide="monitor"></i><span>ห้องคอมพิวเตอร์</span></button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i data-lucide="settings-2"></i><span>ขนาดห้องเรียน</span></div>
+        <div class="control-row">
+          <div class="control">
+            <label>จำนวนแถว (Rows)</label>
+            <input type="number" id="rowsInput" min="2" max="12" value="6">
+          </div>
+          <div class="control">
+            <label>จำนวนคอลัมน์ (Cols)</label>
+            <input type="number" id="colsInput" min="2" max="12" value="6">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i data-lucide="users"></i><span>รายชื่อนักเรียน</span></div>
+        <div class="control">
+          <label>พิมพ์ชื่อทีละบรรทัด หรือคัดลอกวางแบบ Bulk (คั่นด้วย , หรือขึ้นบรรทัดใหม่)</label>
+          <textarea id="studentsInput" placeholder="สมชาย ใจดี&#10;สมหญิง รักเรียน&#10;วิชัย เก่งกาจ&#10;..."></textarea>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="btn btn-secondary btn-icon" id="sampleBtn" style="flex:1"><i data-lucide="flask-conical"></i><span style="font-size:12px">ตัวอย่าง</span></button>
+          <button class="btn btn-secondary btn-icon" id="clearStudentsBtn" style="flex:1"><i data-lucide="trash-2"></i><span style="font-size:12px">ล้าง</span></button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i data-lucide="sparkles"></i><span>โหมดการสุ่ม</span></div>
+        <div class="mode-group" id="modeGroup">
+          <label class="mode-option active">
+            <input type="radio" name="mode" value="dispersed" checked>
+            <span class="mode-radio"></span>
+            <div class="mode-label"><strong>กระจายแบบสูงสุด</strong><span>ใช้ FPF Algorithm</span></div>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="mode" value="checkerboard">
+            <span class="mode-radio"></span>
+            <div class="mode-label"><strong>สลับฟันปลา</strong><span>Checkerboard Pattern</span></div>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="mode" value="random">
+            <span class="mode-radio"></span>
+            <div class="mode-label"><strong>สุ่มอิสระ</strong><span>Randomized</span></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i data-lucide="zap"></i><span>การดำเนินการ</span></div>
+        <button class="btn btn-primary" id="randomizeBtn" style="margin-bottom:8px;">
+          <i data-lucide="shuffle"></i><span>สุ่มที่นั่ง</span>
+        </button>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="resetBtn"><i data-lucide="rotate-ccw"></i><span>รีเซ็ต</span></button>
+          <button class="btn btn-secondary" id="clearDisabledBtn"><i data-lucide="check-circle-2"></i><span>เปิดทั้งหมด</span></button>
+        </div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button class="btn btn-secondary" id="exportBtn">
+            <i data-lucide="image-down"></i><span>บันทึกรูปภาพ</span>
+          </button>
+          <button class="btn btn-secondary" id="printBtn"><i data-lucide="printer"></i><span>พิมพ์</span></button>
+        </div>
+      </div>
+
+      <div class="section" style="padding:12px; background:var(--surface-2); border-radius:10px; border:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--text-dim); line-height:1.6;">
+          <strong style="color:var(--accent);">💡 เคล็ดลับ:</strong><br>
+          • คลิกที่เก้าอี้เพื่อ <b>ปิดใช้งาน</b> (ชำรุด)<br>
+          • กด <b>Shift + คลิก</b> เพื่อ <b>ล็อก</b> นักเรียน<br>
+          • ใช้ปุ่ม <b>A- / A+</b> บนแถบเมนูเพื่อปรับขนาดอักษร
+        </div>
+      </div>
+
+      <div class="credit">
+        <div class="credit-label">Designed by</div>
+        <div class="credit-name">
+          <i data-lucide="sparkles"></i>
+          <span>Thanakrit <span class="highlight">Yomthaisong</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn menu-toggle" id="menuToggle"><i data-lucide="menu"></i></button>
+        <div class="topbar-title">
+          แผนผังห้องสอบ
+          <span id="roomInfo">• ห้องเรียนทั่วไป • 6×6</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="font-controls" title="ปรับขนาดการแสดงผล">
+          <button class="font-btn" id="fontDec" title="ลดขนาด (A-)">A<span style="font-size:10px">-</span></button>
+          <div class="font-sep"></div>
+          <button class="font-btn reset" id="fontReset" title="ขนาดปกติ"><span id="fontScaleLabel">100%</span></button>
+          <div class="font-sep"></div>
+          <button class="font-btn" id="fontInc" title="เพิ่มขนาด (A+)">A<span style="font-size:10px">+</span></button>
+        </div>
+        <button class="icon-btn" id="themeToggle" title="สลับธีม"><i data-lucide="moon"></i></button>
+        <button class="icon-btn" id="fullscreenBtn" title="เต็มจอ"><i data-lucide="maximize-2"></i></button>
+      </div>
+    </div>
+
+    <div class="classroom-area" id="classroomArea">
+      <div class="front-board">
+        <div class="front-board-content">
+          <i data-lucide="presentation"></i>
+          <div>
+            <h2>หน้าห้องเรียน</h2>
+            <p>FRONT OF CLASSROOM</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid-wrapper">
+        <div class="classroom-grid" id="classroomGrid"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-value" id="statTotal">36</div><div class="stat-label">ที่นั่งทั้งหมด</div></div>
+        <div class="stat"><div class="stat-value" id="statAvailable">36</div><div class="stat-label">ว่าง / ใช้งานได้</div></div>
+        <div class="stat"><div class="stat-value" id="statAssigned">0</div><div class="stat-label">ถูกจับจอง</div></div>
+        <div class="stat"><div class="stat-value" id="statDisabled">0</div><div class="stat-label">ชำรุด</div></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot empty"></div><span>ว่าง</span></div>
+        <div class="legend-item"><div class="legend-dot assigned"></div><span>มีนักเรียน</span></div>
+        <div class="legend-item"><div class="legend-dot locked"></div><span>ล็อกไว้</span></div>
+        <div class="legend-item"><div class="legend-dot disabled"></div><span>ชำรุด / ไม่ใช้</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">
+  <i data-lucide="info"></i>
+  <span id="toastMsg">ข้อความ</span>
+</div>
+
+<script>
+const state = {
+  rows: 6, cols: 6,
+  roomType: 'classroom',
+  mode: 'dispersed',
+  seats: [],
+  lockedStudents: new Set()
+};
+
+let fontScale = 1;
+
+const $ = id => document.getElementById(id);
+const grid = $('classroomGrid');
+const rowsInput = $('rowsInput');
+const colsInput = $('colsInput');
+const studentsInput = $('studentsInput');
+const roomInfo = $('roomInfo');
+
+function init() {
+  buildGrid();
+  bindEvents();
+  lucide.createIcons();
+}
+
+function buildGrid() {
+  state.rows = clamp(parseInt(rowsInput.value) || 6, 2, 12);
+  state.cols = clamp(parseInt(colsInput.value) || 6, 2, 12);
+  rowsInput.value = state.rows;
+  colsInput.value = state.cols;
+
+  state.seats = [];
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
+      state.seats.push({ r, c, status: 'empty', student: null });
+    }
+  }
+
+  const viewportHeight = window.innerHeight;
+  const availableHeight = Math.max(400, viewportHeight * 0.55);
+  const seatHeight = Math.floor((availableHeight - (state.rows * 10) - 40) / state.rows);
+  const clampedHeight = clamp(seatHeight, 70, 140);
+
+  grid.style.gridTemplateColumns = `repeat(${state.cols}, minmax(0, 1fr))`;
+  grid.style.gridAutoRows = `${clampedHeight}px`;
+
+  renderGrid();
+  updateRoomInfo();
+  updateStats();
+}
+
+function renderGrid() {
+  grid.innerHTML = '';
+  state.seats.forEach((seat, idx) => {
+    const el = document.createElement('div');
+    el.className = 'seat';
+    el.dataset.idx = idx;
+
+    const iconName = getSeatIcon(seat);
+    el.innerHTML = `
+      <i data-lucide="${iconName}" class="seat-icon"></i>
+      <span class="seat-num">${seat.r + 1}-${seat.c + 1}</span>
+      <span class="seat-name">${seat.student || ''}</span>
+    `;
+
+    if (seat.status !== 'empty') el.classList.add(seat.status);
+    el.addEventListener('click', (e) => handleSeatClick(idx, e));
+    grid.appendChild(el);
+  });
+  lucide.createIcons();
+}
+
+function getSeatIcon(seat) {
+  if (seat.status === 'disabled') return 'x-octagon';
+  if (seat.status === 'locked') return 'lock';
+  if (state.roomType === 'computer') return seat.status === 'assigned' ? 'monitor-check' : 'monitor';
+  return seat.status === 'assigned' ? 'user-check' : 'armchair';
+}
+
+function updateSeatElement(idx) {
+  const seat = state.seats[idx];
+  const el = grid.querySelector(`[data-idx="${idx}"]`);
+  if (!el) return;
+  el.className = 'seat';
+  if (seat.status !== 'empty') el.classList.add(seat.status);
+  const iconName = getSeatIcon(seat);
+  el.innerHTML = `
+    <i data-lucide="${iconName}" class="seat-icon"></i>
+    <span class="seat-num">${seat.r + 1}-${seat.c + 1}</span>
+    <span class="seat-name">${seat.student || ''}</span>
+  `;
+  lucide.createIcons();
+}
+
+function handleSeatClick(idx, e) {
+  const seat = state.seats[idx];
+
+  if (e.shiftKey) {
+    if (seat.status === 'disabled') { showToast('ไม่สามารถล็อกโต๊ะที่ชำรุดได้', 'error'); return; }
+    if (seat.status === 'locked' || seat.status === 'assigned') {
+      if (seat.student) state.lockedStudents.delete(seat.student);
+      seat.status = 'empty';
+      seat.student = null;
+      showToast('ปลดล็อกที่นั่งแล้ว', 'success');
+    } else {
+      const name = prompt('ระบุชื่อนักเรียนที่จะล็อกที่นั่งนี้:');
+      if (name && name.trim()) {
+        seat.status = 'locked';
+        seat.student = name.trim();
+        state.lockedStudents.add(name.trim());
+        showToast(`ล็อกที่นั่งสำหรับ ${name.trim()}`, 'success');
+      }
+    }
+    updateSeatElement(idx);
+    updateStats();
+    return;
+  }
+
+  if (seat.status === 'disabled') {
+    seat.status = 'empty';
+    seat.student = null;
+  } else if (seat.status === 'assigned' || seat.status === 'locked') {
+    showToast('ที่นั่งถูกใช้งานแล้ว (Shift+Click เพื่อปลดล็อก)', 'error');
+    return;
+  } else {
+    seat.status = 'disabled';
+    seat.student = null;
+  }
+  updateSeatElement(idx);
+  updateStats();
+}
+
+function distance(a, b) { return Math.sqrt((a.r - b.r) ** 2 + (a.c - b.c) ** 2); }
+
+function farthestPointFirst(available, count) {
+  const pool = [...available];
+  const selected = [];
+  if (pool.length === 0) return [];
+
+  selected.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+
+  while (selected.length < count && pool.length > 0) {
+    let bestIdx = 0, bestMinDist = -1;
+    for (let i = 0; i < pool.length; i++) {
+      let minDist = Infinity;
+      for (const s of selected) {
+        const d = distance(pool[i], s);
+        if (d < minDist) minDist = d;
+      }
+      const score = minDist + Math.random() * 0.001;
+      if (score > bestMinDist) { bestMinDist = score; bestIdx = i; }
+    }
+    selected.push(pool.splice(bestIdx, 1)[0]);
+  }
+  return selected;
+}
+
+function checkerboard(available, count) {
+  const even = available.filter(s => (s.r + s.c) % 2 === 0);
+  const odd = available.filter(s => (s.r + s.c) % 2 === 1);
+  shuffle(even); shuffle(odd);
+  let primary = even.length >= odd.length ? even : odd;
+  let secondary = even.length >= odd.length ? odd : even;
+  const result = [...primary];
+  if (result.length < count) result.push(...secondary.slice(0, count - result.length));
+  return result.slice(0, count);
+}
+
+function randomPick(available, count) {
+  const pool = [...available];
+  shuffle(pool);
+  return pool.slice(0, count);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ============================================================
+   RANDOMIZE - เคลียร์ที่นั่งที่สุ่มไว้ทั้งหมดก่อนทุกครั้ง
+   (คงไว้เฉพาะ locked และ disabled)
+   ============================================================ */
+function randomize() {
+  const raw = studentsInput.value.trim();
+  if (!raw) { showToast('กรุณาใส่รายชื่อนักเรียน', 'error'); return; }
+  const students = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+  if (students.length === 0) { showToast('ไม่พบรายชื่อนักเรียน', 'error'); return; }
+
+  // ===== ขั้นตอนที่ 1: เคลียร์ที่นั่งที่ถูกสุ่มไว้ (assigned) ทั้งหมด =====
+  let clearedCount = 0;
+  state.seats.forEach(s => {
+    if (s.status === 'assigned') {
+      s.status = 'empty';
+      s.student = null;
+      clearedCount++;
+    }
+  });
+
+  // ===== ขั้นตอนที่ 2: รีเซ็ต UI ทันทีให้เป็นที่นั่งว่าง =====
+  renderGrid();
+  updateStats();
+
+  if (clearedCount > 0) {
+    showToast(`เคลียร์ที่นั่งเก่า ${clearedCount} ที่นั่ง → เริ่มสุ่มใหม่...`, 'info');
+  }
+
+  // ===== ขั้นตอนที่ 3: รอสั้นๆ ให้ UI อัพเดต แล้วค่อยเริ่มสุ่มใหม่ =====
+  setTimeout(() => {
+    doRandomize(students);
+  }, 400);
+}
+
+/* ฟังก์ชันสุ่มที่นั่งแยกออกมา (ทำงานหลังเคลียร์แล้ว) */
+function doRandomize(students) {
+  const lockedNames = new Set(state.seats.filter(s => s.status === 'locked').map(s => s.student));
+  const studentsToPlace = students.filter(s => !lockedNames.has(s));
+  const available = state.seats.filter(s => s.status === 'empty');
+
+  if (studentsToPlace.length > available.length) {
+    showToast(`ที่นั่งไม่พอ! ต้องการ ${studentsToPlace.length} ที่มีเพียง ${available.length}`, 'error');
+    return;
+  }
+
+  let pickedSeats;
+  switch (state.mode) {
+    case 'dispersed': pickedSeats = farthestPointFirst(available, studentsToPlace.length); break;
+    case 'checkerboard': pickedSeats = checkerboard(available, studentsToPlace.length); break;
+    case 'random': pickedSeats = randomPick(available, studentsToPlace.length); break;
+  }
+
+  const shuffledStudents = shuffle([...studentsToPlace]);
+
+  pickedSeats.forEach((seat, i) => {
+    setTimeout(() => {
+      seat.status = 'assigned';
+      seat.student = shuffledStudents[i];
+      const idx = state.seats.indexOf(seat);
+      updateSeatElement(idx);
+      const el = grid.querySelector(`[data-idx="${idx}"]`);
+      if (el) el.classList.add('animate-in');
+      updateStats();
+    }, i * 80);
+  });
+
+  setTimeout(() => {
+    showToast(`สุ่มเสร็จสิ้น! จัดที่นั่ง ${shuffledStudents.length} คน`, 'success');
+  }, pickedSeats.length * 80 + 100);
+}
+
+/* ============================================================
+   EXPORT PNG - แนวนอน (Landscape)
+   ============================================================ */
+async function exportPNG() {
+  const btn = $('exportBtn');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i data-lucide="loader-2"></i><span>กำลังบันทึก...</span>';
+  lucide.createIcons();
+
+  try {
+    await new Promise(r => setTimeout(r, 50));
+
+    const isDark = document.body.dataset.theme === 'dark';
+    const C = isDark ? {
+      bg: '#070b17', surface: '#141b30', surface2: '#1e2844',
+      border: 'rgba(100, 120, 180, 0.5)', text: '#e8ecf7',
+      textDim: '#8892b0', textMuted: '#5a6485',
+      accent: '#00e5ff', accent2: '#00b4d8',
+      danger: '#ff3860', warning: '#ffcc00',
+      seatEmpty: '#1e2844',
+    } : {
+      bg: '#f5f7fb', surface: '#ffffff', surface2: '#f0f3fa',
+      border: 'rgba(20, 30, 60, 0.3)', text: '#1a2035',
+      textDim: '#5a6485', textMuted: '#8892b0',
+      accent: '#0891b2', accent2: '#0e7490',
+      danger: '#dc2626', warning: '#d97706',
+      seatEmpty: '#f0f3fa',
+    };
+
+    const allStudents = state.seats.filter(s => s.student).map(s => s.student);
+    const maxNameLen = allStudents.length > 0 ? Math.max(...allStudents.map(n => n.length)) : 10;
+
+    const nameFontPx = 14;
+    const charWidth = nameFontPx * 0.72;
+    const minSeatW = 150;
+    const maxSeatW = 260;
+    const neededW = Math.ceil(maxNameLen * charWidth + 90);
+    let seatW = clamp(neededW, minSeatW, maxSeatW);
+    let seatH = Math.round(seatW * 0.55);
+    seatH = clamp(seatH, 70, 130);
+
+    const seatGap = 12;
+    const padding = 50;
+
+    const gridW = state.cols * seatW + (state.cols - 1) * seatGap;
+    const gridH = state.rows * seatH + (state.rows - 1) * seatGap;
+    const canvasW = gridW + padding * 2;
+
+    const titleH = 55;
+    const frontH = 70;
+    const statsH = 80;
+    const legendH = 45;
+    const creditH = 60;
+    const gapY = 22;
+    const canvasH = padding + titleH + gapY + frontH + gapY + gridH + gapY + statsH + gapY + legendH + gapY + creditH + padding;
+
+    const canvas = document.createElement('canvas');
+    const scale = 2;
+    canvas.width = canvasW * scale;
+    canvas.height = canvasH * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = C.bg;
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    let y = padding;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = C.text;
+    ctx.font = 'bold 24px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillText('แผนผังห้องสอบ', canvasW / 2, y + 18);
+    const roomLabel = state.roomType === 'computer' ? 'ห้องคอมพิวเตอร์' : 'ห้องเรียนทั่วไป';
+    ctx.font = '13px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillStyle = C.textDim;
+    ctx.fillText(`${roomLabel} • ${state.rows}×${state.cols} • ${new Date().toLocaleDateString('th-TH')}`, canvasW / 2, y + 42);
+    y += titleH + gapY;
+
+    const boardX = padding;
+    ctx.fillStyle = isDark ? 'rgba(0, 229, 255, 0.08)' : 'rgba(8, 145, 178, 0.08)';
+    ctx.strokeStyle = C.accent;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 5]);
+    roundRect(ctx, boardX, y, gridW, frontH, 10, true, true);
+    ctx.setLineDash([]);
+    ctx.fillStyle = C.accent;
+    ctx.font = 'bold 20px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillText('▶  หน้าห้องเรียน  ◀', canvasW / 2, y + 28);
+    ctx.font = '11px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillStyle = C.textDim;
+    ctx.fillText('FRONT OF CLASSROOM', canvasW / 2, y + 52);
+    y += frontH + gapY;
+
+    const gridX = padding;
+    const gridY = y;
+
+    state.seats.forEach((seat) => {
+      const x = gridX + seat.c * (seatW + seatGap);
+      const sy = gridY + seat.r * (seatH + seatGap);
+
+      if (seat.status === 'disabled') {
+        ctx.fillStyle = C.danger + '40';
+        ctx.strokeStyle = C.danger;
+      } else if (seat.status === 'locked') {
+        ctx.fillStyle = C.warning + '4D';
+        ctx.strokeStyle = C.warning;
+      } else if (seat.status === 'assigned') {
+        const grad = ctx.createLinearGradient(x, sy, x + seatW, sy + seatH);
+        grad.addColorStop(0, C.accent);
+        grad.addColorStop(1, C.accent2);
+        ctx.fillStyle = grad;
+        ctx.strokeStyle = C.accent;
+      } else {
+        ctx.fillStyle = C.seatEmpty;
+        ctx.strokeStyle = C.border;
+      }
+
+      ctx.lineWidth = 2;
+      roundRect(ctx, x, sy, seatW, seatH, 8, true, true);
+
+      const iconAreaW = 55;
+      const iconCenterX = x + iconAreaW / 2;
+      const iconCenterY = sy + seatH / 2;
+
+      const iconColor = seat.status === 'assigned' ? '#ffffff' :
+                       seat.status === 'disabled' ? C.danger :
+                       seat.status === 'locked' ? C.warning : C.textDim;
+      const iconSize = seatH * 0.32;
+      drawIcon(ctx, getIconType(seat), iconCenterX, iconCenterY - 6, iconSize, iconColor);
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = seat.status === 'assigned' ? 'rgba(255,255,255,0.85)' : C.textMuted;
+      ctx.font = '600 10px Consolas, monospace';
+      ctx.fillText(`${seat.r + 1}-${seat.c + 1}`, iconCenterX, iconCenterY + 16);
+
+      const divX = x + iconAreaW;
+      ctx.strokeStyle = seat.status === 'assigned' ? 'rgba(255,255,255,0.25)' : C.border;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(divX, sy + 8);
+      ctx.lineTo(divX, sy + seatH - 8);
+      ctx.stroke();
+
+      if (seat.student) {
+        const nameAreaX = divX + 10;
+        const nameAreaW = seatW - iconAreaW - 20;
+        const nameCenterY = sy + seatH / 2;
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = seat.status === 'assigned' ? '#ffffff' : C.text;
+        ctx.font = 'bold 14px "Segoe UI", "Sarabun", sans-serif';
+
+        let displayName = seat.student;
+        while (ctx.measureText(displayName).width > nameAreaW && displayName.length > 1) {
+          displayName = displayName.slice(0, -1);
+        }
+        if (displayName !== seat.student) displayName += '…';
+
+        ctx.fillText(displayName, nameAreaX, nameCenterY);
+      } else if (seat.status === 'disabled') {
+        const nameAreaX = divX + 10;
+        const nameCenterY = sy + seatH / 2;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = C.danger;
+        ctx.font = 'bold 12px "Segoe UI", "Sarabun", sans-serif';
+        ctx.fillText('ชำรุด', nameAreaX, nameCenterY);
+      }
+    });
+    y += gridH + gapY;
+
+    const stats = [
+      { label: 'ที่นั่งทั้งหมด', value: state.seats.length },
+      { label: 'ว่าง / ใช้งานได้', value: state.seats.filter(s => s.status === 'empty').length },
+      { label: 'ถูกจับจอง', value: state.seats.filter(s => s.status === 'assigned' || s.status === 'locked').length },
+      { label: 'ชำรุด', value: state.seats.filter(s => s.status === 'disabled').length },
+    ];
+    const statW = (gridW - 30) / 4;
+    stats.forEach((stat, i) => {
+      const sx = padding + i * (statW + 10);
+      ctx.fillStyle = C.surface2;
+      ctx.strokeStyle = C.border;
+      ctx.lineWidth = 1;
+      roundRect(ctx, sx, y, statW, statsH - 10, 8, true, true);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.accent;
+      ctx.font = 'bold 26px Consolas, monospace';
+      ctx.fillText(stat.value, sx + statW / 2, y + 26);
+      ctx.fillStyle = C.textDim;
+      ctx.font = '11px "Segoe UI", "Sarabun", sans-serif';
+      ctx.fillText(stat.label, sx + statW / 2, y + 52);
+    });
+    y += statsH + gapY;
+
+    const legendItems = [
+      { label: 'ว่าง', color: C.seatEmpty, border: C.border },
+      { label: 'มีนักเรียน', color: C.accent, border: C.accent },
+      { label: 'ล็อกไว้', color: C.warning, border: C.warning },
+      { label: 'ชำรุด', color: C.danger, border: C.danger },
+    ];
+    const legendItemW = 130;
+    const legendTotalW = legendItems.length * legendItemW;
+    let lx = (canvasW - legendTotalW) / 2;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.strokeStyle = item.border;
+      ctx.lineWidth = 2;
+      roundRect(ctx, lx, y + 6, 18, 18, 4, true, true);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.textDim;
+      ctx.font = '13px "Segoe UI", "Sarabun", sans-serif';
+      ctx.fillText(item.label, lx + 24, y + 15);
+      lx += legendItemW;
+    });
+    y += legendH + gapY;
+
+    ctx.fillStyle = isDark ? 'rgba(0, 229, 255, 0.05)' : 'rgba(8, 145, 178, 0.05)';
+    ctx.strokeStyle = C.border;
+    ctx.lineWidth = 1;
+    roundRect(ctx, padding, y, gridW, creditH - 10, 8, true, true);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = C.textMuted;
+    ctx.font = '600 10px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillText('DESIGNED BY', canvasW / 2, y + 18);
+    ctx.fillStyle = C.textDim;
+    ctx.font = '600 14px "Segoe UI", "Sarabun", sans-serif';
+    ctx.fillText('Thanakrit Yomthaisong', canvasW / 2, y + 38);
+
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      link.download = `seating-plan-${timestamp}.png`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('บันทึกรูปภาพเรียบร้อย ✓', 'success');
+    }, 'image/png');
+
+  } catch (err) {
+    console.error('Export error:', err);
+    showToast('ไม่สามารถบันทึกรูปภาพได้: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+    lucide.createIcons();
+  }
+}
+
+function getIconType(seat) {
+  if (seat.status === 'disabled') return 'x';
+  if (seat.status === 'locked') return 'lock';
+  if (state.roomType === 'computer') return seat.status === 'assigned' ? 'monitor-check' : 'monitor';
+  return seat.status === 'assigned' ? 'user' : 'chair';
+}
+
+function drawIcon(ctx, type, x, y, size, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  const s = size;
+
+  if (type === 'x') {
+    ctx.beginPath();
+    ctx.moveTo(x - s/2, y - s/2); ctx.lineTo(x + s/2, y + s/2);
+    ctx.moveTo(x + s/2, y - s/2); ctx.lineTo(x - s/2, y + s/2);
+    ctx.stroke();
+  } else if (type === 'lock') {
+    ctx.fillRect(x - s/2, y - s/6, s, s * 0.7);
+    ctx.beginPath();
+    ctx.arc(x, y - s/6, s/2.5, Math.PI, 0);
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  } else if (type === 'monitor' || type === 'monitor-check') {
+    ctx.strokeRect(x - s/2, y - s/2, s, s * 0.75);
+    ctx.fillRect(x - s/4, y + s/4, s/2, s/8);
+    if (type === 'monitor-check') {
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x - s/4, y - s/8);
+      ctx.lineTo(x - s/10, y + s/8);
+      ctx.lineTo(x + s/3, y - s/4);
+      ctx.stroke();
+    }
+  } else if (type === 'user') {
+    ctx.beginPath();
+    ctx.arc(x, y - s/3, s/3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y + s/2, s/2, Math.PI, 0);
+    ctx.fill();
+  } else if (type === 'chair') {
+    ctx.fillRect(x - s/2, y - s/4, s, s/3);
+    ctx.fillRect(x - s/2, y - s/2, s/5, s/2);
+    ctx.fillRect(x - s/2, y + s/12, s/6, s/3);
+    ctx.fillRect(x + s/3, y + s/12, s/6, s/3);
+  }
+
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
+}
+
+function setFontScale(s) {
+  fontScale = clamp(s, 0.75, 1.5);
+  document.body.style.zoom = fontScale;
+  $('fontScaleLabel').textContent = Math.round(fontScale * 100) + '%';
+}
+
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+function updateStats() {
+  const total = state.seats.length;
+  const disabled = state.seats.filter(s => s.status === 'disabled').length;
+  const assigned = state.seats.filter(s => s.status === 'assigned').length;
+  const locked = state.seats.filter(s => s.status === 'locked').length;
+  const available = total - disabled - assigned - locked;
+
+  $('statTotal').textContent = total;
+  $('statAvailable').textContent = available;
+  $('statAssigned').textContent = assigned + locked;
+  $('statDisabled').textContent = disabled;
+}
+
+function updateRoomInfo() {
+  const roomLabel = state.roomType === 'computer' ? 'ห้องคอมพิวเตอร์' : 'ห้องเรียนทั่วไป';
+  roomInfo.textContent = `• ${roomLabel} • ${state.rows}×${state.cols}`;
+}
+
+function showToast(msg, type = 'info') {
+  const toast = $('toast');
+  $('toastMsg').textContent = msg;
+  toast.className = 'toast show ' + type;
+  const iconName = type === 'error' ? 'alert-circle' : type === 'success' ? 'check-circle-2' : 'info';
+  toast.querySelector('i').setAttribute('data-lucide', iconName);
+  lucide.createIcons();
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+function bindEvents() {
+  rowsInput.addEventListener('change', buildGrid);
+  colsInput.addEventListener('change', buildGrid);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildGrid, 200);
+  });
+
+  document.querySelectorAll('#roomToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#roomToggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.roomType = btn.dataset.room;
+      renderGrid();
+      updateRoomInfo();
+    });
+  });
+
+  document.querySelectorAll('#modeGroup .mode-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('#modeGroup .mode-option').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      opt.querySelector('input').checked = true;
+      state.mode = opt.querySelector('input').value;
+    });
+  });
+
+  $('randomizeBtn').addEventListener('click', randomize);
+
+  $('resetBtn').addEventListener('click', () => {
+    state.seats.forEach(s => {
+      if (s.status === 'assigned') { s.status = 'empty'; s.student = null; }
+    });
+    renderGrid();
+    updateStats();
+    showToast('รีเซ็ตที่นั่งที่สุ่มแล้ว', 'success');
+  });
+
+  $('clearDisabledBtn').addEventListener('click', () => {
+    state.seats.forEach(s => { if (s.status === 'disabled') s.status = 'empty'; });
+    renderGrid();
+    updateStats();
+    showToast('เปิดใช้งานที่นั่งทั้งหมด', 'success');
+  });
+
+  $('sampleBtn').addEventListener('click', () => {
+    const sample = [
+      'สมชาย ใจดี', 'สมหญิง รักเรียน', 'วิชัย เก่งกาจ', 'มาลี อ่อนหวาน',
+      'ประเสริฐ มั่นคง', 'สุดา ใสสะอาด', 'ธนพล รวดเร็ว', 'นภา สดใส',
+      'กิตติ ประเสริฐ', 'วารุณี แสนดี', 'พิชิต ชัยชนะ', 'อรุณี สว่างจิต',
+      'ธนากร มั่นคง', 'สิริพร งามตา', 'อนุชา ขยันเรียน', 'ปวีณา ใจดี',
+      'ณัฐพล ฉลาดล้ำ', 'จิราภรณ์ อ่อนโยน', 'ภาสกร ก้าวหน้า', 'นิภา ร่าเริง'
+    ];
+    studentsInput.value = sample.join('\n');
+    showToast('โหลดตัวอย่าง 20 ชื่อ', 'success');
+  });
+
+  $('clearStudentsBtn').addEventListener('click', () => {
+    studentsInput.value = '';
+    showToast('ล้างรายชื่อแล้ว', 'success');
+  });
+
+  $('exportBtn').addEventListener('click', exportPNG);
+
+  $('printBtn').addEventListener('click', () => window.print());
+
+  $('themeToggle').addEventListener('click', () => {
+    const body = document.body;
+    const current = body.dataset.theme;
+    const next = current === 'dark' ? 'light' : 'dark';
+    body.dataset.theme = next;
+    const icon = $('themeToggle').querySelector('i');
+    icon.setAttribute('data-lucide', next === 'dark' ? 'moon' : 'sun');
+    lucide.createIcons();
+  });
+
+  $('fullscreenBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  });
+
+  $('fontDec').addEventListener('click', () => setFontScale(fontScale - 0.1));
+  $('fontInc').addEventListener('click', () => setFontScale(fontScale + 0.1));
+  $('fontReset').addEventListener('click', () => setFontScale(1));
+
+  $('menuToggle').addEventListener('click', () => {
+    $('sidebar').classList.add('open');
+    $('sidebarOverlay').classList.add('show');
+  });
+
+  $('sidebarOverlay').addEventListener('click', () => {
+    $('sidebar').classList.remove('open');
+    $('sidebarOverlay').classList.remove('show');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
