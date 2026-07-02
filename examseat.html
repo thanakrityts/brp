@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Seating</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #121318;
+      --bg-2: #171923;
+      --panel: rgba(34, 37, 49, .78);
+      --panel-strong: rgba(42, 45, 59, .94);
+      --text: #f4f7fb;
+      --muted: #aeb8c8;
+      --line: rgba(255, 255, 255, .12);
+      --line-strong: rgba(255, 255, 255, .2);
+      --primary: #42d8ff;
+      --primary-2: #f15cff;
+      --accent: #ffcc66;
+      --good: #61e7a6;
+      --danger: #ff6b88;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .38);
+      --soft-shadow: 0 12px 30px rgba(0, 0, 0, .24);
+      --radius: 8px;
+      --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body[data-theme="light"],
+    .export-root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --bg-2: #eef3f8;
+      --panel: rgba(255, 255, 255, .86);
+      --panel-strong: rgba(255, 255, 255, .96);
+      --text: #182030;
+      --muted: #647187;
+      --line: rgba(24, 32, 48, .12);
+      --line-strong: rgba(24, 32, 48, .2);
+      --primary: #1d8fb2;
+      --primary-2: #bb55ce;
+      --accent: #d18a00;
+      --good: #1f9f6a;
+      --danger: #d94466;
+      --shadow: 0 22px 48px rgba(80, 94, 120, .18);
+      --soft-shadow: 0 12px 26px rgba(80, 94, 120, .14);
+    }
+
+    .export-root {
+      --bg: #121318;
+      --bg-2: #171923;
+      --panel: rgba(34, 37, 49, .78);
+      --panel-strong: rgba(42, 45, 59, .94);
+      --text: #f4f7fb;
+      --muted: #aeb8c8;
+      --line: rgba(255, 255, 255, .12);
+      --line-strong: rgba(255, 255, 255, .2);
+      --primary: #42d8ff;
+      --primary-2: #f15cff;
+      --accent: #ffcc66;
+      --good: #61e7a6;
+      --danger: #ff6b88;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .38);
+      --soft-shadow: 0 12px 30px rgba(0, 0, 0, .24);
+      --radius: 8px;
+      --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(66, 216, 255, .08), transparent 26%),
+        linear-gradient(315deg, rgba(241, 92, 255, .08), transparent 24%),
+        var(--bg);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(310px, 380px) minmax(0, 1fr);
+      gap: 18px;
+      min-height: 100vh;
+      padding: 18px;
+    }
+
+    .control-panel,
+    .stage {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      border-radius: var(--radius);
+    }
+
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 18px;
+      overflow: auto;
+      max-height: calc(100vh - 36px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-title {
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.34rem, 2.2vw, 2.05rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.45;
+    }
+
+    .designer-credit,
+    .board-credit {
+      display: block;
+      color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-2), #8df2c9);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-shadow: 0 0 22px rgba(66, 216, 255, .18);
+    }
+
+    .designer-credit {
+      margin: 8px 0 0;
+      font-size: .82rem;
+    }
+
+    .icon-button,
+    .mini-button {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      color: var(--text);
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid var(--line);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .icon-button:hover,
+    .mini-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+      background: rgba(66, 216, 255, .12);
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      color: var(--text);
+      font-size: .96rem;
+      font-weight: 750;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 650;
+    }
+
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: rgba(255, 255, 255, .06);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    input[type="number"],
+    select {
+      height: 42px;
+      padding: 0 12px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 150px;
+      padding: 12px;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(66, 216, 255, .16);
+      background: rgba(255, 255, 255, .09);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(var(--segments, 2), minmax(0, 1fr));
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 39px;
+      padding: 8px 9px;
+      border-radius: 6px;
+      color: var(--muted);
+      background: transparent;
+      font-size: .86rem;
+      font-weight: 750;
+      transition: color .18s ease, background .18s ease, box-shadow .18s ease;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .segment svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .segment.is-active {
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(66, 216, 255, .2), rgba(241, 92, 255, .16));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), 0 0 22px rgba(66, 216, 255, .1);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      font-weight: 800;
+      color: var(--text);
+      border: 1px solid var(--line);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .primary-button {
+      grid-column: 1 / -1;
+      color: #071116;
+      background: linear-gradient(135deg, var(--primary), #8df2c9);
+      box-shadow: 0 14px 34px rgba(66, 216, 255, .2);
+    }
+
+    .secondary-button {
+      background: rgba(255, 255, 255, .07);
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, .2);
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.15rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .74rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .small-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.45;
+    }
+
+    .font-size-control {
+      display: grid;
+      grid-template-columns: 34px 60px 34px;
+      gap: 4px;
+      align-items: center;
+      width: 142px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .font-size-button {
+      display: inline-grid;
+      place-items: center;
+      width: 100%;
+      height: 34px;
+      border-radius: 6px;
+      color: var(--text);
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid var(--line);
+      font-size: 1.08rem;
+      font-weight: 900;
+      line-height: 1;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .font-size-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(66, 216, 255, .18), rgba(241, 92, 255, .14));
+    }
+
+    .font-size-button:disabled {
+      cursor: not-allowed;
+      opacity: .42;
+      transform: none;
+      border-color: var(--line);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .font-size-value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      min-height: 34px;
+      border-radius: 6px;
+      color: var(--text);
+      background: rgba(255, 255, 255, .045);
+      font-weight: 850;
+      font-size: .86rem;
+      text-align: center;
+    }
+
+    .stage {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .toolbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 850;
+    }
+
+    .toolbar-title span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .board-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .board {
+      width: 100%;
+      min-width: 0;
+      margin: 0 auto;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .03)),
+        var(--bg-2);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .front-board {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 56px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(66, 216, 255, .34);
+      border-radius: var(--radius);
+      color: var(--text);
+      background:
+        linear-gradient(90deg, rgba(66, 216, 255, .15), rgba(241, 92, 255, .12), rgba(255, 204, 102, .12));
+      box-shadow: inset 0 0 24px rgba(66, 216, 255, .08), 0 0 22px rgba(66, 216, 255, .1);
+      font-size: calc(1rem * var(--seat-font-scale, 1));
+      font-weight: 900;
+    }
+
+    .front-board span {
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+
+    .grid-shell {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      grid-template-rows: 28px auto;
+      gap: clamp(8px, 1vw, 12px);
+      align-items: stretch;
+    }
+
+    .grid-corner {
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .column-headers,
+    .row-headers {
+      display: grid;
+      gap: clamp(8px, 1.2vw, 14px);
+    }
+
+    .column-headers {
+      grid-template-columns: repeat(var(--cols), minmax(58px, 1fr));
+    }
+
+    .row-headers {
+      grid-template-rows: repeat(var(--rows), minmax(clamp(68px, 8vw, 96px), auto));
+    }
+
+    .axis-label {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--primary);
+      background: linear-gradient(135deg, rgba(66, 216, 255, .12), rgba(241, 92, 255, .08));
+      font-size: calc(.78rem * var(--seat-font-scale, 1));
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .025);
+    }
+
+    .seating-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--cols), minmax(58px, 1fr));
+      gap: clamp(8px, 1.2vw, 14px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .seat {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+      min-height: clamp(68px, 8vw, 96px);
+      display: grid;
+      grid-template-rows: 24px 1fr;
+      gap: 3px;
+      place-items: center;
+      padding: 8px 7px 7px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(255, 255, 255, .055);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .025);
+      user-select: none;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+      overflow: hidden;
+    }
+
+    .seat:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      color: var(--text);
+      box-shadow: 0 12px 22px rgba(0, 0, 0, .18), 0 0 20px rgba(66, 216, 255, .12);
+    }
+
+    .seat.assigned {
+      color: var(--text);
+      border-color: rgba(97, 231, 166, .7);
+      background: linear-gradient(180deg, rgba(97, 231, 166, .18), rgba(66, 216, 255, .08));
+      animation: revealSeat .46s both cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .seat.locked {
+      border-color: rgba(255, 204, 102, .78);
+      background: linear-gradient(180deg, rgba(255, 204, 102, .18), rgba(255, 255, 255, .04));
+    }
+
+    .seat.disabled {
+      color: rgba(174, 184, 200, .42);
+      border-color: rgba(255, 107, 136, .42);
+      background: repeating-linear-gradient(135deg, rgba(255, 107, 136, .14), rgba(255, 107, 136, .14) 7px, rgba(255, 255, 255, .03) 7px, rgba(255, 255, 255, .03) 14px);
+      box-shadow: none;
+    }
+
+    .seat.disabled:hover {
+      box-shadow: 0 0 0 1px rgba(255, 107, 136, .18);
+    }
+
+    .seat-icon {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      color: currentColor;
+    }
+
+    .seat-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .seat-name {
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+      color: currentColor;
+      font-size: clamp(.58rem, calc(.78rem * var(--seat-font-scale, 1)), 1.16rem);
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+    }
+
+    .seat-tag {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      display: inline-grid;
+      place-items: center;
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+    }
+
+    .seat.disabled .seat-tag {
+      color: var(--danger);
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: calc(.8rem * var(--seat-font-scale, 1));
+    }
+
+    .board-credit {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      font-size: calc(.84rem * var(--seat-font-scale, 1));
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .swatch.assigned {
+      background: rgba(97, 231, 166, .5);
+    }
+
+    .swatch.locked {
+      background: rgba(255, 204, 102, .5);
+    }
+
+    .swatch.disabled {
+      background: rgba(255, 107, 136, .5);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 20;
+      max-width: min(560px, calc(100vw - 28px));
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: var(--panel-strong);
+      box-shadow: var(--shadow);
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      font-weight: 750;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @keyframes revealSeat {
+      from {
+        opacity: .1;
+        transform: translateY(10px) scale(.94);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .control-panel {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .control-panel,
+      .stage {
+        border-radius: 0;
+      }
+
+      .field-grid,
+      .actions,
+      .stat-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .toolbar-actions {
+        justify-content: flex-start;
+      }
+
+      .board-scroll {
+        padding: 10px;
+      }
+
+      .board {
+        min-width: 620px;
+        padding: 12px;
+      }
+
+      .grid-shell {
+        grid-template-columns: 30px minmax(0, 1fr);
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+
+      body {
+        background: #fff !important;
+        color: #111 !important;
+      }
+
+      .app {
+        display: block;
+        min-height: auto;
+        padding: 0;
+      }
+
+      .control-panel,
+      .stage-toolbar,
+      .toast {
+        display: none !important;
+      }
+
+      .stage {
+        display: block;
+        border: 0;
+        background: #fff;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .board-scroll {
+        overflow: visible;
+        padding: 0;
+      }
+
+      .board {
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        background: #fff;
+      }
+
+      .front-board,
+      .seat {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .seating-grid {
+        grid-template-columns: repeat(var(--cols), minmax(48px, 1fr));
+      }
+
+      .column-headers {
+        grid-template-columns: repeat(var(--cols), minmax(48px, 1fr));
+      }
+
+      .row-headers {
+        grid-template-rows: repeat(var(--rows), minmax(58px, auto));
+      }
+
+      .seat {
+        width: auto;
+        min-height: 58px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <main class="app">
+    <aside class="control-panel" aria-label="แผงควบคุม">
+      <header class="brand">
+        <div class="brand-title">
+          <h1>Exam Seating</h1>
+          <p class="subtitle">จัดผังห้องสอบ กระจายที่นั่ง ล็อกตำแหน่ง และพิมพ์ใช้งานได้ทันที</p>
+          <p class="designer-credit">Designed by Thanakrit Yomthaisong</p>
+        </div>
+      </header>
+
+      <section class="section">
+        <h2 class="section-title"><span data-icon="layout"></span> รูปแบบห้อง</h2>
+        <div class="segmented" style="--segments: 2" data-group="roomType">
+          <button class="segment is-active" type="button" data-value="general"><span data-icon="chair"></span>ห้องเรียน</button>
+          <button class="segment" type="button" data-value="lab"><span data-icon="monitor"></span>ห้องคอม</button>
+        </div>
+        <div class="field-grid">
+          <label>จำนวนแถว
+            <input id="rowsInput" type="number" min="2" max="12" value="6">
+          </label>
+          <label>จำนวนคอลัมน์
+            <input id="colsInput" type="number" min="2" max="12" value="6">
+          </label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title"><span data-icon="users"></span> รายชื่อนักเรียน</h2>
+        <textarea id="studentInput" spellcheck="false">กานต์ วัฒนากุล
+ขวัญชนก ศรีสุวรรณ
+จิรภัทร แก้วมณี
+ชลธิชา พงษ์ไพบูลย์
+ณัฐวุฒิ รัตนชัย
+ตะวัน วิริยะกุล
+นภัสสร อมรสิทธิ์
+ปริมมณี ชัยวงศ์
+ภัทรพล สุขเกษม
+มินตรา ธรรมรักษา
+อาทิตยา ผลเพิ่ม
+วีรวัฒน์ คำแสน
+ปิยธิดา นิลประดับ
+ศุภกร ตั้งมั่น
+ธนัชชา อินทร์แก้ว
+รินรดา มั่นคง
+กิตติภพ ศรีเจริญ
+เมธาวี บุญเรือง
+สิรวิชญ์ ปัญญาดี
+อรปรียา สุวรรณภักดี</textarea>
+        <div class="stat-strip">
+          <div class="stat"><strong id="studentCount">20</strong><span>นักเรียน</span></div>
+          <div class="stat"><strong id="seatCount">36</strong><span>ที่นั่งใช้ได้</span></div>
+          <div class="stat"><strong id="lockedCount">0</strong><span>ล็อกไว้</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title"><span data-icon="pointer"></span> การคลิกโต๊ะ</h2>
+        <div class="segmented" style="--segments: 2" data-group="clickMode">
+          <button class="segment is-active" type="button" data-value="disable"><span data-icon="ban"></span>ปิดใช้งาน</button>
+          <button class="segment" type="button" data-value="lock"><span data-icon="lock"></span>ล็อกนักเรียน</button>
+        </div>
+        <label>นักเรียนสำหรับล็อก
+          <select id="lockStudentSelect"></select>
+        </label>
+        <p class="small-note">คลิกโต๊ะในโหมดที่เลือกเพื่อปิดใช้งานหรือกำหนดนักเรียนประจำที่นั่ง</p>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title"><span data-icon="spark"></span> โหมดสุ่ม</h2>
+        <div class="segmented" style="--segments: 3" data-group="randomMode">
+          <button class="segment is-active" type="button" data-value="dispersion">กระจายสูงสุด</button>
+          <button class="segment" type="button" data-value="checker">ฟันปลา</button>
+          <button class="segment" type="button" data-value="random">สุ่มอิสระ</button>
+        </div>
+        <div class="actions">
+          <button class="primary-button" id="randomizeBtn" type="button"><span data-icon="shuffle"></span>สุ่มที่นั่ง</button>
+          <button class="secondary-button" id="clearBtn" type="button"><span data-icon="eraser"></span>ล้างผลสุ่ม</button>
+          <button class="secondary-button" id="resetBtn" type="button"><span data-icon="refresh"></span>รีเซ็ตโต๊ะ</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="stage" aria-label="ผังห้องสอบ">
+      <div class="stage-toolbar">
+        <div class="toolbar-title">
+          <span data-icon="map"></span>
+          <span id="roomLabel">ผังห้องเรียน 6 x 6</span>
+        </div>
+        <div class="toolbar-actions">
+          <button class="icon-button" id="themeToggle" type="button" aria-label="สลับโหมดสี" title="สลับโหมดสี"></button>
+          <div class="font-size-control" aria-label="ปรับขนาดตัวอักษรบนผังที่นั่ง" title="ขนาดตัวอักษร">
+            <button class="font-size-button" id="fontDecreaseBtn" type="button" aria-label="ลดขนาดตัวอักษร">-</button>
+            <div class="font-size-value" id="fontSizeValue">100%</div>
+            <button class="font-size-button" id="fontIncreaseBtn" type="button" aria-label="เพิ่มขนาดตัวอักษร">+</button>
+          </div>
+          <button class="mini-button" id="exportPngBtn" type="button" aria-label="บันทึก PNG" title="บันทึก PNG"><span data-icon="image"></span></button>
+          <button class="mini-button" id="exportJpgBtn" type="button" aria-label="บันทึก JPEG" title="บันทึก JPEG"><span data-icon="fileimage"></span></button>
+          <button class="mini-button" id="printBtn" type="button" aria-label="พิมพ์" title="พิมพ์"><span data-icon="printer"></span></button>
+        </div>
+      </div>
+
+      <div class="board-scroll">
+        <div class="board" id="exportTarget">
+          <div class="front-board"><span data-icon="front"></span><span>หน้าห้องเรียน / Front of Classroom</span></div>
+          <div class="grid-shell" aria-label="ตารางที่นั่งพร้อมเลขแถวและคอลัมน์">
+            <div class="grid-corner" aria-hidden="true"></div>
+            <div class="column-headers" id="columnHeaders" aria-label="เลขคอลัมน์"></div>
+            <div class="row-headers" id="rowHeaders" aria-label="เลขแถว"></div>
+            <div class="seating-grid" id="seatingGrid" aria-label="ตารางที่นั่ง"></div>
+          </div>
+          <div class="legend" aria-label="คำอธิบายสี">
+            <span class="legend-item"><i class="swatch"></i>ว่าง</span>
+            <span class="legend-item"><i class="swatch assigned"></i>มีนักเรียน</span>
+            <span class="legend-item"><i class="swatch locked"></i>ล็อกไว้</span>
+            <span class="legend-item"><i class="swatch disabled"></i>ปิดใช้งาน</span>
+          </div>
+          <div class="board-credit">Designed by Thanakrit Yomthaisong</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const icons = {
+      sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>',
+      moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M20.9 14.7A8.5 8.5 0 0 1 9.3 3.1 9 9 0 1 0 20.9 14.7z"></path></svg>',
+      chair: '<svg class="icon" viewBox="0 0 24 24"><path d="M5 10h14v4H5z"></path><path d="M8 14v6M16 14v6"></path><path d="M9 10V6h6v4"></path><path d="M8 6h8"></path></svg>',
+      monitor: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg>',
+      layout: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>',
+      spark: '<svg class="icon" viewBox="0 0 24 24"><path d="M13 2 9 13l-7 3 7 3 4 3 2-8 7-4-7-2z"></path></svg>',
+      users: '<svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+      pointer: '<svg class="icon" viewBox="0 0 24 24"><path d="M5 3l14 9-6 2-3 6z"></path></svg>',
+      ban: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M5.7 5.7 18.3 18.3"></path></svg>',
+      lock: '<svg class="icon" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>',
+      shuffle: '<svg class="icon" viewBox="0 0 24 24"><path d="M16 3h5v5"></path><path d="M4 20 21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>',
+      eraser: '<svg class="icon" viewBox="0 0 24 24"><path d="m7 21-4-4L14 6a3 3 0 0 1 4 4L7 21z"></path><path d="M14 21h7"></path><path d="m5 15 4 4"></path></svg>',
+      refresh: '<svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>',
+      map: '<svg class="icon" viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3z"></path><path d="M9 3v15M15 6v15"></path></svg>',
+      image: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"></path></svg>',
+      fileimage: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><circle cx="10" cy="13" r="2"></circle><path d="m20 17-2-2a2 2 0 0 0-2.8 0L10 20"></path></svg>',
+      printer: '<svg class="icon" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>',
+      font: '<svg class="icon" viewBox="0 0 24 24"><path d="M4 19h4"></path><path d="m6 19 5-14h2l5 14"></path><path d="M9 13h6"></path><path d="M16 19h4"></path></svg>',
+      front: '<svg class="icon" viewBox="0 0 24 24"><path d="m12 3 8 8h-5v10H9V11H4z"></path></svg>'
+    };
+
+    const state = {
+      rows: 6,
+      cols: 6,
+      roomType: 'general',
+      randomMode: 'dispersion',
+      clickMode: 'disable',
+      fontScale: 1,
+      disabled: new Set(),
+      locked: new Map(),
+      assignments: new Map()
+    };
+
+    const els = {
+      body: document.body,
+      themeToggle: document.getElementById('themeToggle'),
+      rowsInput: document.getElementById('rowsInput'),
+      colsInput: document.getElementById('colsInput'),
+      studentInput: document.getElementById('studentInput'),
+      studentCount: document.getElementById('studentCount'),
+      seatCount: document.getElementById('seatCount'),
+      lockedCount: document.getElementById('lockedCount'),
+      lockStudentSelect: document.getElementById('lockStudentSelect'),
+      randomizeBtn: document.getElementById('randomizeBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      fontDecreaseBtn: document.getElementById('fontDecreaseBtn'),
+      fontIncreaseBtn: document.getElementById('fontIncreaseBtn'),
+      fontSizeValue: document.getElementById('fontSizeValue'),
+      columnHeaders: document.getElementById('columnHeaders'),
+      rowHeaders: document.getElementById('rowHeaders'),
+      seatingGrid: document.getElementById('seatingGrid'),
+      roomLabel: document.getElementById('roomLabel'),
+      exportTarget: document.getElementById('exportTarget'),
+      exportPngBtn: document.getElementById('exportPngBtn'),
+      exportJpgBtn: document.getElementById('exportJpgBtn'),
+      printBtn: document.getElementById('printBtn'),
+      toast: document.getElementById('toast')
+    };
+
+    function injectIcons() {
+      document.querySelectorAll('[data-icon]').forEach((node) => {
+        const name = node.dataset.icon;
+        node.innerHTML = icons[name] || '';
+      });
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const isLight = els.body.dataset.theme === 'light';
+      els.themeToggle.innerHTML = icons[isLight ? 'moon' : 'sun'];
+    }
+
+    function parseStudents() {
+      const seen = new Set();
+      return els.studentInput.value
+        .split(/[\n,]+/)
+        .map((name) => name.trim())
+        .filter(Boolean)
+        .filter((name) => {
+          if (seen.has(name)) return false;
+          seen.add(name);
+          return true;
+        });
+    }
+
+    function keyOf(row, col) {
+      return `${row}-${col}`;
+    }
+
+    function pointFromKey(key) {
+      const [row, col] = key.split('-').map(Number);
+      return { row, col, key };
+    }
+
+    function allSeats() {
+      const seats = [];
+      for (let row = 0; row < state.rows; row += 1) {
+        for (let col = 0; col < state.cols; col += 1) {
+          seats.push({ row, col, key: keyOf(row, col) });
+        }
+      }
+      return seats;
+    }
+
+    function shuffle(items) {
+      const list = [...items];
+      for (let i = list.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+      return list;
+    }
+
+    function distance(a, b) {
+      return Math.hypot(a.row - b.row, a.col - b.col);
+    }
+
+    function cleanState() {
+      const validSeatKeys = new Set(allSeats().map((seat) => seat.key));
+      [...state.disabled].forEach((key) => {
+        if (!validSeatKeys.has(key)) state.disabled.delete(key);
+      });
+      [...state.locked.keys()].forEach((key) => {
+        if (!validSeatKeys.has(key) || state.disabled.has(key)) state.locked.delete(key);
+      });
+      [...state.assignments.keys()].forEach((key) => {
+        if (!validSeatKeys.has(key) || state.disabled.has(key)) state.assignments.delete(key);
+      });
+
+      const students = new Set(parseStudents());
+      [...state.locked.entries()].forEach(([key, name]) => {
+        if (!students.has(name)) state.locked.delete(key);
+      });
+    }
+
+    function availableSeats() {
+      return allSeats().filter((seat) => !state.disabled.has(seat.key));
+    }
+
+    function selectByDispersion(candidates, count, seedSeats = []) {
+      const remaining = [...candidates];
+      const selected = [...seedSeats];
+      const result = [];
+      const center = { row: (state.rows - 1) / 2, col: (state.cols - 1) / 2 };
+
+      while (result.length < count && remaining.length) {
+        let bestScore = -Infinity;
+        let bestIndexes = [];
+        remaining.forEach((seat, index) => {
+          const minDist = selected.length
+            ? Math.min(...selected.map((other) => distance(seat, other)))
+            : distance(seat, center);
+          const edgeBonus = Math.min(seat.row, state.rows - 1 - seat.row, seat.col, state.cols - 1 - seat.col) * -0.015;
+          const score = minDist + edgeBonus + Math.random() * 0.001;
+          if (score > bestScore) {
+            bestScore = score;
+            bestIndexes = [index];
+          } else if (Math.abs(score - bestScore) < 0.0001) {
+            bestIndexes.push(index);
+          }
+        });
+        const chosenIndex = bestIndexes[Math.floor(Math.random() * bestIndexes.length)];
+        const [chosen] = remaining.splice(chosenIndex, 1);
+        selected.push(chosen);
+        result.push(chosen);
+      }
+      return result;
+    }
+
+    function selectByCheckerboard(candidates, count) {
+      const first = shuffle(candidates.filter((seat) => (seat.row + seat.col) % 2 === 0));
+      const second = shuffle(candidates.filter((seat) => (seat.row + seat.col) % 2 === 1));
+      return [...first, ...second].slice(0, count);
+    }
+
+    function chooseSeats(candidates, count, seedSeats) {
+      if (state.randomMode === 'random') return shuffle(candidates).slice(0, count);
+      if (state.randomMode === 'checker') return selectByCheckerboard(candidates, count);
+      return selectByDispersion(candidates, count, seedSeats);
+    }
+
+    function randomize() {
+      cleanState();
+      const students = shuffle(parseStudents());
+      if (!students.length) {
+        showToast('กรุณาใส่รายชื่อนักเรียนก่อนสุ่ม');
+        return;
+      }
+
+      const validAvailable = availableSeats();
+      if (students.length > validAvailable.length) {
+        showToast(`นักเรียน ${students.length} คน แต่มีที่นั่งใช้ได้ ${validAvailable.length} ที่`);
+        return;
+      }
+
+      const lockedByName = new Map();
+      state.locked.forEach((name, key) => {
+        if (!lockedByName.has(name)) lockedByName.set(name, key);
+      });
+
+      state.assignments.clear();
+      lockedByName.forEach((key, name) => {
+        state.assignments.set(key, name);
+      });
+
+      const lockedNames = new Set(lockedByName.keys());
+      const remainingStudents = shuffle(students.filter((name) => !lockedNames.has(name)));
+      const lockedSeatKeys = new Set([...lockedByName.values()]);
+      const candidates = validAvailable.filter((seat) => !lockedSeatKeys.has(seat.key));
+      const seedSeats = [...lockedSeatKeys].map(pointFromKey);
+      const chosenSeats = chooseSeats(candidates, remainingStudents.length, seedSeats);
+
+      chosenSeats.forEach((seat, index) => {
+        state.assignments.set(seat.key, remainingStudents[index]);
+      });
+
+      render();
+      showToast('สุ่มที่นั่งเรียบร้อยแล้ว');
+    }
+
+    function renderLockOptions() {
+      const selected = els.lockStudentSelect.value;
+      const students = parseStudents();
+      els.lockStudentSelect.innerHTML = students.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+      if (students.includes(selected)) els.lockStudentSelect.value = selected;
+    }
+
+    function seatTitle(key, name) {
+      if (state.disabled.has(key)) return 'โต๊ะปิดใช้งาน';
+      if (state.locked.has(key)) return `ล็อกไว้: ${state.locked.get(key)}`;
+      if (name) return name;
+      return 'ที่นั่งว่าง';
+    }
+
+    function render() {
+      cleanState();
+      const students = parseStudents();
+      const usable = availableSeats().length;
+      const roomName = state.roomType === 'lab' ? 'ห้องคอมพิวเตอร์' : 'ห้องเรียน';
+      const seatIcon = state.roomType === 'lab' ? icons.monitor : icons.chair;
+
+      els.seatingGrid.style.setProperty('--cols', state.cols);
+      els.columnHeaders.style.setProperty('--cols', state.cols);
+      els.rowHeaders.style.setProperty('--rows', state.rows);
+      els.roomLabel.textContent = `ผัง${roomName} ${state.rows} x ${state.cols}`;
+      els.studentCount.textContent = students.length;
+      els.seatCount.textContent = usable;
+      els.lockedCount.textContent = state.locked.size;
+
+      renderLockOptions();
+      els.columnHeaders.innerHTML = Array.from({ length: state.cols }, (_, index) => (
+        `<div class="axis-label" aria-label="คอลัมน์ ${index + 1}">${index + 1}</div>`
+      )).join('');
+      els.rowHeaders.innerHTML = Array.from({ length: state.rows }, (_, index) => (
+        `<div class="axis-label" aria-label="แถว ${index + 1}">${index + 1}</div>`
+      )).join('');
+      els.seatingGrid.innerHTML = '';
+      allSeats().forEach((seat, index) => {
+        const name = state.assignments.get(seat.key) || '';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'seat';
+        button.dataset.key = seat.key;
+        button.style.animationDelay = name ? `${Math.min(index * 22, 900)}ms` : '0ms';
+        if (name) button.classList.add('assigned');
+        if (state.locked.has(seat.key)) button.classList.add('locked');
+        if (state.disabled.has(seat.key)) button.classList.add('disabled');
+        button.title = seatTitle(seat.key, name);
+        button.setAttribute('aria-label', `แถว ${seat.row + 1} คอลัมน์ ${seat.col + 1} ${seatTitle(seat.key, name)}`);
+        button.innerHTML = `
+          <span class="seat-icon">${seatIcon}</span>
+          <span class="seat-name">${escapeHtml(name || (state.disabled.has(seat.key) ? 'ปิด' : 'ว่าง'))}</span>
+          ${state.locked.has(seat.key) ? `<span class="seat-tag">${icons.lock}</span>` : ''}
+          ${state.disabled.has(seat.key) ? `<span class="seat-tag">${icons.ban}</span>` : ''}
+        `;
+        button.addEventListener('click', () => handleSeatClick(seat.key));
+        els.seatingGrid.appendChild(button);
+      });
+    }
+
+    function handleSeatClick(key) {
+      if (state.clickMode === 'disable') {
+        if (state.disabled.has(key)) {
+          state.disabled.delete(key);
+        } else {
+          state.disabled.add(key);
+          state.locked.delete(key);
+          state.assignments.delete(key);
+        }
+        render();
+        return;
+      }
+
+      const selectedStudent = els.lockStudentSelect.value;
+      if (!selectedStudent) {
+        showToast('กรุณาใส่รายชื่อนักเรียนก่อนล็อกที่นั่ง');
+        return;
+      }
+      if (state.disabled.has(key)) {
+        showToast('โต๊ะนี้ถูกปิดใช้งานอยู่');
+        return;
+      }
+      if (state.locked.get(key) === selectedStudent) {
+        state.locked.delete(key);
+      } else {
+        [...state.locked.entries()].forEach(([seatKey, name]) => {
+          if (name === selectedStudent) state.locked.delete(seatKey);
+        });
+        state.locked.set(key, selectedStudent);
+        state.assignments.set(key, selectedStudent);
+      }
+      render();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => els.toast.classList.remove('show'), 2600);
+    }
+
+    function clearAssignments() {
+      state.assignments.clear();
+      state.locked.forEach((name, key) => state.assignments.set(key, name));
+      render();
+      showToast('ล้างผลสุ่มแล้ว');
+    }
+
+    function resetSeats() {
+      state.disabled.clear();
+      state.locked.clear();
+      state.assignments.clear();
+      render();
+      showToast('รีเซ็ตโต๊ะทั้งหมดแล้ว');
+    }
+
+    function setGroupValue(group, value) {
+      document.querySelectorAll(`[data-group="${group}"] .segment`).forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.value === value);
+      });
+    }
+
+    function updateFontScale(nextScale) {
+      state.fontScale = Math.max(.8, Math.min(1.4, Number(nextScale.toFixed(2))));
+      els.exportTarget.style.setProperty('--seat-font-scale', state.fontScale);
+      els.fontSizeValue.textContent = `${Math.round(state.fontScale * 100)}%`;
+      els.fontDecreaseBtn.disabled = state.fontScale <= .8;
+      els.fontIncreaseBtn.disabled = state.fontScale >= 1.4;
+    }
+
+    async function exportImage(type) {
+      const node = els.exportTarget;
+      const rect = node.getBoundingClientRect();
+      const width = Math.ceil(rect.width);
+      const height = Math.ceil(rect.height);
+      const clone = node.cloneNode(true);
+      clone.style.width = `${width}px`;
+      clone.style.minWidth = `${width}px`;
+      clone.style.margin = '0';
+      clone.querySelectorAll('.seat').forEach((seat) => {
+        seat.style.animation = 'none';
+      });
+
+      const css = document.querySelector('style').textContent;
+      const theme = els.body.dataset.theme;
+      const markup = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+          <foreignObject width="100%" height="100%">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="export-root" data-theme="${theme}" style="width:${width}px; min-height:${height}px; padding:0;">
+              <style>${css}</style>
+              ${clone.outerHTML}
+            </div>
+          </foreignObject>
+        </svg>
+      `;
+
+      const svgBlob = new Blob([markup], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ratio = Math.max(2, window.devicePixelRatio || 1);
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(ratio, ratio);
+        ctx.fillStyle = theme === 'light' ? '#f7f8fb' : '#121318';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        const mime = type === 'jpeg' ? 'image/jpeg' : 'image/png';
+        const link = document.createElement('a');
+        link.download = `exam-seating-${state.rows}x${state.cols}.${type === 'jpeg' ? 'jpg' : 'png'}`;
+        link.href = canvas.toDataURL(mime, .94);
+        link.click();
+        showToast(`บันทึกไฟล์ ${type.toUpperCase()} แล้ว`);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        showToast('บันทึกรูปภาพไม่สำเร็จ ลองใช้คำสั่งพิมพ์แทน');
+      };
+      img.src = url;
+    }
+
+    function bindEvents() {
+      els.themeToggle.addEventListener('click', () => {
+        els.body.dataset.theme = els.body.dataset.theme === 'light' ? 'dark' : 'light';
+        updateThemeIcon();
+      });
+
+      [els.rowsInput, els.colsInput].forEach((input) => {
+        input.addEventListener('input', () => {
+          const rows = Math.max(2, Math.min(12, Number(els.rowsInput.value) || 2));
+          const cols = Math.max(2, Math.min(12, Number(els.colsInput.value) || 2));
+          state.rows = rows;
+          state.cols = cols;
+          els.rowsInput.value = rows;
+          els.colsInput.value = cols;
+          state.assignments.clear();
+          render();
+        });
+      });
+
+      els.studentInput.addEventListener('input', () => {
+        state.assignments.clear();
+        render();
+      });
+
+      document.querySelectorAll('[data-group]').forEach((group) => {
+        group.addEventListener('click', (event) => {
+          const button = event.target.closest('.segment');
+          if (!button) return;
+          const groupName = group.dataset.group;
+          state[groupName] = button.dataset.value;
+          setGroupValue(groupName, button.dataset.value);
+          if (groupName === 'roomType') render();
+        });
+      });
+
+      els.randomizeBtn.addEventListener('click', randomize);
+      els.clearBtn.addEventListener('click', clearAssignments);
+      els.resetBtn.addEventListener('click', resetSeats);
+      els.fontDecreaseBtn.addEventListener('click', () => updateFontScale(state.fontScale - .1));
+      els.fontIncreaseBtn.addEventListener('click', () => updateFontScale(state.fontScale + .1));
+      els.printBtn.addEventListener('click', () => window.print());
+      els.exportPngBtn.addEventListener('click', () => exportImage('png'));
+      els.exportJpgBtn.addEventListener('click', () => exportImage('jpeg'));
+    }
+
+    injectIcons();
+    bindEvents();
+    updateFontScale(state.fontScale);
+    render();
+  </script>
+</body>
+</html>
