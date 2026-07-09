@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือสำหรับผู้เข้าอบรม: AI ASSISTANTS FOR TEACHERS</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1.15rem; /* ขยายขนาดอักษรขึ้นประมาณ 30% จากค่าเริ่มต้น */
+            line-height: 1.75;
+        }
+        h1, h2, h3, h4, .font-title {
+            font-family: 'Prompt', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800 min-h-screen">
+
+    <!-- Header Section with Brick Orange/Amber Gradient theme -->
+    <header class="bg-gradient-to-r from-orange-800 to-amber-950 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-orange-500 text-white p-2.5 rounded-xl shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-wide">คู่มือสำหรับผู้เข้าอบรม</h1>
+                    <p class="text-xs md:text-sm text-orange-200">การขยายผลอบรม AI ASSISTANTS FOR TEACHERS ร่วมขับเคลื่อนการเรียนรู้ด้วย AI ยกระดับคุณภาพการสอนอย่างยั่งยืน</p>
+                    <p class="text-xs text-orange-300 mt-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-tie"></i> 
+                        <span>ขยายผลโดย: <strong>นายธนกฤชช์ โยมไธสง</strong> ครู โรงเรียนบุรีรัมย์พิทยาคม</span>
+                    </p>
+                </div>
+            </div>
+            <!-- Dynamic and updated quick links matching the new order of sections -->
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="#section-1" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">20 Prompt</a>
+                <a href="#section-2" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">สูตร R-T-C-F</a>
+                <a href="#section-3" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">สร้างภาพ AI</a>
+                <a href="#section-4" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">Gemini Canvas</a>
+                <a href="#section-5" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">สร้างเว็บไซต์ครู</a>
+                <a href="#section-6" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">สร้างเกมเรียนรู้/AR</a>
+                <a href="#section-7" class="px-2.5 py-1.5 bg-orange-700/50 hover:bg-orange-700 text-xs md:text-sm rounded-lg transition">ข้อควรระวังฯ</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Left Sidebar (Table of Contents & Quick Navigation) -->
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 sticky top-28">
+                <h3 class="font-bold text-lg text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul text-orange-600"></i> สารบัญเนื้อหา
+                </h3>
+                <nav class="space-y-2 text-sm md:text-base">
+                    <a href="#section-1" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 1: 20 คลังคำสั่งสำเร็จรูป
+                    </a>
+                    <a href="#section-2" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 2: หลักการเขียนคำสั่ง R-T-C-F
+                    </a>
+                    <a href="#section-3" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 3: ชุบชีวิตบทเรียนด้วยภาพถ่าย AI
+                    </a>
+                    <a href="#section-4" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 4: เจาะลึก Gemini Canvas
+                    </a>
+                    <a href="#section-5" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 5: Super Prompt สร้างเว็บไซต์ครู
+                    </a>
+                    <a href="#section-6" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 6: Super Prompt สร้างเกมการเรียนรู้และเกม AR
+                    </a>
+                    <a href="#section-6-general-games" class="block py-1.5 px-6 rounded-lg text-slate-500 hover:bg-orange-50 hover:text-orange-700 transition text-sm">
+                        - เกมการเรียนรู้ทั่วไป
+                    </a>
+                    <a href="#section-6-ar-games" class="block py-1.5 px-6 rounded-lg text-slate-500 hover:bg-orange-50 hover:text-orange-700 transition text-sm">
+                        - เกมการเรียนรู้ AR
+                    </a>
+                    <a href="#section-7" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition font-medium">
+                        ส่วนที่ 7: ข้อควรระวังและจรรยาบรรณ
+                    </a>
+                </nav>
+                <div class="mt-6 pt-6 border-t border-slate-100 text-center space-y-3">
+                    <p class="text-xs font-semibold text-slate-700">ผู้ขยายผลการอบรม</p>
+                    <p class="text-xs text-orange-700 leading-normal">
+                        <strong>นายธนกฤชช์ โยมไธสง</strong><br>
+                        ครู โรงเรียนบุรีรัมย์พิทยาคม
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <article class="lg:col-span-3 space-y-12 bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-stone-100">
+            
+            <!-- Intro Card -->
+            <div class="bg-gradient-to-br from-orange-50 to-amber-50 p-6 md:p-8 rounded-2xl border border-orange-100/80">
+                <h2 class="text-2xl font-bold text-orange-900 mb-3">คู่มือสำหรับการขยายผลการอบรม</h2>
+                <p class="text-slate-600">
+                    เครื่องมือชุดนี้จัดทำขึ้นสำหรับผู้บริหารสถานศึกษา ครูผู้สอนในทุกกลุ่มสาระการเรียนรู้ และนักเทคโนโลยีการศึกษา เพื่อเป็นแนวทางในการนำระบบปัญญาประดิษฐ์ (Generative AI) เข้ามาเป็นผู้ช่วยคู่ใจในการทำงาน ลดภาระงานเอกสาร และสร้างกิจกรรมการเรียนรู้ที่ตื่นตาตื่นใจให้แก่ผู้เรียน
+                </p>
+                <div class="mt-4 pt-4 border-t border-orange-100 flex items-center gap-2 text-sm text-orange-850">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>วิทยากรผู้ขยายผลการเรียนรู้: <strong>นายธนกฤชช์ โยมไธสง</strong> (โรงเรียนบุรีรัมย์พิทยาคม)</span>
+                </div>
+            </div>
+
+            <!-- SECTION 1: 20 Presets -->
+            <section id="section-1" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 1</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">20 คลังคำสั่งสำเร็จรูปพร้อมใช้งานแยกตามหมวดหมู่</h2>
+                </div>
+                <p class="text-slate-600 text-sm md:text-base">
+                    คุณครูสามารถกดเลือกดูหมวดหมู่และก๊อปปี้ไปทดลองใช้งานจริงได้อย่างรวดเร็วครับ เพียงกดเปลี่ยนข้อมูลในวงเล็บสีเหลืองส้ม <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 font-bold text-sm">[...]</span> ให้ตรงกับความต้องการจริงก็ใช้ได้ทันทีครับ
+                </p>
+
+                <div class="space-y-4">
+                    
+                    <!-- category 1 -->
+                    <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                        <div class="bg-stone-100 px-6 py-4 font-bold text-orange-850 flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-orange-600"></i> หมวดที่ 1: การวางแผนและการเตรียมการสอน
+                        </div>
+                        <div class="p-4 space-y-4 divide-y divide-slate-100">
+                            <!-- p1 -->
+                            <div class="pt-3 first:pt-0 space-y-2">
+                                <h5 class="font-bold text-slate-800">1. ออกแบบแผนการสอนรายคาบ (Lesson Plan)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยออกแบบแผนการสอนวิชา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[วิทยาศาสตร์]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การลอยและการจม]</span> สำหรับนักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ป.3]</span> เวลา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[60 นาที]</span> โดยขอให้มีเป้าหมายการเรียนรู้ กิจกรรมนำเข้าสู่บทเรียน ขั้นดำเนินกิจกรรม (เน้นการทดลอง) และขั้นสรุป พร้อมเกณฑ์การวัดผล</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยออกแบบแผนการสอนวิชา [วิทยาศาสตร์] เรื่อง [การลอยและการจม] สำหรับนักเรียนชั้น [ป.3] เวลา [60 นาที] โดยขอให้มีเป้าหมายการเรียนรู้ กิจกรรมนำเข้าสู่บทเรียน ขั้นดำเนินกิจกรรม (เน้นการทดลอง) และขั้นสรุป พร้อมเกณฑ์การวัดผล')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p2 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">2. คิดไอเดียกิจกรรมกลุ่มในห้องเรียน (Ice Breaking)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ขอไอเดียกิจกรรมกลุ่มที่สนุกสนานและได้ความรู้ เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[คำราชาศัพท์]</span> สำหรับนักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.2]</span> ใช้เวลาประมาณ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[15 นาที]</span> ขอแบบที่นักเรียนทุกคนได้มีส่วนร่วมและไม่ต้องใช้อุปกรณ์เยอะ</span>
+                                    <button onclick="copyPrompt(this, 'ขอไอเดียกิจกรรมกลุ่มที่สนุกสนานและได้ความรู้ เรื่อง [คำราชาศัพท์] สำหรับนักเรียนชั้น [ม.2] ใช้เวลาประมาณ [15 นาที] ขอแบบที่นักเรียนทุกคนได้มีส่วนร่วมและไม่ต้องใช้อุปกรณ์เยอะ')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p3 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">3. สรุปเนื้อหาบทเรียนให้สั้นกระชับ (Summarizing)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยสรุปเนื้อหาเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[สงครามโลกครั้งที่ 2]</span> ให้เหลือเป็นหัวข้อสั้นๆ (Bullet points) 5 ข้อ เพื่อใช้เปิดสไลด์แนะนำบทเรียนให้นักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.3]</span> เข้าใจได้ง่ายที่สุด</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยสรุปเนื้อหาเรื่อง [สงครามโลกครั้งที่ 2] ให้เหลือเป็นหัวข้อสั้นๆ (Bullet points) 5 ข้อ เพื่อใช้เปิดสไลด์แนะนำบทเรียนให้นักเรียนชั้น [ม.3] เข้าใจได้ง่ายที่สุด')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p4 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">4. สร้างโครงร่างเนื้อหาหลักสูตร (Course Outline)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ฉันต้องสอนวิชา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การเงินส่วนบุคคลเบื้องต้น]</span> สำหรับนักเรียน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.ปลาย]</span> เป็นเวลา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[1 ภาคเรียน/16 สัปดาห์]</span> ช่วยออกแบบโครงร่างหลักสูตรรายสัปดาห์ให้หน่อยว่าแต่ละสัปดาห์ควรสอนหัวข้ออะไรบ้าง</span>
+                                    <button onclick="copyPrompt(this, 'ฉันต้องสอนวิชา [การเงินส่วนบุคคลเบื้องต้น] สำหรับนักเรียน [ม.ปลาย] เป็นเวลา [1 ภาคเรียน/16 สัปญห์] ช่วยออกแบบโครงร่างหลักสูตรรายสัปดาห์ให้หน่อยว่าแต่ละสัปดาห์ควรสอนหัวข้ออะไรบ้าง')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 2 -->
+                    <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                        <div class="bg-stone-100 px-6 py-4 font-bold text-orange-850 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-ruler text-orange-600"></i> หมวดที่ 2: การสร้างสื่อและเครื่องมือวัดผล
+                        </div>
+                        <div class="p-4 space-y-4 divide-y divide-slate-100">
+                            <!-- p5 -->
+                            <div class="pt-3 first:pt-0 space-y-2">
+                                <h5 class="font-bold text-slate-800">5. ออกแบบข้อสอบปรนัย (Multiple Choice)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยออกข้อสอบปรนัย (4 ตัวเลือก) จำนวน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[5 ข้อ]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ระบบหมุนเวียนเลือด]</span> สำหรับนักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.2]</span> พร้อมระบุเฉลยที่ถูกต้องและคำอธิบายสั้นๆ ว่าทำไมข้อนั้นถึงถูก</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยออกข้อสอบปรนัย (4 ตัวเลือก) จำนวน [5 ข้อ] เรื่อง [ระบบหมุนเวียนเลือด] สำหรับนักเรียนชั้น [ม.2] พร้อมระบุเฉลยที่ถูกต้องและคำอธิบายสั้นๆ ว่าทำไมข้อนั้นถึงถูก')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p6 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">6. สร้างเกณฑ์การให้คะแนน (Rubric Assessment)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยสร้างเกณฑ์การให้คะแนน (Rubric) แบบ 4 ระดับ (ดีมาก, ดี, พอใช้, ปรับปรุง) สำหรับประเมิน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[งานเขียนเรียงความวันแม่]</span> ของนักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ป.6]</span> โดยประเมินในหัวข้อ: เนื้อหา, การใช้ภาษา, และความเรียบร้อย</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยสร้างเกณฑ์การให้คะแนน (Rubric) แบบ 4 ระดับ (ดีมาก, ดี, พอใช้, ปรับปรุง) สำหรับประเมิน [งานเขียนเรียงความวันแม่] ของนักเรียนชั้น [ป.6] โดยประเมินในหัวข้อ: เนื้อหา, การใช้ภาษา, และความเรียบร้อย')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p7 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">7. คิดโจทย์ปัญหาประยุกต์ / โจทย์ตุ๊กตา (Contextual Problems)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยคิดโจทย์ปัญหาวิชา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[คณิตศาสตร์]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ร้อยละและเปอร์เซ็นต์]</span> จำนวน 3 ข้อ โดยใช้วิธีการแต่งเรื่องให้เกี่ยวข้องกับชีวิตประจำวันของวัยรุ่น เช่น การซื้อของออนไลน์ หรือการเล่นเกม</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยคิดโจทย์ปัญหาวิชา [คณิตศาสตร์] เรื่อง [ร้อยละและเปอร์เซ็นต์] จำนวน 3 ข้อ โดยใช้วิธีการแต่งเรื่องให้เกี่ยวข้องกับชีวิตประจำวันของวัยรุ่น เช่น การซื้อของออนไลน์ หรือการเล่นเกม')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p8 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">8. สร้างใบงานเติมคำในช่องว่าง (Fill in the blanks)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยแต่งเนื้อเรื่องสั้นๆ เกี่ยวกับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ประวัติศาสตร์สุโขทัย]</span> ความยาวประมาณ 1 หน้ากระดาษ แล้วทำเป็นใบงานเติมคำในช่องว่าง โดยเว้นคำสำคัญไว้ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[5 จุด]</span> พร้อมทำเฉลยแยกไว้ด้านล่าง</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยแต่งเนื้อเรื่องสั้นๆ เกี่ยวกับ [ประวัติศาสตร์สุโขทัย] ความยาวประมาณ 1 หน้ากระดาษ แล้วทำเป็นใบงานเติมคำในช่องว่าง โดยเว้นคำสำคัญไว้ [5 จุด] พร้อมทำเฉลยแยกไว้ด้านล่าง')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 3 -->
+                    <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                        <div class="bg-stone-100 px-6 py-4 font-bold text-orange-850 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-orange-600"></i> หมวดที่ 3: การช่วยคิดและสร้างสรรค์ไอเดีย
+                        </div>
+                        <div class="p-4 space-y-4 divide-y divide-slate-100">
+                            <!-- p9 -->
+                            <div class="pt-3 first:pt-0 space-y-2">
+                                <h5 class="font-bold text-slate-800">9. แต่งนิทานหรือเรื่องเล่าเพื่อนำเข้าสู่บทเรียน</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">แต่งนิทานสั้นๆ ไม่เกิน 2 นาที เกี่ยวกับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[เมืองจำลองที่ทุกคนเห็นแก่ตัวจนขยะล้นเมือง]</span> เพื่อใช้นำเข้าสู่บทเรียนเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[สิ่งแวดล้อมและการแยกขยะ]</span> สำหรับเด็กชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ป.2]</span></span>
+                                    <button onclick="copyPrompt(this, 'แต่งนิทานสั้นๆ ไม่เกิน 2 นาที เกี่ยวกับ [เมืองจำลองที่ทุกคนเห็นแก่ตัวจนขยะล้นเมือง] เพื่อใช้นำเข้าสู่บทเรียนเรื่อง [สิ่งแวดล้อมและการแยกขยะ] สำหรับเด็กชั้น [ป.2]')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p10 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">10. แปลงเนื้อหายากๆ เป็นอุปมาอุปไมย (Analogies)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยอธิบายเรื่องยากๆ อย่าง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การทำงานของ BlockChain]</span> โดยใช้การเปรียบเทียบ (Analogy) กับสิ่งใกล้ตัวง่ายๆ เพื่อให้นักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.1]</span> ฟังแล้วเข้าใจภาพรวมทันที</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยอธิบายเรื่องยากๆ อย่าง [การทำงานของ BlockChain] โดยใช้การเปรียบเทียบ (Analogy) กับสิ่งใกล้ตัวง่ายๆ เพื่อให้นักเรียนชั้น [ม.1] ฟังแล้วเข้าใจภาพรวมทันที')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p11 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">11. คิดหัวข้อโต้วาทีหรืออภิปรายในห้องเรียน (Debate)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ขอหัวข้อโต้วาทีที่น่าสนใจและน่าถกเถียงในห้องเรียน จำนวน 5 หัวข้อ ที่เกี่ยวข้องกับเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ปัญญาประดิษฐ์ (AI) กับอนาคตของมนุษย์]</span> สำหรับนักเรียนระดับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[มหาวิทยาลัย]</span></span>
+                                    <button onclick="copyPrompt(this, 'ขอหัวข้อโต้วาทีที่น่าสนใจและน่าถกเถียงในห้องเรียน จำนวน 5 หัวข้อ ที่เกี่ยวข้องกับเรื่อง [ปัญญาประดิษฐ์ (AI) กับอนาคตของมนุษย์] สำหรับนักเรียนระดับ [มหาวิทยาลัย]')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p12 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">12. ออกแบบโครงงานวิจัย/สเต็มศึกษา (STEM Project)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยคิดไอเดียโครงงาน STEM (Science, Technology, Engineering, Math) สำหรับนักเรียน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ม.ต้น]</span> ที่ตอบโจทย์การแก้ปัญหา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ภัยแล้งหรือการประหยัดน้ำในชุมชน]</span></span>
+                                    <button onclick="copyPrompt(this, 'ช่วยคิดไอเดียโครงงาน STEM (Science, Technology, Engineering, Math) สำหรับนักเรียน [ม.ต้น] ที่ตอบโจทย์การแก้ปัญหา [ภัยแล้งหรือการประหยัดน้ำในชุมชน]')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 4 -->
+                    <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                        <div class="bg-stone-100 px-6 py-4 font-bold text-orange-850 flex items-center gap-2">
+                            <i class="fa-solid fa-user-gear text-orange-600"></i> หมวดที่ 4: การดูแลและการสอนซ่อมเสริม
+                        </div>
+                        <div class="p-4 space-y-4 divide-y divide-slate-100">
+                            <!-- p13 -->
+                            <div class="pt-3 first:pt-0 space-y-2">
+                                <h5 class="font-bold text-slate-800">13. เขียนคำติชมเชิงบวกในสมุดรายงาน (Student Feedback)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยเขียนคำติชม/ข้อแนะนำในสมุดพกภาษาไทยในเชิงบวกและให้กำลังใจ สำหรับนักเรียนที่ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[เรียนดี พยายามตั้งใจ แต่ค่อนข้างเงียบไม่ค่อยกล้าแสดงออก]</span> ขอ 3 แบบให้เลือกปรับใช้</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยเขียนคำติชม/ข้อแนะนำในสมุดพกภาษาไทยในเชิงบวกและให้กำลังใจ สำหรับนักเรียนที่ [เรียนดี พยายามตั้งใจ แต่ค่อนข้างเงียบไม่ค่อยกล้าแสดงออก] ขอ 3 แบบให้เลือกปรับใช้')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p14 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">14. แปลงบทเรียนให้ง่ายลงสำหรับเด็กเรียนช้า</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">นี่คือเนื้อเรื่องเกี่ยวกับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[กฎของนิวตัน]</span> (ก๊อปปี้เนื้อหามาวาง) ช่วยสรุปและปรับภาษาให้ง่ายขึ้น ลดความซับซ้อนลง เพื่อใช้สอนซ่อมเสริมให้กับนักเรียนที่ตามเพื่อนไม่ทัน</span>
+                                    <button onclick="copyPrompt(this, 'นี่คือเนื้อเรื่องเกี่ยวกับ [กฎของนิวตัน] (ก๊อปปี้เนื้อหามาวาง) ช่วยสรุปและปรับภาษาให้ง่ายขึ้น ลดความซับซ้อนลง เพื่อใช้สอนซ่อมเสริมให้กับนักเรียนที่ตามเพื่อนไม่ทัน')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p15 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">15. คิดแบบฝึกหัดท้าทายสำหรับเด็กเรียนเก่ง</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ฉันมีนักเรียนที่เก่ง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[วิชาภาษาอังกฤษ]</span> มากและทำแบบฝึกหัดแกรมม่าเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[Tense]</span> เสร็จก่อนเพื่อนเสมอ ช่วยคิดกิจกรรมหรือโจทย์ที่ท้าทายเพิ่มขึ้น 3 ข้อ เพื่อให้เขาทำระหว่างรอเพื่อน</span>
+                                    <button onclick="copyPrompt(this, 'ฉันมีนักเรียนที่เก่ง [วิชาภาษาอังกฤษ] มากและทำแบบฝึกหัดแกรมม่าเรื่อง [Tense] เสร็จก่อนเพื่อนเสมอ ช่วยคิดกิจกรรมหรือโจทย์ที่ท้าทายเพิ่มขึ้น 3 ข้อ เพื่อให้เขาทำระหว่างรอเพื่อน')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p16 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">16. ร่างจดหมาย/ข้อความสั้นถึงผู้ปกครอง (Line/SMS)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยเขียนข้อความสุภาพเพื่อแจ้งผู้ปกครองทาง Line กลุ่ม เกี่ยวกับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การนัดหมายให้นักเรียนเตรียมอุปกรณ์ทำพานไหว้ครูมาในวันพรุ่งนี้]</span> และขอความร่วมมือช่วยกำชับเรื่องความปลอดภัย</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยเขียนข้อความสุภาพเพื่อแจ้งผู้ปกครองทาง Line กลุ่ม เกี่ยวกับ [การนัดหมายให้นักเรียนเตรียมอุปกรณ์ทำพานไหว้ครูมาในวันพรุ่งนี้] และขอความร่วมมือช่วยกำชับเรื่องความปลอดภัย')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 5 -->
+                    <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                        <div class="bg-stone-100 px-6 py-4 font-bold text-orange-850 flex items-center gap-2">
+                            <i class="fa-solid fa-business-time text-orange-600"></i> หมวดที่ 5: งานบริหารและพัฒนาตนเอง
+                        </div>
+                        <div class="p-4 space-y-4 divide-y divide-slate-100">
+                            <!-- p17 -->
+                            <div class="pt-3 first:pt-0 space-y-2">
+                                <h5 class="font-bold text-slate-800">17. ร่างจดหมายราชการ / หนังสือเชิญวิทยากร</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยร่างหนังสือเชิญวิทยากรภายนอก มาบรรยายในหัวข้อ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การรู้เท่าทันสื่อออนไลน์]</span> ให้กับนักเรียนชั้น ม.ปลาย ในวันที่ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[20 กรกฎาคม]</span> เวลา <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[09.00 - 12.00 น.]</span> ขอภาษาที่เป็นทางการและถูกต้องตามฟอร์มจดหมายราชการ</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยร่างหนังสือเชิญวิทยากรภายนอก มาบรรยายในหัวข้อ [การรู้เท่าทันสื่อออนไลน์] ให้กับนักเรียนชั้น ม.ปลาย ในวันที่ [20 กรกฎาคม] เวลา [09.00 - 12.00 น.] ขอภาษาที่เป็นทางการและถูกต้องตามฟอร์มจดหมายราชการ')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p18 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">18. เขียนวัตถุประสงค์เชิงพฤติกรรม (Bloom's Taxonomy)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยเขียนวัตถุประสงค์เชิงพฤติกรรมตามอนุกรมวิธานของบลู (Bloom's Taxonomy) ทั้ง 3 ด้าน (K-P-A) สำหรับแผนการสอนเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[การเขียนโปรแกรมกล้วยๆ ด้วย Scratch]</span></span>
+                                    <button onclick="copyPrompt(this, 'ช่วยเขียนวัตถุประสงค์เชิงพฤติกรรมตามอนุกรมวิธานของบลู (Bloom\'s Taxonomy) ทั้ง 3 ด้าน (K-P-A) สำหรับแผนการสอนเรื่อง [การเขียนโปรแกรมกล้วยๆ ด้วย Scratch]')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p19 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">19. ช่วยแปลและสรุปงานวิจัยการศึกษา (Research Translation)</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">ช่วยแปลและสรุปใจความสำคัญของงานวิจัยชิ้นนี้ (แนบลิงก์หรือก๊อปเนื้อหาภาษาอังกฤษมาวาง) ให้เป็นภาษาไทย โดยเน้นว่า 'ครูสามารถนำเทคนิคในงานวิจัยนี้ไปปรับใช้ในห้องเรียนจริงได้อย่างไรบ้าง'</span>
+                                    <button onclick="copyPrompt(this, 'ช่วยแปลและสรุปใจความสำคัญของงานวิจัยชิ้นนี้ (แนบลิงก์หรือก๊อปเนื้อหาภาษาอังกฤษมาวาง) ให้เป็นภาษาไทย โดยเน้นว่า \'ครูสามารถนำเทคนิคในงานวิจัยนี้ไปปรับใช้ในห้องเรียนจริงได้อย่างไรบ้าง\'')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <!-- p20 -->
+                            <div class="pt-3 space-y-2">
+                                <h5 class="font-bold text-slate-800">20. สวมบทบาทเป็นนักเรียนเพื่อฝึกทดสอบจิตวิทยาครู</h5>
+                                <div class="bg-stone-50 p-3 rounded-lg border-l-4 border-orange-500 text-sm font-mono flex justify-between items-start gap-4">
+                                    <span class="block leading-relaxed">จงสวมบทบาทเป็น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[นักเรียนชั้น ม.3 ที่ขี้สงสัย ชอบกวน และชอบถามลองภูมิครู]</span> ฉันจะเริ่มอธิบายเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">[ทำไมเราต้องเรียนวิชาประวัติศาสตร์]</span> ให้คุณลองถามคำถามขัดหรือคำถามยากๆ กลับมาทีละคำถาม เพื่อให้ฉันฝึกตอบ</span>
+                                    <button onclick="copyPrompt(this, 'จงสวมบทบาทเป็น [นักเรียนชั้น ม.3 ที่ขี้สงสัย ชอบกวน และชอบถามลองภูมิครู] ฉันจะเริ่มอธิบายเรื่อง [ทำไมเราต้องเรียนวิชาประวัติศาสตร์] ให้คุณลองถามคำถามขัดหรือคำถามยากๆ กลับมาทีละคำถาม เพื่อให้ฉันฝึกตอบ')" class="text-orange-600 hover:text-orange-800 transition shrink-0 pt-1 text-base"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 2: Prompt Engineering -->
+            <section id="section-2" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 2</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">หลักการเขียนคำสั่งเพื่อคุยกับ AI (Prompt Engineering)</h2>
+                </div>
+                <p class="text-slate-600">
+                    การที่คุณครูจะได้รับไอเดีย ผลงาน หรือแผนการสอนที่ตรงประเด็นและสมบูรณ์แบบจากปัญญาประดิษฐ์นั้น ปัจจัยหลักไม่ได้ขึ้นอยู่กับระบบของตัว AI เอง แต่ขึ้นอยู่กับการป้อนคำสั่งที่คมชัด ด้วยโครงสร้าง <strong>"R-T-C-F Formula"</strong> ที่ออกแบบมาเป็นพิเศษสำหรับงานการศึกษาโดยเฉพาะ ดังนี้:
+                </p>
+
+                <!-- RTCF Grid Card -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-rose-50 border border-rose-100 p-5 rounded-xl">
+                        <span class="bg-rose-500 text-white font-bold px-2.5 py-1 rounded text-sm font-title">R</span>
+                        <h4 class="font-bold text-lg text-rose-900 mt-2">Role (บทบาท)</h4>
+                        <p class="text-sm text-rose-800 mt-1">บอกให้ AI สวมวิญญาณเป็นใคร เช่น ครูวิทย์ระดับประถม, นักเขียนนิทานเด็ก</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-5 rounded-xl">
+                        <span class="bg-amber-500 text-white font-bold px-2.5 py-1 rounded text-sm font-title">T</span>
+                        <h4 class="font-bold text-lg text-amber-900 mt-2">Task (ภารกิจ)</h4>
+                        <p class="text-sm text-amber-800 mt-1">สั่งงานที่ต้องการให้ทำอย่างเจาะจง เช่น ออกแผนการสอน, คิดข้อสอบ, แต่งบทละคร</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-xl">
+                        <span class="bg-emerald-500 text-white font-bold px-2.5 py-1 rounded text-sm font-title">C</span>
+                        <h4 class="font-bold text-lg text-emerald-900 mt-2">Context (บริบท)</h4>
+                        <p class="text-sm text-emerald-800 mt-1">ให้รายละเอียดเพิ่ม เช่น ป.2, 60นาที, ใช้ของหาง่าย, เด็กค่อนข้างเรียนช้า</p>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-xl">
+                        <span class="bg-indigo-500 text-white font-bold px-2.5 py-1 rounded text-sm font-title">F</span>
+                        <h4 class="font-bold text-lg text-indigo-900 mt-2">Format (รูปแบบ)</h4>
+                        <p class="text-sm text-indigo-800 mt-1">กําหนดหน้าตาผลลัพธ์ เช่น แสดงเป็นตาราง, เขียนเป็นข้อๆ, ร่างข้อความสั้นทาง Line</p>
+                    </div>
+                </div>
+
+                <!-- 5 Examples of RTCF mapping -->
+                <div id="section-2-examples" class="scroll-mt-24 mt-8 pt-8 border-t border-slate-100 space-y-6">
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-orange-600"></i>
+                        วิเคราะห์ 5 ตัวอย่างการประยุกต์ใช้สูตร R-T-C-F ในห้องเรียนจริง
+                    </h3>
+                    <p class="text-slate-600">
+                        นี่คือแผนผังตัวอย่างการนำสูตรไปสร้างเป็นประโยคคำสั่งจริง คุณครูสามารถสังเกตวิธีการจัดแบ่งขอบเขตองค์ประกอบของคำสั่ง เพื่อนำไปเลียนแบบในการเขียนคำสั่งของคุณครูเองได้ง่ายขึ้นครับ:
+                    </p>
+
+                    <!-- Example 1 -->
+                    <div class="bg-white border-2 border-orange-50 rounded-xl p-5 md:p-6 space-y-3 shadow-sm hover:shadow-md transition">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b">
+                            <span class="font-bold text-orange-700 font-title text-lg">ตัวอย่างที่ 1: แผนการสอน Active Learning (วิทยาสิ่งแวดล้อม ป.1)</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">แผนการสอน</span>
+                        </div>
+                        <div class="space-y-2 text-sm md:text-base">
+                            <p class="text-slate-700 italic bg-slate-50 p-4 rounded-lg border-l-4 border-slate-300 leading-relaxed">
+                                "<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded border border-rose-200 font-semibold inline-block my-0.5">[R] จงสวมบทบาทเป็นครูผู้เชี่ยวชาญด้านสิ่งแวดล้อมและการสอนเด็กเล็ก</span> 
+                                <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-semibold inline-block my-0.5">[T] ช่วยออกแบบกิจกรรมการสอนสั้นๆ 20 นาทีเรื่องการคัดแยกขยะ</span> 
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold inline-block my-0.5">[C] สำหรับนักเรียนชั้น ป.1 ที่เน้นการลงมือปฏิบัติและเกมสนุกสนาน ไม่เน้นการจดบันทึก</span> 
+                                <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded border border-indigo-200 font-semibold inline-block my-0.5">[F] โดยนำเสนอเป็นขั้นตอน 1, 2, 3 พร้อมบทพูดที่ครูสามารถนำไปใช้พูดกระตุ้นนักเรียนได้จริง</span>"
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs pt-2">
+                                <div class="p-2 bg-rose-50 text-rose-800 rounded"><strong>[R]:</strong> ครูสิ่งแวดล้อมเด็กเล็ก</div>
+                                <div class="p-2 bg-amber-50 text-amber-800 rounded"><strong>[T]:</strong> ออกแบบกิจกรรมคัดแยกขยะ</div>
+                                <div class="p-2 bg-emerald-50 text-emerald-800 rounded"><strong>[C]:</strong> ป.1 / 20นาที / เน้นกิจกรรม</div>
+                                <div class="p-2 bg-indigo-50 text-indigo-850 rounded"><strong>[F]:</strong> ขั้นตอน 1-2-3 + บทพูดครู</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button onclick="copyPrompt(this, 'จงสวมบทบาทเป็นครูผู้เชี่ยวชาญด้านสิ่งแวดล้อมและการสอนเด็กเล็ก ช่วยออกแบบกิจกรรมการสอนสั้นๆ 20 นาทีเรื่องการคัดแยกขยะ สำหรับนักเรียนชั้น ป.1 ที่เน้นการลงมือปฏิบัติและเกมสนุกสนาน ไม่เน้นการจดบันทึก โดยนำเสนอเป็นขั้นตอน 1, 2, 3 พร้อมบทพูดที่ครูสามารถนำไปใช้พูดกระตุ้นนักเรียนได้จริง')" class="text-sm bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Example 2 -->
+                    <div class="bg-white border-2 border-orange-50 rounded-xl p-5 md:p-6 space-y-3 shadow-sm hover:shadow-md transition">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b">
+                            <span class="font-bold text-orange-700 font-title text-lg">ตัวอย่างที่ 2: บทสนทนาและข้อสอบวิชาภาษาอังกฤษ (ภาษาอังกฤษ ม.3)</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">สื่อและข้อสอบ</span>
+                        </div>
+                        <div class="space-y-2 text-sm md:text-base">
+                            <p class="text-slate-700 italic bg-slate-50 p-4 rounded-lg border-l-4 border-slate-300 leading-relaxed">
+                                "<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded border border-rose-200 font-semibold inline-block my-0.5">[R] ในฐานะเจ้าของภาษาและครูสอน ESL ประสบการณ์สูง</span> 
+                                <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-semibold inline-block my-0.5">[T] ช่วยเขียนบทสนทนาจำลองสถานการณ์ในร้านอาหารและแบบฝึกหัดเติมคำ</span> 
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold inline-block my-0.5">[C] สำหรับนักเรียนชั้น ม.3 ระดับเริ่มต้น (Beginner) เน้นคำศัพท์และโครงสร้างประโยคที่สุภาพ</span> 
+                                <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded border border-indigo-200 font-semibold inline-block my-0.5">[F] โดยแสดงผลเป็นบทสนทนาจำลองโต้ตอบ 5 บรรทัด และโจทย์แบบฝึกหัด 3 ข้อพร้อมเฉลยในวงเล็บท้ายประโยค</span>"
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs pt-2">
+                                <div class="p-2 bg-rose-50 text-rose-800 rounded"><strong>[R]:</strong> ครูเจ้าของภาษา ESL</div>
+                                <div class="p-2 bg-amber-50 text-amber-800 rounded"><strong>[T]:</strong> บทสนทนาร้านอาหาร+แบบฝึกหัด</div>
+                                <div class="p-2 bg-emerald-50 text-emerald-800 rounded"><strong>[C]:</strong> ม.3 / ระดับเริ่มต้น / ประโยคสุภาพ</div>
+                                <div class="p-2 bg-indigo-50 text-indigo-850 rounded"><strong>[F]:</strong> บทสนทนา 5 บรรทัด + โจทย์ 3 ข้อ</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button onclick="copyPrompt(this, 'ในฐานะเจ้าของภาษาและครูสอน ESL ประสบการณ์สูง ช่วยเขียนบทสนทนาจำลองสถานการณ์ในร้านอาหารและแบบฝึกหัดเติมคำ สำหรับนักเรียนชั้น ม.3 ระดับเริ่มต้น (Beginner) เน้นคำศัพท์และโครงสร้างประโยคที่สุภาพ โดยแสดงผลเป็นบทสนทนาจำลองโต้ตอบ 5 บรรทัด และโจทย์แบบฝึกหัด 3 ข้อพร้อมเฉลยในวงเล็บท้ายประโยค')" class="text-sm bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Example 3 -->
+                    <div class="bg-white border-2 border-orange-50 rounded-xl p-5 md:p-6 space-y-3 shadow-sm hover:shadow-md transition">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b">
+                            <span class="font-bold text-orange-700 font-title text-lg">ตัวอย่างที่ 3: โจทย์ปัญหาคณิตศาสตร์ระดับท้าทาย (คณิตศาสตร์ ม.2)</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">คณิตศาสตร์</span>
+                        </div>
+                        <div class="space-y-2 text-sm md:text-base">
+                            <p class="text-slate-700 italic bg-slate-50 p-4 rounded-lg border-l-4 border-slate-300 leading-relaxed">
+                                "<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded border border-rose-200 font-semibold inline-block my-0.5">[R] สวมบทบาทเป็นติวเตอร์คณิตศาสตร์แนวคิดสร้างสรรค์</span> 
+                                <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-semibold inline-block my-0.5">[T] ออกแบบโจทย์ปัญหาเรื่องอัตราส่วนและร้อยละที่เกี่ยวข้องกับการผสมส่วนผสมอาหารหรือเครื่องดื่ม</span> 
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold inline-block my-0.5">[C] สำหรับนักเรียนระดับชั้น ม.2 ที่เรียนรู้ไวและต้องการสิ่งเร้าความสนใจแปลกใหม่</span> 
+                                <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded border border-indigo-200 font-semibold inline-block my-0.5">[F] นำเสนอในรูปแบบโจทย์จำนวน 2 ข้อ พร้อมแนบคำเฉลยอธิบายหลักการและแสดงขั้นตอนวิธีทำทีละขั้นอย่างละเอียด</span>"
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs pt-2">
+                                <div class="p-2 bg-rose-50 text-rose-800 rounded"><strong>[R]:</strong> ติวเตอร์คณิตศาสตร์หัวคิดสร้างสรรค์</div>
+                                <div class="p-2 bg-amber-50 text-amber-800 rounded"><strong>[T]:</strong> โจทย์คณิตเรื่องอัตราส่วนอาหาร</div>
+                                <div class="p-2 bg-emerald-50 text-emerald-800 rounded"><strong>[C]:</strong> ม.2 / เรียนรู้เร็ว / ท้าทายความสามารถ</div>
+                                <div class="p-2 bg-indigo-50 text-indigo-855 rounded"><strong>[F]:</strong> โจทย์ 2 ข้อ + วิธีคิดทีละขั้นตอน</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button onclick="copyPrompt(this, 'สวมบทบาทเป็นติวเตอร์คณิตศาสตร์แนวคิดสร้างสรรค์ ออกแบบโจทย์ปัญหาเรื่องอัตราส่วนและร้อยละที่เกี่ยวข้องกับการผสมส่วนผสมอาหารหรือเครื่องดื่ม สำหรับนักเรียนระดับชั้น ม.2 ที่เรียนรู้ไวและต้องการสิ่งเร้าความสนใจแปลกใหม่ นำเสนอในรูปแบบโจทย์จำนวน 2 ข้อ พร้อมแนบคำเฉลยอธิบายหลักการและแสดงขั้นตอนวิธีทำทีละขั้นอย่างละเอียด')" class="text-sm bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Example 4 -->
+                    <div class="bg-white border-2 border-orange-50 rounded-xl p-5 md:p-6 space-y-3 shadow-sm hover:shadow-md transition">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b">
+                            <span class="font-bold text-orange-700 font-title text-lg">ตัวอย่างที่ 4: การแจ้งข่าวและปรึกษาพฤติกรรมเด็กเชิงบวก (แนะแนว/ดูแลเด็ก ป.4)</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">สื่อสารกับผู้ปกครอง</span>
+                        </div>
+                        <div class="space-y-2 text-sm md:text-base">
+                            <p class="text-slate-700 italic bg-slate-50 p-4 rounded-lg border-l-4 border-slate-300 leading-relaxed">
+                                "<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded border border-rose-200 font-semibold inline-block my-0.5">[R] จงทำงานเป็นนักจิตวิทยาเด็กและครูประจำชั้นระดับประถมมืออาชีพ</span> 
+                                <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-semibold inline-block my-0.5">[T] ช่วยเขียนร่างข้อความสนทนาเพื่อปรึกษาหารือปัญหาพฤติกรรมด้านการค้างส่งงานของผู้เรียน</span> 
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold inline-block my-0.5">[C] สำหรับเด็กนักเรียนชั้น ป.4 โดยมุ่งเน้นการใช้ข้อความเชิงบวก ประนีประนอม ไม่ทำให้ผู้ปกครองเกิดอาการเครียด เกร็ง หรือรู้สึกโดนตำหนิ</span> 
+                                <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded border border-indigo-200 font-semibold inline-block my-0.5">[F] เขียนเป็นความยาวข้อความสั้นๆ 1 ย่อหน้า สำหรับคัดลอกไปส่งทางแอปพลิเคชัน Line</span>"
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs pt-2">
+                                <div class="p-2 bg-rose-50 text-rose-800 rounded"><strong>[R]:</strong> นักจิตวิทยา + ครูประจำชั้น</div>
+                                <div class="p-2 bg-amber-50 text-amber-800 rounded"><strong>[T]:</strong> ปรึกษาพฤติกรรมค้างงานเชิงบวก</div>
+                                <div class="p-2 bg-emerald-50 text-emerald-800 rounded"><strong>[C]:</strong> ป.4 / ประนีประนอม / ไม่ตำหนิ</div>
+                                <div class="p-2 bg-indigo-50 text-indigo-855 rounded"><strong>[F]:</strong> ข้อความ Line 1 ย่อหน้าสั้น</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button onclick="copyPrompt(this, 'จงทำงานเป็นนักจิตวิทยาเด็กและครูประจำชั้นระดับประถมมืออาชีพ ช่วยเขียนร่างข้อความสนทนาเพื่อปรึกษาหารือปัญหาพฤติกรรมด้านการค้างส่งงานของผู้เรียน สำหรับเด็กนักเรียนชั้น ป.4 โดยมุ่งเน้นการใช้ข้อความเชิงบวก ประนีประนอม ไม่ทำให้ผู้ปกครองเกิดอาการเครียด เกร็ง หรือรู้สึกโดนตำหนิ เขียนเป็นความยาวข้อความสั้นๆ 1 ย่อหน้า สำหรับคัดลอกไปส่งทางแอปพลิเคชัน Line')" class="text-sm bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Example 5 -->
+                    <div class="bg-white border-2 border-orange-50 rounded-xl p-5 md:p-6 space-y-3 shadow-sm hover:shadow-md transition">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b">
+                            <span class="font-bold text-orange-700 font-title text-lg">ตัวอย่างที่ 5: นิทานหรือเรื่องเล่าประวัติศาสตร์ก่อนบทเรียน (ประวัติศาสตร์ ม.1)</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">สื่อนำเข้าสู่บทเรียน</span>
+                        </div>
+                        <div class="space-y-2 text-sm md:text-base">
+                            <p class="text-slate-700 italic bg-slate-50 p-4 rounded-lg border-l-4 border-slate-300 leading-relaxed">
+                                "<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded border border-rose-200 font-semibold inline-block my-0.5">[R] สวมบทบาทเป็นนักเล่าเรื่องราวประวัติศาสตร์ที่ยอดเยี่ยมที่สุด</span> 
+                                <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-semibold inline-block my-0.5">[T] เขียนสรุปความเป็นมาเบื้องต้นของการสถาปนากรุงศรีอยุธยาโดยสมเด็จพระรามาธิบดีที่ 1</span> 
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold inline-block my-0.5">[C] สำหรับใช้นำเข้าสู่บทเรียนเพื่อปลุกเร้าความสนใจนักเรียน ม.1 หลีกเลี่ยงภาษาโบราณที่อ่านเข้าใจยาก</span> 
+                                <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded border border-indigo-200 font-semibold inline-block my-0.5">[F] แยกการนำเสนอข้อมูลออกเป็น 3 หัวข้อย่อยสั้นกระชับ โดยมีการเลือกนำเอาอิโมจิ (Emoji) มาตกแต่งประกอบให้อ่านง่าย</span>"
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs pt-2">
+                                <div class="p-2 bg-rose-50 text-rose-800 rounded"><strong>[R]:</strong> นักเล่าเรื่องราวประวัติศาสตร์ชั้นยอด</div>
+                                <div class="p-2 bg-amber-50 text-amber-800 rounded"><strong>[T]:</strong> ความเป็นมาสถาปนากรุงศรีอยุธยา</div>
+                                <div class="p-2 bg-emerald-50 text-emerald-800 rounded"><strong>[C]:</strong> ม.1 / ใช้ภาษาทันสมัย / ปลุกเร้าความสนใจ</div>
+                                <div class="p-2 bg-indigo-50 text-indigo-855 rounded"><strong>[F]:</strong> 3 ย่อย / มีอีโมจิตกแต่งน่ารัก</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button onclick="copyPrompt(this, 'สวมบทบาทเป็นนักเล่าเรื่องราวประวัติศาสตร์ที่ยอดเยี่ยมที่สุด เขียนสรุปความเป็นมาเบื้องต้นของการสถาปนากรุงศรีอยุธยาโดยสมเด็จพระรามาธิบดีที่ 1 สำหรับใช้นำเข้าสู่บทเรียนเพื่อปลุกเร้าความสนใจนักเรียน ม.1 หลีกเลี่ยงภาษาโบราณที่อ่านเข้าใจยาก แยกการนำเสนอข้อมูลออกเป็น 3 หัวข้อย่อยสั้นกระชับ โดยมีการเลือกนำเอาอิโมจิ (Emoji) มาตกแต่งประกอบให้อ่านง่าย')" class="text-sm bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 3: AI Image Generation -->
+            <section id="section-3" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 3</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">ชุบชีวิตบทเรียนด้วยภาพถ่ายจาก AI</h2>
+                </div>
+                
+                <!-- 1. Introduction -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-orange-800"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>1. Introduction: ทำไมครูยุคใหม่ต้องใช้ AI สร้างภาพ?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm md:text-base">
+                        <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-crop-simple mr-1"></i> ก้าวข้ามขีดจำกัดเดิมๆ</h4>
+                            <p class="text-slate-600 text-sm">ไม่ต้องเสียเวลาค้นหาภาพใน Google แล้วเจอภาพติดลายน้ำ หรือภาพที่ไม่ตรงใจอีกต่อไป</p>
+                        </div>
+                        <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-scale-balanced mr-1"></i> สร้างความเท่าเทียม</h4>
+                            <p class="text-slate-600 text-sm">ครูทุกคนสามารถมีสิทธิ์เข้าถึงภาพประกอบสื่อการสอนที่สวยงามและมีความพรีเมียมระดับมืออาชีพได้ฟรี</p>
+                        </div>
+                        <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-bolt mr-1"></i> กระตุ้นความสนใจ (Engagement)</h4>
+                            <p class="text-slate-600 text-sm">เด็กๆ จะรู้สึกตื่นตาตื่นใจ ตื่นตัว และสนุกกับรูปภาพใหม่ๆ ที่ตรงกับเนื้อหาที่เรียนในคาบนั้นแบบพอดีเป๊ะ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Core Concept -->
+                <div class="space-y-4 pt-4">
+                    <h3 class="text-xl font-bold text-orange-800"><i class="fa-solid fa-gears mr-2"></i>2. Core Concept: หลักการเขียน Prompt ให้ AI เข้าใจง่ายที่สุด</h3>
+                    <p class="text-slate-600">
+                        เพื่อให้ได้รูปภาพที่สวยงามและตรงใจที่สุด แนะนำให้ยึดหลักสูตรสำเร็จ: <strong class="text-orange-700 bg-orange-50 px-2 py-1 rounded">"ใคร + ทำอะไร + ที่ไหน + สไตล์แบบไหน"</strong> เสมอ
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
+                        <div class="bg-rose-50 border border-rose-100 p-4 rounded-xl">
+                            <h4 class="font-bold text-rose-800 mb-2"><i class="fa-regular fa-circle-xmark mr-1"></i> ตัวอย่างคำสั่งที่ไม่ค่อยเวิร์ก (กว้างเกินไป)</h4>
+                            <p class="italic text-rose-900">"ภาพเด็กผู้หญิงเรียนหนังสือ"</p>
+                            <span class="text-xs text-rose-700 block mt-2">* ผลลัพธ์: AI จะสุ่มองค์ประกอบมั่วสั่ว ได้ผลลัพธ์ไม่ตรงตามจุดประสงค์ของแผนการสอน</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                            <h4 class="font-bold text-emerald-800 mb-2"><i class="fa-regular fa-circle-check mr-1"></i> ตัวอย่างที่แนะนำ (ระบุชัดเจน)</h4>
+                            <p class="italic text-emerald-955 font-medium">"ภาพวาดลายเส้นการ์ตูน 2D, เด็กผู้หญิงใส่ชุดนักเรียนไทย, กำลังส่องกล้องจุลทรรศน์ในห้องแล็บวิทยาศาสตร์, สีสันสดใส"</p>
+                            <span class="text-xs text-emerald-700 block mt-2">* ผลลัพธ์: จะได้รูปภาพตัวละครและฉากหลังที่สอดคล้องกับวิชาวิทยาศาสตร์และคุ้นเคยกับคนไทย</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Workshop & Examples -->
+                <div id="section-3-examples" class="scroll-mt-24 space-y-4 pt-4">
+                    <h3 class="text-xl font-bold text-orange-800"><i class="fa-solid fa-laptop-code mr-2"></i>3. Workshop & Examples: 10 ไอเดียสร้างภาพใช้งานจริง</h3>
+                    <p class="text-slate-600 text-sm md:text-base">
+                        แนะนำให้คุณครูเปิดโปรแกรมสร้างรูปภาพ (แนะนำ Bing Image Creator, Canva หรือ Midjourney) ไปพร้อมๆ กันในเซสชันนี้ โดยเลือกหัวข้อที่สนใจด้านล่างเพื่อคัดลอก Prompt ทั้งภาษาอังกฤษและภาษาไทยไปวางใช้งานได้ตามสะดวกครับ
+                    </p>
+
+                    <!-- Prompt Grid -->
+                    <div class="space-y-6 mt-6">
+                        
+                        <!-- Subcategory: Elementary -->
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-pink-500 rounded"></span> สื่อการสอนระดับประถม / อนุบาล (เน้นน่ารัก เข้าใจง่าย)
+                            </h4>
+                            
+                            <!-- Prompt 1 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">1. ภาพประกอบนิทานหรือบทเรียนภาษาไทย (สัตว์พูดได้)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-pink-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A cute 3D Pixar style cartoon of a smart rabbit wearing glasses, reading a book under a big green tree, colorful, bright, cheerful for children book illustration.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> การ์ตูน 3D สไตล์พิกซาร์ กระต่ายแสนฉลาดใส่แว่นกำลังอ่านหนังสือใต้ต้นไม้ใหญ่ สีสันสดใส เหมาะสำหรับภาพประกอบหนังสือเด็ก</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A cute 3D Pixar style cartoon of a smart rabbit wearing glasses, reading a book under a big green tree, colorful, bright, cheerful for children book illustration.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'การ์ตูน 3D สไตล์พิกซาร์ กระต่ายแสนฉลาดใส่แว่นกำลังอ่านหนังสือใต้ต้นไม้ใหญ่ สีสันสดใส เหมาะสำหรับภาพประกอบหนังสือเด็ก')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 2 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">2. บัตรคำศัพท์ (Flashcard) เรียนรู้เรื่องอาชีพ</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-pink-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A cute chibi character of a friendly female doctor holding a stethoscope, smiling, isolated on a clean white background, vector illustration, sticker style.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ตัวละครชิบิสุดน่ารัก คุณหมอผู้หญิงใจดีถือหูฟังแพทย์ กำลังยิ้ม พื้นหลังสีขาวล้วน ภาพเวกเตอร์ สไตล์สติกเกอร์</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A cute chibi character of a friendly female doctor holding a stethoscope, smiling, isolated on a clean white background, vector illustration, sticker style.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ตัวละครชิบิสุดน่ารัก คุณหมอผู้หญิงใจดีถือหูฟังแพทย์ กำลังยิ้ม พื้นหลังสีขาวล้วน ภาพเวกเตอร์ สไตล์สติกเกอร์')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subcategory: Core Subjects -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-blue-500 rounded"></span> วิชาแกนหลัก (วิทยาศาสตร์ / คณิตศาสตร์ / สังคม)
+                            </h4>
+                            
+                            <!-- Prompt 3 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">3. วิชา วิทยาศาสตร์ (จำลองโครงสร้างที่มองเห็นยาก)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-blue-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A detailed 3D render of a plant cell structure, showing nucleus, chloroplast, and cell wall, clearly labeled parts, educational diagram style, clean studio lighting.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพเรนเดอร์ 3D รายละเอียดสูงของโครงสร้างเซลล์พืช แสดงนิวเคลียส คลอโรพลาสต์ และผนังเซลล์ สไตล์แผนภาพเพื่อการศึกษา</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A detailed 3D render of a plant cell structure, showing nucleus, chloroplast, and cell wall, clearly labeled parts, educational diagram style, clean studio lighting.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพเรนเดอร์ 3D รายละเอียดสูงของโครงสร้างเซลล์พืช แสดงนิวเคลียส คลอโรพลาสต์ และผนังเซลล์ สไตล์แผนภาพเพื่อการศึกษา')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 4 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">4. วิชา ประวัติศาสตร์/สังคม (พาย้อนยุค)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-blue-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A realistic cinematic photo of an ancient Egyptian marketplace near the pyramids, merchants selling spices and fabrics, sunny day, historical reconstruction, 8k resolution.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพถ่ายสมจริงแนวภาพยนตร์ ของตลาดอียิปต์โบราณใกล้พีระมิด พ่อค้าขายเครื่องเทศและผ้า วันแดดจ้า ภาพจำลองประวัติศาสตร์</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A realistic cinematic photo of an ancient Egyptian marketplace near the pyramids, merchants selling spices and fabrics, sunny day, historical reconstruction, 8k resolution.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพถ่ายสมจริงแนวภาพยนตร์ ของตลาดอียิปต์โบราณใกล้พีระมิด พ่อค้าขายเครื่องเทศและผ้า วันแดดจ้า ภาพจำลองประวัติศาสตร์')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 5 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">5. วิชา คณิตศาสตร์ (สร้างโจทย์ปัญหาให้เห็นภาพ)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-blue-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A bright and colorful flat vector illustration of a birthday party table with a delicious chocolate cake cut into 4 equal slices, perfect for a fraction math lesson.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพเวกเตอร์แบนๆ สีสันสดใส ของโต๊ะปาร์ตี้วันเกิดที่มีเค้กช็อกโกแลตน่าทานถูกตัดแบ่งเป็น 4 ส่วนเท่าๆ กัน เหมาะสำหรับบทเรียนคณิตศาสตร์เรื่องเศษส่วน</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A bright and colorful flat vector illustration of a birthday party table with a delicious chocolate cake cut into 4 equal slices, perfect for a fraction math lesson.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพเวกเตอร์แบนๆ สีสันสดใส ของโต๊ะปาร์ตี้วันเกิดที่มีเค้กช็อกโกแลตน่าทานถูกตัดแบ่งเป็น 4 ส่วนเท่าๆ กัน เหมาะสำหรับบทเรียนคณิตศาสตร์เรื่องเศษส่วน')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subcategory: Deco -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-purple-500 rounded"></span> ตกแต่งห้องเรียน และกิจกรรมสร้างสรรค์
+                            </h4>
+                            
+                            <!-- Prompt 6 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">6. ตกแต่งป้ายนิเทศ (จัดบอร์ดหน้าห้องเรียน)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-purple-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A beautiful watercolor border of tropical leaves and colorful flowers, blank white space in the middle for text, cute forest animals peek from corners, classroom decoration.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ขอบภาพสีน้ำรูปใบไม้เขตร้อนและดอกไม้หลากสี มีพื้นที่ว่างสีขาวตรงกลางสำหรับใส่ข้อความ มีสัตว์ป่าผู้น่ารักแอบมองจากมุมภาพ สำหรับตกแต่งห้องเรียน</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A beautiful watercolor border of tropical leaves and colorful flowers, blank white space in the middle for text, cute forest animals peek from corners, classroom decoration.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ขอบภาพสีน้ำรูปใบไม้เขตร้อนและดอกไม้หลากสี มีพื้นที่ว่างสีขาวตรงกลางสำหรับใส่ข้อความ มีสัตว์ป่าผู้น่ารักแอบมองจากมุมภาพ สำหรับตกแต่งห้องเรียน')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 7 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">7. ภาพระบายสี (Coloring Page) สำหรับเด็ก</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-purple-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">Black and white coloring page for kids, a cute astronaut floating in space next to planets and stars, clean bold outlines, no shading, pure white background.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพระบายสีขาวดำสำหรับเด็ก นักบินอวกาศผู้น่ารักลอยอยู่ในอวกาศข้างๆ ดาวเคราะห์และดวงดาว เส้นขอบหนาสะอาด ไม่มีเงา พื้นหลังขาวล้วน</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'Black and white coloring page for kids, a cute astronaut floating in space next to planets and stars, clean bold outlines, no shading, pure white background.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพระบายสีขาวดำสำหรับเด็ก นักบินอวกาศผู้น่ารักลอยอยู่ในอวกาศข้างๆ ดาวเคราะห์และดวงดาว เส้นขอบหนาสะอาด ไม่มีเงา พื้นหลังขาวล้วน')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 8 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">8. เกียรติบัตร / ของรางวัลชมเชยเด็กนักเรียน</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-purple-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A magical golden trophy with sparkling stars and a rainbow in the background, cute cartoon style, achievement award illustration for elementary students.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ถ้วยรางวัลสีทองประกายเวทมนตร์พร้อมดาวระยิบระยับและสายรุ้งเป็นพื้นหลัง สไตล์การ์ตูนน่ารัก ภาพประกอบรางวัลความสำเร็จสำหรับนักเรียนประถม</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A magical golden trophy with sparkling stars and a rainbow in the background, cute cartoon style, achievement award illustration for elementary students.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ถ้วยรางวัลสีทองประกายเวทมนตร์พร้อมดาวระยิบระยับและสายรุ้งเป็นพื้นหลัง สไตล์การ์ตูนน่ารัก ภาพประกอบรางวัลความสำเร็จสำหรับนักเรียนประถม')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subcategory: Games -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-amber-500 rounded"></span> สร้างกิจกรรมกระตุ้นสมอง (Warm-up / Gamification)
+                            </h4>
+                            
+                            <!-- Prompt 9 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">9. เกม "จับผิดภาพ" หรือ "ตามหาสิ่งของ" (Ice Breaking)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-amber-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A highly detailed 'Find the hidden objects' puzzle game image, a messy toy room full of teddy bears, toy cars, and blocks, bright colors, isometric view.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพเกมปริศนา "ตามหาของที่ซ่อนอยู่" ที่มีรายละเอียดสูง ห้องของเล่นที่รกๆ เต็มไปด้วยตุ๊กตาหมี รถของเล่น และบล็อกไม้ สีสันสดใส มุมมองไอโซเมตริก</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A highly detailed \'Find the hidden objects\' puzzle game image, a messy toy room full of teddy bears, toy cars, and blocks, bright colors, isometric view.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพเกมปริศนา \"ตามหาของที่ซ่อนอยู่\" ที่มีรายละเอียดสูง ห้องของเล่นที่รกๆ เต็มไปด้วยตุ๊กตาหมี รถของเล่น และบล็อกไม้ สีสันสดใส มุมมองไอโซเมตริก')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Prompt 10 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">10. กิจกรรมจินตนาการ "ถ้าสิ่งนี้ผสมกับสิ่งนั้น" (ฝึกการคิดนอกกรอบ)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-amber-500 text-sm font-mono space-y-2">
+                                    <p class="text-slate-800 font-semibold select-all">A creative surreal photo of a fruit animal, a hybrid creature between an elephant and a watermelon, walking in a futuristic jungle, realistic texture, highly detailed.</p>
+                                    <p class="text-xs text-slate-500 font-sans italic"><strong>คำแปล / Prompt ไทย:</strong> ภาพถ่ายแนวเหนือจริงที่สร้างสรรค์ของสัตว์ผลไม้ สิ่งมีชีวิตผสมระหว่างช้างกับแตงโม กำลังเดินอยู่ในป่าแห่งอนาคต พื้นผิวสมจริง รายละเอียดสูง</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 justify-end">
+                                    <button onclick="copyPrompt(this, 'A creative surreal photo of a fruit animal, a hybrid creature between an elephant and a watermelon, walking in a futuristic jungle, realistic texture, highly detailed.')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt อังกฤษ
+                                    </button>
+                                    <button onclick="copyPrompt(this, 'ภาพถ่ายแนวเหนือจริงที่สร้างสรรค์ของสัตว์ผลไม้ สิ่งมีชีวิตผสมระหว่างช้างกับแตงโม กำลังเดินอยู่ในป่าแห่งอนาคต พื้นผิวสมจริง รายละเอียดสูง')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอก Prompt ไทย
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 4. Conclusion & Caution -->
+                <div class="space-y-4 pt-6 border-t border-slate-100">
+                    <h3 class="text-xl font-bold text-orange-800"><i class="fa-solid fa-triangle-exclamation mr-2"></i>4. สรุปท้ายคาบ & ข้อควรระวังในการนำไปใช้</h3>
+                    <div class="space-y-3 text-slate-600 text-sm md:text-base">
+                        <div class="flex gap-3">
+                            <i class="fa-solid fa-copyright text-blue-500 text-xl shrink-0 mt-1"></i>
+                            <span><strong>ลิขสิทธิ์และการใช้งาน:</strong> ภาพที่เจเนอเรตขึ้นจาก AI ส่วนใหญ่สามารถนำมาประยุกต์ใช้เพื่อความบันเทิงและการศึกษาในห้องเรียนได้โดยตรงอย่างไม่มีปัญหา แต่ควรระมัดระวังเรื่องกฎระเบียบหากจะนำไปตีพิมพ์เผยแพร่ในเชิงพาณิชย์ (ซึ่งขึ้นอยู่กับข้อตกลงและนโยบายของแพลตฟอร์ม AI นั้นๆ)</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <i class="fa-solid fa-eye-dropper text-purple-500 text-xl shrink-0 mt-1"></i>
+                            <span><strong>การตรวจสอบความถูกต้อง (Fact-check):</strong> พึงระลึกว่า AI มักวาดรายละเอียดเล็กน้อยผิดเพี้ยนได้บ่อยครั้ง เช่น สัดส่วนนิ้วมือที่ขาดหรือเกิน หรือสัดส่วนทางวิทยาศาสตร์ที่ผิดไปจากความจริง คุณครูจำเป็นต้องช่วยคัดกรองเนื้อหาเหล่านี้ให้ถูกต้องสมบูรณ์ก่อนนำไปยื่นให้นักเรียนครับ</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Gemini Canvas (2026 Updated) -->
+            <section id="section-4" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 4</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Gemini Canvas (ข้อมูลอัปเดตล่าสุดปี 2026)</h2>
+                </div>
+                
+                <p class="text-slate-600">
+                    ปัจจุบันพื้นที่ทำงานของ <strong>Canvas</strong> ได้พัฒนาไปไกลกว่าการเป็นแค่หน้าต่างพิมพ์เอกสารทั่วไป โดยถูกยกระดับให้เป็น <strong class="text-orange-700 bg-orange-50 px-1 rounded">"พื้นที่สร้างสรรค์และแปลงข้อมูลแบบมัลติฟังก์ชัน"</strong> ที่ผสานการทำงานร่วมกับฟีเจอร์ระดับสูงอย่าง <strong>Deep Research</strong> และระบบความบันเทิง/การศึกษาได้อย่างสมบูรณ์แบบ
+                </p>
+
+                <!-- Key Features Grid -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-orange-850"><i class="fa-solid fa-rocket mr-2 text-orange-600"></i>🚀 สรุปฟังก์ชันอัปเดตล่าสุดของ Gemini Canvas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
+                        <div class="bg-orange-50/40 p-5 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-search-plus mr-1"></i> เชื่อมต่อกับ Deep Research โดยตรง</h4>
+                            <p class="text-slate-600 text-sm">เมื่อคุณครูสั่งให้ Gemini ทำรายงานวิจัยเชิงลึก (Deep Research) คุณครูสามารถดึงข้อมูลรายงานนั้นเข้าสู่ Canvas ได้ทันทีเพื่อแปลงข้อมูลเป็นเว็บบอร์ด ใบงาน ควิซ หรือหน้าเว็บจำลองในคลิกเดียว</p>
+                        </div>
+                        <div class="bg-orange-50/40 p-5 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-file-powerpoint mr-1"></i> สร้างสไลด์นำเสนอแบบสมบูรณ์ (Full Slide Generation)</h4>
+                            <p class="text-slate-600 text-sm">ไม่ใช่แค่คิดโครงร่างข้อความอีกต่อไป ปัจจุบัน Canvas สามารถคำนวณธีม จัด Layout และใส่ภาพประกอบที่เหมาะสมให้เสร็จสรรพ พร้อมปุ่ม Export ไปยัง <strong>Google Slides</strong> หรือแปลงไฟล์เป็น <strong>Microsoft PowerPoint (.pptx)</strong> และ <strong>PDF</strong> ได้ทันที</p>
+                        </div>
+                        <div class="bg-orange-50/40 p-5 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-microphone-lines mr-1"></i> ฟังก์ชัน Audio Overview (พอดแคสต์สรุปเนื้อหา)</h4>
+                            <p class="text-slate-600 text-sm">สามารถแปลงเนื้อหาในหน้า Canvas หรือไฟล์เอกสารที่คุณครูอัปโหลด ให้กลายเป็นบทสนทนาพอดแคสต์เล่าเรื่องโดย AI สองคน (โต้ตอบกันอย่างเป็นธรรมชาติ) เหมาะสำหรับสร้างเป็นสื่อการฟังให้ผู้เรียน</p>
+                        </div>
+                        <div class="bg-orange-50/40 p-5 rounded-xl border border-orange-100">
+                            <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-code mr-1"></i> Interactive App Coding (Vibe Coding)</h4>
+                            <p class="text-slate-600 text-sm">สำหรับครูสายเทคโนโลยีหรือคอมพิวเตอร์ Canvas สามารถเขียนโค้ด HTML, CSS, JavaScript หรือ React แล้วเปิด "หน้าต่าง Preview" ให้เห็นหน้าตาแอปพลิเคชันตัวอย่างและทดลองกดเล่นได้ทันทีในหน้าจอเดียว</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-orange-50/40 p-5 rounded-xl border border-orange-100 text-sm md:text-base">
+                        <h4 class="font-bold text-orange-900 mb-1"><i class="fa-solid fa-palette mr-1"></i> สร้างสื่อการสอนยุคใหม่ได้หลากหลาย</h4>
+                        <p class="text-slate-600 text-sm">เมนูสร้างสรรค์ในปัจจุบันรองรับการคลิกสร้าง Infographics, แฟลชการ์ด (Flashcards), ควิซตอบคำถาม และการวาดภาพประกอบนิทรรศการ (Illustrated Storybook)</p>
+                    </div>
+                </div>
+
+                <!-- 10 Prompts Area -->
+                <div id="section-4-examples" class="scroll-mt-24 space-y-6 pt-4">
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-regular fa-clipboard text-orange-600"></i>
+                        📝 10 ตัวอย่างพรอมต์ยกระดับห้องเรียนบน Canvas สำหรับคุณครู
+                    </h3>
+                    <p class="text-slate-600 text-sm">
+                        คุณครูสามารถคัดลอกข้อความด้านล่างนี้ไปปรับใช้ได้เลยครับ ระบบจะเปิดหน้าต่าง Canvas เพื่อสร้างชิ้นงานให้ทันทีตามคำสั่ง:
+                    </p>
+
+                    <div class="space-y-6">
+                        
+                        <!-- Group 1 -->
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-orange-600 rounded"></span> [หมวดควิซ เกม และพอดแคสต์เสียง]
+                            </h4>
+                            
+                            <!-- Ex 1 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 1: พรอมต์สร้างข้อสอบและควิซแบบโต้ตอบ (Interactive Quiz)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยสร้างชุดคำถามทบทวนบทเรียน เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'การแบ่งเซลล์แบบ Mitosis และ Meiosis'</span> สำหรับนักเรียนชั้น <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">ม.4</span> จำนวน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">5 ข้อ</span> ในรูปแบบควิซบน Canvas ขอแบบที่มีตัวเลือกคำตอบที่ชัดเจน และมีโครงสร้างที่สามารถแปลงไปทำเป็นแฟลชการ์ด (Flashcards) เพื่อให้เด็กใช้สแกนจำศัพท์เทคนิคชีววิทยาได้ง่าย ๆ
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยสร้างชุดคำถามทบทวนบทเรียน เรื่อง \'การแบ่งเซลล์แบบ Mitosis และ Meiosis\' สำหรับนักเรียนชั้น ม.4 จำนวน 5 ข้อ ในรูปแบบควิซบน Canvas ขอแบบที่มีตัวเลือกคำตอบที่ชัดเจน และมีโครงสร้างที่สามารถแปลงไปทำเป็นแฟลชการ์ด (Flashcards) เพื่อให้เด็กใช้สแกนจำศัพท์เทคนิคชีววิทยาได้ง่าย ๆ')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ex 2 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 2: พรอมต์เตรียมข้อมูลเพื่อทำ Audio Overview (พอดแคสต์การศึกษา)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    สรุปเนื้อหาเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'ประวัติศาสตร์การปฏิวัติอุตสาหกรรมยุคที่ 1 ถึง 4'</span> บน Canvas โดยเน้นการจัดหมวดหมู่ประเด็นสำคัญและผลกระทบต่อโลก เพื่อที่ฉันจะใช้ฟีเจอร์ Audio Overview สั่งให้ AI เจนเนอเรตเป็นไฟล์เสียงพอดแคสต์ความยาว <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">5 นาที</span> ให้นักเรียนเปิดฟังในคาบโฮมรูม
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'สรุปเนื้อหาเรื่อง \'ประวัติศาสตร์การปฏิวัติอุตสาหกรรมยุคที่ 1 ถึง 4\' บน Canvas โดยเน้นการจัดหมวดหมู่ประเด็นสำคัญและผลกระทบต่อโลก เพื่อที่ฉันจะใช้ฟีเจอร์ Audio Overview สั่งให้ AI เจนเนอเรตเป็นไฟล์เสียงพอดแคสต์ความยาว 5 นาที ให้นักเรียนเปิดฟังในคาบโฮมรูม')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 2 -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-orange-600 rounded"></span> [หมวดสร้างสไลด์และสื่อนำเสนอทันที]
+                            </h4>
+                            
+                            <!-- Ex 3 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 3: พรอมต์สร้างชุดสไลด์พร้อมภาพประกอบเพื่อเปิดสอน (Full Deck Generation)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยสร้างชุดสไลด์นำเสนอ (Presentation Deck) เรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'วิกฤตการณ์ภาวะโลกร้อนและแนวทางการแก้ปัญหาด้วยพลังงานสะอาด'</span> สำหรับนักเรียน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">ม.ต้น</span> จำนวน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">10 สไลด์</span> โดยบน Canvas ให้เลือกโทนสีเขียว-ฟ้าที่ดูเป็นมิตรกับสิ่งแวดล้อม จัดวางเนื้อหาข้อความแต่ละหน้าให้กระชับ และแนะนำภาพถ่ายหรือกราฟิกที่ควรใส่ในแต่ละสไลด์เพื่อเตรียม Export ไปยัง Google Slides
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยสร้างชุดสไลด์นำเสนอ (Presentation Deck) เรื่อง \'วิกฤตการณ์ภาวะโลกร้อนและแนวทางการแก้ปัญหาด้วยพลังงานสะอาด\' สำหรับนักเรียน ม.ต้น จำนวน 10 สไลด์ โดยบน Canvas ให้เลือกโทนสีเขียว-ฟ้าที่ดูเป็นมิตรกับสิ่งแวดล้อม จัดวางเนื้อหาข้อความแต่ละหน้าให้กระชับ และแนะนำภาพถ่ายหรือกราฟิกที่ควรใส่ในแต่ละสไลด์เพื่อเตรียม Export ไปยัง Google Slides')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ex 4 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 4: พรอมต์แปลงเนื้อหาเป็นอินโฟกราฟิก (Infographic Outline)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ฉันต้องการสรุปขั้นตอน <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'การทำ CPR และการปฐมพยาบาลเบื้องต้น'</span> ช่วยจัดหน้าข้อมูลบน Canvas ให้ออกมาในรูปแบบโครงสร้างอินโฟกราฟิก (Infographic Layout) ที่แบ่งข้อมูลเป็นลำดับขั้นตอน 1, 2, 3, 4 มีสัญลักษณ์ (Icons) แนะนำประกอบแต่ละขั้น เพื่อให้นักเรียนเข้าใจและจำไปใช้ได้ทันทีในสถานการณ์จริง
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ฉันต้องการสรุปขั้นตอน \'การทำ CPR และการปฐมพยาบาลเบื้องต้น\' ช่วยจัดหน้าข้อมูลบน Canvas ให้ออกมาในรูปแบบโครงสร้างอินโฟกราฟิก (Infographic Layout) ที่แบ่งข้อมูลเป็นลำดับขั้นตอน 1, 2, 3, 4 มีสัญลักษณ์ (Icons) แนะนำประกอบแต่ละขั้น เพื่อให้นักเรียนเข้าใจและจำไปใช้ได้ทันทีในสถานการณ์จริง')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 3 -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-orange-600 rounded"></span> [หมวดครูสายวิทย์-คณิต และเทคโนโลยี]
+                            </h4>
+                            
+                            <!-- Ex 5 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 5: พรอมต์เขียนโค้ดแอปสื่อการสอนแบบเปิด Preview ได้ (Vibe Coding)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยเขียนโค้ด HTML และ JavaScript บน Canvas เพื่อสร้างเครื่องมือคำนวณและจำลอง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'การหาค่าดัชนีมวลกาย (BMI Calculator)'</span> สำหรับวิชาสุขศึกษา โดยขอให้มีช่องกรอกน้ำหนักและส่วนสูง มีปุ่มกดคำนวณ แล้วแสดงผลลัพธ์เป็นระดับสุขภาพ (ผอม, ปกติ, อ้วน) พร้อมแถบสีแจ้งเตือน เพื่อให้ฉันเปิดหน้า Preview ให้นักเรียนดูการทำงานของระบบ
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยเขียนโค้ด HTML และ JavaScript บน Canvas เพื่อสร้างเครื่องมือคำนวณและจำลอง \'การหาค่าดัชนีมวลกาย (BMI Calculator)\' สำหรับวิชาสุขศึกษา โดยขอให้มีช่องกรอกน้ำหนักและส่วนสูง มีปุ่มกดคำนวณ แล้วแสดงผลลัพธ์เป็นระดับสุขภาพ (ผอม, ปกติ, อ้วน) พร้อมแถบสีแจ้งเตือน เพื่อให้ฉันเปิดหน้า Preview ให้นักเรียนดูการทำงานของระบบ')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ex 6 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 6: พรอมต์แก้สมการและสูตรชั้นสูงด้วย LaTeX</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    สร้างใบสรุปสูตรและการคำนวณเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'ฟิสิกส์นิวเคลียร์: ครึ่งชีวิต (Half-life)'</span> จำนวน 3 ตัวอย่างโจทย์ โดยแสดงการแปลงสูตรและสัญลักษณ์ทางฟิสิกส์ด้วยระบบ LaTeXทั้งหมด เพื่อให้ฟอนต์และเครื่องหมายคณิตศาสตร์แสดงผลบน Canvas ได้อย่างถูกต้อง สวยงาม คมชัด ไม่เพี้ยนเวลาส่งออกเป็น PDF
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'สร้างใบสรุปสูตรและการคำนวณเรื่อง \'ฟิสิกส์นิวเคลียร์: ครึ่งชีวิต (Half-life)\' จำนวน 3 ตัวอย่างโจทย์ โดยแสดงการแปลงสูตรและสัญลักษณ์ทางฟิสิกส์ด้วยระบบ LaTeXทั้งหมด เพื่อให้ฟอนต์และเครื่องหมายคณิตศาสตร์แสดงผลบน Canvas ได้อย่างถูกต้อง สวยงาม คมชัด ไม่เพี้ยนเวลาส่งออกเป็น PDF')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 4 -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-orange-600 rounded"></span> [หมวดการวางแผนและการจัดการเรียนรู้ขั้นสูง]
+                            </h4>
+                            
+                            <!-- Ex 7 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 7: พรอมต์แปลงผลวิจัยเป็นแผนการสอน (Deep Research Integration)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    หลังจากที่สืบค้นข้อมูลเชิงลึกเสร็จแล้ว ช่วยนำข้อมูลงานวิจัยล่าสุดเกี่ยวกับ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'ผลกระทบของ Microplastic ในอาหารทะเลไทย'</span> มาสรุปและร่างเป็นแผนการจัดการเรียนรู้ 1 คาบ (60 นาที) บน Canvas โดยเน้นให้เด็ก ๆ ร่วมกันอภิปรายปัญหาและหาแนวทางลดการใช้พลาสติกในโรงเรียน
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'หลังจากที่สืบค้นข้อมูลเชิงลึกเสร็จแล้ว ช่วยนำข้อมูลงานวิจัยล่าสุดเกี่ยวกับ \'ผลกระทบของ Microplastic ในอาหารทะเลไทย\' มาสรุปและร่างเป็นแผนการจัดการเรียนรู้ 1 คาบ (60 นาที) บน Canvas โดยเน้นให้เด็ก ๆ ร่วมกันอภิปรายปัญหาและหาแนวทางลดการใช้พลาสติกในโรงเรียน')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ex 8 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 8: พรอมต์สร้างแผนการสอนแยกกลุ่มผู้เรียน (Differentiated Lesson Plan)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยออกแบบใบกิจกรรมเรื่อง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'การเขียนโปรแกรมด้วยภาษา Python เบื้องต้น'</span> โดยแบ่งโจทย์การเรียนรู้ออกเป็น 3 ระดับบน Canvas หน้าเดียวกัน: ระดับที่ 1 สำหรับกลุ่มเริ่มต้น (เติมโค้ดคำสั่งที่หายไป), ระดับที่ 2 สำหรับกลุ่มปานกลาง (เขียนโค้ดคำนวณเกรด), และระดับที่ 3 สำหรับกลุ่มท้าทาย (โจทย์ลูปซ้อนลูป)
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยออกแบบใบกิจกรรมเรื่อง \'การเขียนโปรแกรมด้วยภาษา Python เบื้องต้น\' โดยแบ่งโจทย์การเรียนรู้ออกเป็น 3 ระดับบน Canvas หน้าเดียวกัน: ระดับที่ 1 สำหรับกลุ่มเริ่มต้น (เติมโค้ดคำสั่งที่หายไป), ระดับที่ 2 สำหรับกลุ่มปานกลาง (เขียนโค้ดคำนวณเกรด), และระดับที่ 3 สำหรับกลุ่มท้าทาย (โจทย์ลูปซ้อนลูป)')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 5 -->
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-orange-600 rounded"></span> [หมวดบอร์ดเกมสร้างสรรค์และงานบริหารครู]
+                            </h4>
+                            
+                            <!-- Ex 9 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 9: พรอมต์ออกแบบการ์ดเกมในห้องเรียน (Educational Card Game)</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยออกแบบไอเดียเกมการ์ดชื่อ <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'พ่อค้าแห่งเส้นทางสายไหม'</span> เพื่อใช้สอนวิชาประวัติศาสตร์โลก ช่วยกำหนดกฎกติกาการเล่นอย่างง่าย และร่างข้อความตัวอย่างสำหรับ 'การ์ดสินค้า' และ 'การ์ดเหตุการณ์พลิกผัน' จำนวน 15 ใบ ลงบน Canvas เพื่อให้ฉันสามารถปรินท์และตัดเป็นแผ่นให้นักเรียนเล่นในกลุ่ม
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยออกแบบไอเดียเกมการ์ดชื่อ \'พ่อค้าแห่งเส้นทางสายไหม\' เพื่อใช้สอนวิชาประวัติศาสตร์โลก ช่วยกำหนดกฎกติกาการเล่นอย่างง่าย และร่างข้อความตัวอย่างสำหรับ \'การ์ดสินค้า\' และ \'การ์ดเหตุการณ์พลิกผัน\' จำนวน 15 ใบ ลงบน Canvas เพื่อให้ฉันสามารถปรินท์และตัดเป็นแผ่นให้นักเรียนเล่นในกลุ่ม')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ex 10 -->
+                            <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 shadow-sm">
+                                <h5 class="font-bold text-slate-800 text-base">ตัวอย่างที่ 10: พรอมต์สร้างคู่มือโครงงานพร้อม Checklist สรุปส่งงาน</h5>
+                                <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-orange-500 text-sm font-mono leading-relaxed select-all">
+                                    ช่วยสร้าง <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded border border-amber-300 font-bold">'คู่มือการทำโครงงานนวัตกรรมชุมชน'</span> ความยาว 1 หน้า Canvas สำหรับแจกให้นักเรียน ม.ปลาย โดยหัวข้อสุดท้ายของหน้าขอให้ทำเป็นตารางเช็คลิสต์ (Submission Checklist) ตรวจสอบความเรียบร้อยก่อนส่ง เช่น รูปเล่ม, รายชื่อสมาชิก, บทคัดย่อ และสไลด์นำเสนอ เพื่อให้เด็ก ๆ ใช้ประเมินตนเองก่อนส่งครู
+                                </div>
+                                <div class="flex justify-end">
+                                    <button onclick="copyPrompt(this, 'ช่วยสร้าง \'คู่มือการทำโครงงานนวัตกรรมชุมชน\' ความยาว 1 หน้า Canvas สำหรับแจกให้นักเรียน ม.ปลาย โดยหัวข้อสุดท้ายของหน้าขอให้ทำเป็นตารางเช็คลิสต์ (Submission Checklist) ตรวจสอบความเรียบร้อยก่อนส่ง เช่น รูปเล่ม, รายชื่อสมาชิก, บทคัดย่อ และสไลด์นำเสนอ เพื่อให้เด็ก ๆ ใช้ประเมินตนเองก่อนส่งครู')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                        <i class="fa-regular fa-copy"></i> คัดลอกพรอมต์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Tip card -->
+                <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl mt-6">
+                    <h4 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> 💡 เคล็ดลับการใช้งานปัจจุบัน:
+                    </h4>
+                    <p class="text-amber-955 text-sm mt-1 leading-relaxed">
+                        บนหน้าจอ Canvas คุณครูสามารถใช้คุณสมบัติพิเศษโดยการลากเมาส์คลุมข้อความเฉพาะจุด (Inline Editing) แล้วพิมพ์บอก Gemini เป็นภาษาไทยได้โดยตรง เช่น <span class="bg-white/80 px-1 py-0.5 rounded font-mono">"เพิ่มตารางสรุปตรงนี้"</span> หรือ <span class="bg-white/80 px-1 py-0.5 rounded font-mono">"เปลี่ยนข้อความประโยคนี้ให้สุภาพและเป็นทางการขึ้น"</span> แล้วระบบจะทำการประมวลผลแก้ไขเฉพาะจุดนั้นให้ภายในไม่กี่วินาทีครับ
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Super Prompt สร้างเว็บไซต์ครู -->
+            <section id="section-5" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 5</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Super Prompt สร้างเว็บไซต์ครู</h2>
+                </div>
+                
+                <p class="text-slate-600">
+                    Super Prompt ที่ออกแบบมาเพื่อให้ครูทุกวิชา สามารถนำไปวางใน AI (เช่น ChatGPT, Claude, Gemini) เพื่อสร้างโครงสร้างหน้าเว็บไซต์สำหรับการเรียนการสอน (Course Website) ได้ทันทีครับ คุณครูสามารถก๊อปปี้ข้อความในกรอบด้านล่างนี้ แล้วเปลี่ยนข้อมูลในวงเล็บไฮไลท์สีเหลืองส้ม <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 font-bold text-sm">[...]</span> ให้เป็นวิชาของตัวเองได้เลยครับ
+                </p>
+
+                <!-- Prompt Code Block Area -->
+                <div class="bg-stone-50 rounded-xl border border-stone-200 relative overflow-hidden">
+                    <div class="flex justify-between items-center bg-stone-100 px-4 py-2.5 rounded-t-xl border-b border-stone-200">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Super Prompt Template</span>
+                        <button onclick="copyTextFromId(this, 'super-prompt-text')" class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-medium py-1.5 px-4 rounded-lg flex items-center gap-1 transition active:scale-95">
+                            <i class="fa-regular fa-copy"></i> คัดลอก Super Prompt
+                        </button>
+                    </div>
+                    <pre id="super-prompt-text" class="p-5 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap leading-relaxed select-all">คุณคือผู้เชี่ยวชาญด้านการออกแบบเว็บไซต์เพื่อการศึกษา (Educational UX/UI Designer) และนักออกแบบการเรียนรู้ (Instructional Designer) 
+
+ฉันต้องการให้คุณเขียนโค้ด HTML และ CSS (รวมไว้ในไฟล์เดียวกันด้วยแท็ก &lt;style&gt;) เพื่อสร้างหน้าเว็บไซต์รายวิชาสำหรับครูนำไปใช้จัดการเรียนการสอน 
+
+ข้อมูลรายวิชาของฉันคือ:
+- ชื่อวิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ใส่ชื่อวิชา เช่น ภาษาอังกฤษพื้นฐาน, วิทยาศาสตร์ ม.3, ประวัติศาสตร์ไทย]</span>
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ใส่ระดับชั้น เช่น มัธยมศึกษาปีที่ 3]</span>
+- ชื่อครูผู้สอน: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ใส่ชื่อครูผู้สอน หรือ เว้นว่างไว้]</span>
+- โทนสีของเว็บไซต์ที่อยากได้: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ใส่โทนสีที่ชอบ เช่น ฟ้า-ขาว สบายตา, ส้ม-เทา ทันสมัย, เขียว-พาสเทล]</span>
+
+โครงสร้างหน้าเว็บที่ต้องมีในหน้าเดียว (Single Page HTML) มีดังนี้:
+
+1. Header & Hero Section: 
+- ชื่อวิชาและระดับชั้นเด่นชัด มีปุ่ม (Call to Action) "เข้าสู่บทเรียน" และ "ดาวน์โหลดประมวลรายวิชา (Syllabus)"
+
+2. Course Overview & Objectives:
+- กล่องข้อความสั้นๆ อธิบายภาพรวมวิชา และเป้าหมายการเรียนรู้ (ทำเป็นไอคอนหรือ Bullet point สวยๆ)
+
+3. Learning Modules (ส่วนเนื้อหาบทเรียน):
+- ทำเป็นระบบ Card หรือ Grid แบ่งเป็นอย่างน้อย 3 หน่วยการเรียนรู้ (Module 1, 2, 3) 
+- ในแต่ละ Card ต้องมีพื้นที่สำหรับ: ชื่อหน่วย, คำอธิบายสั้นๆ, และปุ่มสำหรับกด "อ่านเนื้อหา" หรือ "ดูวิดีโอ"
+
+4. Resource & Assignment Center:
+- พื้นที่สำหรับแจกตารางงาน/การบ้าน และลิงก์ดาวน์โหลดเอกสารประกอบการเรียน (เช่น สไลด์, ใบงาน)
+
+5. Teacher Contact:
+- ส่วนท้ายเว็บ (Footer) สำหรับให้ข้อมูลการติดต่อครูผู้สอน (เช่น Email, Line OpenChat, หรือกล่องส่งข้อความ)
+
+ข้อกำหนดด้านการออกแบบ (Design Requirements):
+- ต้องเป็น Responsive Design (แสดงผลได้สวยงามทั้งบนคอมพิวเตอร์และมือถือ)
+- ใช้ฟอนต์ภาษาไทยที่ดูทันสมัย อ่านง่าย (แนะนำให้ดึง Google Fonts เช่น 'Sarabun' หรือ 'Kanit' มาใช้)
+- หน้าตาเว็บต้องสะอาด มินิมอล มีการใช้เงา (Box shadow) และฟังก์ชัน Hover ที่ปุ่มเพื่อความน่าสนใจ
+- เขียนโค้ดให้สะอาด เป็นระเบียบ มี Comment บอกชัดเจนว่าส่วนไหนคืออะไร เพื่อให้ครูนำไปแก้ไขข้อความเองได้ง่าย
+
+ขอโค้ด HTML + CSS ที่พร้อมใช้งานทันที โดยไม่ต้องอธิบายวิธีเขียนโค้ด ให้แสดงตัวโค้ดออกมาเลย</pre>
+                </div>
+
+                <!-- Tips callouts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl">
+                        <h4 class="font-bold text-amber-900 text-base flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-circle-info"></i> วิธีนำไปใช้:
+                        </h4>
+                        <p class="text-sm text-amber-800 leading-relaxed">
+                            เมื่อ AI เจนโค้ดออกมาให้แล้ว ให้ก๊อปปี้โค้ดทั้งหมดไปวางในโปรแกรม <strong>Notepad</strong> (Windows) หรือ <strong>TextEdit</strong> (Mac) แล้วบันทึกไฟล์เป็นชื่อ <code class="bg-white px-1.5 py-0.5 rounded font-mono border border-amber-200 font-semibold">index.html</code> ก็จะได้หน้าเว็บพร้อมเปิดใช้งานบนเบราว์เซอร์ทันทีครับ
+                        </p>
+                    </div>
+                    <div class="bg-orange-50 border border-orange-100 p-5 rounded-xl">
+                        <h4 class="font-bold text-orange-900 text-base flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> การต่อยอด:
+                        </h4>
+                        <p class="text-sm text-orange-800 leading-relaxed">
+                            คุณครูสามารถนำโค้ดนี้ไปแปะในแพลตฟอร์มสร้างเว็บสำเร็จรูปที่รองรับการฝังโค้ด (เช่น <strong>Google Sites</strong> โดยใช้บล็อก "ฝังโค้ด / Embed Code") เพื่อให้ได้หน้าตาเว็บที่สวยงามและยืดหยุ่นกว่าเทมเพลตทั่วไปได้ครับ
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Super Prompt สร้างเกมการเรียนรู้และเกม AR -->
+            <section id="section-6" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 6</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Super Prompt สร้างเกมการเรียนรู้และเกม AR</h2>
+                </div>
+                
+                <p class="text-slate-600">
+                    นี่คือ <strong>10 Super Prompts</strong> ที่ออกแบบมาให้ยืดหยุ่นสูงมาก แบ่งเป็น 2 หัวข้อย่อย ได้แก่ เกมการเรียนรู้ทั่วไป และเกมการเรียนรู้ AR คุณครูสามารถก๊อปปี้ข้อความในกล่องไปวางใน AI (เช่น ChatGPT, Claude, Gemini) แล้วเปลี่ยนข้อมูลในวงเล็บไฮไลท์สีเหลืองส้ม <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 font-bold text-sm">[...]</span> ก็จะได้โครงสร้างรวมถึงเนื้อหากิจกรรมเกมนวัตกรรมพร้อมจัดกิจกรรมในห้องเรียนทันทีครับ
+                </p>
+
+                <div id="section-6-general-games" class="scroll-mt-24 border-l-4 border-amber-400 bg-orange-50/70 pl-4 pr-4 py-3 rounded-r-xl">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">หัวข้อย่อย</span>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900">เกมการเรียนรู้ทั่วไป</h3>
+                </div>
+
+                <!-- Prompts Container -->
+                <div class="space-y-6">
+
+                    <!-- Game Prompt 1 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-user-astronaut"></i> 1. Prompt เกมบทบาทสมมติจำลองสถานการณ์ (RPG / Simulation Game)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้นคิดแก้ปัญหา</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> ฝึกกระบวนการคิดวิเคราะห์ แก้ปัญหาเฉพาะหน้า การตัดสินใจ และการประยุกต์ใช้ความรู้ผ่านสถานการณ์เสมือนจริง</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">RPG Prompt Template</span>
+                                    <button onclick="copyTextFromId(this, 'game-prompt-1')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="game-prompt-1" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้เชี่ยวชาญด้านการออกแบบเกมการศึกษา (Educational Game Designer) ฉันต้องการให้คุณสร้างเกมบทบาทสมมติ (Role-Playing Game) สำหรับนักเรียนระดับชั้น <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น ม.3]</span> ในวิชา <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น วิทยาศาสตร์]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น ระบบนิเวศและการถูกทำลาย]</span>
+
+เงื่อนไขของเกม:
+1. กำหนด "สถานการณ์สมมติที่ท้าทาย" และ "บทบาทของนักเรียน" (เช่น เป็นนักสืบสิ่งแวดล้อม หรือผู้ว่าราชการเมือง)
+2. สร้างทางเลือกให้นักเรียนตัดสินใจ 3-4 รอบ โดยแต่ละรอบผลลัพธ์ของการตัดสินใจจะส่งผลต่อสถานการณ์ถัดไป (Branching Scenario)
+3. ทุกๆ ทางเลือกต้องสอดแทรกความรู้เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้ออีกครั้ง]</span> และมีข้อคิด/คำอธิบายสั้นๆ ว่าทำไมตัวเลือกนั้นถึงดีหรือไม่ดี
+4. ตอนท้ายเกม ให้สรุปคะแนนหรือฉากจบ (Ending) 3 แบบตามการตัดสินใจของนักเรียน พร้อมคำถามชวนคิดเพื่อสรุปบทเรียน (Debriefing Questions)</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Prompt 2 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-key"></i> 2. Prompt เกมไขปริศนาห้องปิดตาย (Digital Escape Room)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้นทบทวนบทเรียน</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> การใช้สรุปเนื้อหาบทเรียน (Review Session) เป็นกิจกรรมกลุ่ม มีความตื่นเต้นและสร้างแรงจูงใจในการไขปริศนาสูงมาก</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">Escape Room Prompt Template</span>
+                                    <button onclick="copyTextFromId(this, 'game-prompt-2')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="game-prompt-2" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้สร้างเกมปริศนา (Puzzle Master) ช่วยออกแบบเกมแนว Escape Room (ห้องปริศนาที่ต้องหาทางออก) เพื่อทบทวนความรู้ให้กับนักเรียนระดับชั้น <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น ประถม 6]</span> ในวิชา <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น ภาษาอังกฤษ]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น Tense และคำศัพท์เกี่ยวกับอาชีพ]</span>
+
+เงื่อนไขของเกม:
+1. สร้างเนื้อเรื่องที่น่าตื่นเต้น (เช่น ติดอยู่ในพิพิธภัณฑ์ลึกลับ หรือยานอวกาศกำลังจะออกเดินทาง)
+2. ออกแบบ "ด่านปริศนา" ทั้งหมด 3 ด่าน โดยแต่ละด่านนักเรียนจะต้องแก้โจทย์ความรู้ในเรื่องที่กำหนด เพื่อรวบรวมรหัสผ่าน (Password) ไปเปิดประตูถัดไป
+3. แต่ละด่านให้ระบุ: โจทย์คำถาม, คำใบ้ (Hint) สำหรับครูเอาไว้ใบ้นักเรียน, และเฉลยที่ถูกต้องพร้อมคำอธิบาย
+4. เกมนี้ต้องเน้นการทำงานเป็นทีมและใช้เวลาไม่เกิน 20 นาทีในการเล่น</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Prompt 3 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-clone"></i> 3. Prompt เกมการ์ดพลังประลองไอเดีย (Educational Card Game)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้นวิเคราะห์เปรียบเทียบ</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> การสร้างปฏิสัมพันธ์ในชั้นเรียน (Active Learning) ช่วยส่งเสริมกระบวนการอภิปราย ข้อดี-ข้อเสีย หรือการจับคู่เชิงมโนทัศน์</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">Card Game Prompt Template</span>
+                                    <button onclick="copyTextFromId(this, 'game-prompt-3')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="game-prompt-3" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้เชี่ยวชาญด้าน Gamification ช่วยออกแบบ "เกมการ์ด (Card Game)" ที่สามารถพิมพ์ลงกระดาษให้นักเรียนเล่นในห้องเรียนได้ สำหรับนักเรียนระดับชั้น <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น]</span> วิชา <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น ธาตุและสารประกอบ หรือ บุคคลสำคัญในประวัติศาสตร์]</span>
+
+เงื่อนไขของเกม:
+1. ขอชื่อเกมที่ฟังดูน่าสนุก
+2. ออกแบบการ์ด 2 ประเภท คือ "การ์ดโจทย์/สถานการณ์ (Action/Quest Cards)" และ "การ์ดความรู้/ทรัพยากร (Item/Resource Cards)" โดยยกตัวอย่างข้อความบนการ์ดมาประเภทละ 5-6 ใบ
+3. อธิบายกฎกติกาการเล่น วิธีการชนะ และการนับแต้มอย่างละเอียดแต่เข้าใจง่าย
+4. เกมนี้ต้องกระตุ้นให้นักเรียนได้ถกเถียง อภิปราย หรือใช้ความรู้ในห้องเรียนเพื่อเอาชนะคู่ต่อสู้</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Prompt 4 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-comments"></i> 4. Prompt เกมทายคำใบ้ 20 คำถาม (The 20 Questions / Akinator Style)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้น Warm-up & เช็กความจำ</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> กิจกรรมนำเข้าสู่บทเรียนสั้นๆ (Warm-up) หรือประเมินผลความเข้าใจรวบยอด 5 นาทีก่อนหมดคาบเรียนอย่างสนุกสนาน</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">20 Questions Prompt Template</span>
+                                    <button onclick="copyTextFromId(this, 'game-prompt-4')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="game-prompt-4" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือ AI นักทายใจ (Akinator) สำหรับห้องเรียน ช่วยออกแบบกิจกรรม "เกม 20 คำถาม" เพื่อใช้ในวิชา <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น คำศัพท์, อวัยวะในร่างกาย, หรือสูตรคณิตศาสตร์]</span> สำหรับนักเรียนระดับชั้น <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น]</span>
+
+เงื่อนไขของเกม:
+1. สุ่มเลือก "คำลับ (Secret Word)" ที่เกี่ยวข้องกับบทเรียนมา 3 คำ (ไม่ต้องแสดงให้ฉันเห็นในตอนแรก หรือให้เขียนแยกไว้ส่วนล่างสุดพร้อมสปอยล์)
+2. เขียน "บทสคริปต์สำหรับครู" ในการดำเนินกิจกรรม โดยครูจะเป็นคนกุมความลับ และให้นักเรียนถามคำถามที่ตอบได้แค่ "ใช่" หรือ "ไม่ใช่" 
+3. แนะนำเทคนิคหรือ "คำใบ้เริ่มต้น (Starter Clues)" 3 ข้อที่ครูสามารถบอกนักเรียนได้หากนักเรียนเริ่มไปไม่ถูก
+4. แนะนำวิธีดัดแปลงเกมนี้ให้เป็นเกมแข่งขันระหว่างกลุ่มในห้องเรียน</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Prompt 5 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-user-secret"></i> 5. Prompt เกมสืบสวนสอบสวน หาคนร้าย (Murder Mystery / Whodunit)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้นใช้ตรรกะเหตุผล</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> รายวิชาที่ใช้กระบวนการคิดวิเคราะห์เปรียบเทียบข้อมูล การตรวจจับความขัดแย้งของตรรกะเหตุผล เช่น ประวัติศาสตร์ วรรณคดี หรือนิติวิทยาศาสตร์</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">Whodunit Prompt Template</span>
+                                    <button onclick="copyTextFromId(this, 'game-prompt-5')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="game-prompt-5" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้เขียนบทละครแนวสืบสวนสอบสวน ช่วยสร้างเกม "ตามหาคนร้าย (Whodunit)" เพื่อใช้จัดการเรียนรู้วิชา <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา]</span> เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น การวิเคราะห์ตัวละครในวรรณคดี หรือ การเปลี่ยนแปลงทางเคมี]</span> สำหรับนักเรียนระดับชั้น <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น]</span>
+
+เงื่อนไขของเกม:
+1. สร้างคดีปริศนา 1 คดีที่เกี่ยวข้องกับหัวข้อเรียน (เช่น สารเคมีในห้องแล็บหายไป หรือ ใครคือผู้เปลี่ยนประวัติศาสตร์)
+2. กำหนดตัวละครผู้ต้องสงสัย 3-4 คน โดยแต่ละคนจะมี "คำให้การ" และ "หลักฐานซ่อนอยู่" ที่เชื่อมโยงกับความรู้ในบทเรียน (มีทั้งคนพูดจริงและคนโกหก)
+3. นักเรียนต้องใช้ความรู้เรื่อง <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้ออีกครั้ง]</span> ในการจับผิดคำให้การหรือวิเคราะห์หลักฐานเพื่อหาว่าใครคือคนร้ายตัวจริง
+4. ขอเฉลยและบทสรุปของคดีอย่างเป็นขั้นเป็นตอน เพื่อให้ครูใช้เฉลยหน้าชั้นเรียน</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Tips Callout for Game Creation -->
+                <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl mt-6 space-y-3">
+                    <h4 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> 💡 ทิปเพิ่มเติมสำหรับคุณครู:
+                    </h4>
+                    <ul class="list-disc pl-5 text-sm text-amber-900 space-y-2">
+                        <li><strong>ปรับระดับภาษา:</strong> หากนำไปใช้กับเด็กเล็ก (อนุบาล - ประถมต้น) สามารถพิมพ์สั่ง AI เพิ่มเติมใน Prompt ได้ว่า <span class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-semibold">"ขอภาษาที่เข้าใจง่าย เน้นจินตนาการและนิทาน"</span> หรือถ้าเป็น ม.ปลาย สามารถสั่งว่า <span class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-semibold">"เน้นการคิดวิเคราะห์ขั้นสูง (Higher-order thinking)"</span> ได้ครับ</li>
+                        <li><strong>ต่อยอดสู่สื่อจริง:</strong> คุณครูสามารถนำข้อความและองค์ประกอบที่ AI เจนให้ออกมา ไปใส่ใน <strong>Canva</strong> เพื่อทำสไลด์ประกอบฉากนำเสนอแสนสวย หรือทำการ์ดเกมปริศนาได้อย่างรวดเร็วและพรีเมียมเลยครับ</li>
+                    </ul>
+                </div>
+
+                <div id="section-6-ar-games" class="scroll-mt-24 border-l-4 border-amber-400 bg-orange-50/70 pl-4 pr-4 py-3 rounded-r-xl">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">หัวข้อย่อย</span>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900">เกมการเรียนรู้ AR</h3>
+                </div>
+                
+                <p class="text-slate-600">
+                    Super Prompts ที่ออกแบบมาให้คุณครูสามารถนำไป Copy และปรับใช้เพื่อสร้างไอเดียหรือแผนการจัดกิจกรรมการเรียนรู้แบบ <strong>Augmented Reality (AR)</strong> ได้ทันทีครับ ทุก Prompt ถูกออกแบบให้ยืดหยุ่น โดยคุณครูเพียงแค่เปลี่ยนข้อความในวงเล็บไฮไลท์สีเหลืองส้ม <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300 font-bold text-sm">[ ]</span> ให้ตรงกับวิชา หัวข้อ และระดับชั้นที่สอนครับ
+                </p>
+
+                <!-- AR Prompts Container -->
+                <div class="space-y-6">
+
+                    <!-- AR Prompt 1 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-magnifying-glass-location"></i> 1. Prompt สายเกมนักสืบ / ตามล่าขุมทรัพย์ (AR Scavenger Hunt)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">Active Learning</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> การเริ่มต้นบทเรียนใหม่, การทบทวนบทเรียน หรือการทำกิจกรรมกลุ่มแบบ Active Learning</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">AR Scavenger Hunt Prompt</span>
+                                    <button onclick="copyTextFromId(this, 'ar-prompt-1')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="ar-prompt-1" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้เชี่ยวชาญด้าน EdTech และการออกแบบบอร์ดเกมเพื่อการเรียนรู้ (Gamification) 
+ช่วยออกแบบกิจกรรม "AR Scavenger Hunt (ตามล่าขุมทรัพย์นักสืบ AR)" 
+
+โดยมีเงื่อนไขดังนี้:
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น มัธยมศึกษาปีที่ 3]</span>
+- วิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น วิทยาศาสตร์]</span>
+- หัวข้อ/เนื้อหา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น ระบบนิเวศและการถ่ายทอดพลังงาน]</span>
+- เทคโนโลยีที่ใช้: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุ เช่น Merge Cube / พิมพ์ภาพ Marker แปะตามจุด / ใช้แอปพลิเคชันอย่าง Metaverse หรือ JigSpace]</span>
+
+สิ่งที่ต้องการให้คุณออกแบบ:
+1. "เนื้อเรื่อง (Storyline)" หรือภารกิจที่ทำให้นักเรียนตื่นเต้น (เช่น สวมบทบาทเป็นนักสืบกู้โลก)
+2. "จุดเช็กอิน AR 5 จุด" โดยแต่ละจุดเมื่อสแกนแล้วจะเจอโมเดล 3D หรือข้อมูลอะไร และต้องตอบคำถาม/แก้ปริศนาอะไรเพื่อคำใบ้ถัดไป
+3. "เกณฑ์การให้คะแนน (Rubric)" และวิธีการสรุปบทเรียน (Debrief) หลังจบเกม</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AR Prompt 2 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-compass"></i> 2. Prompt สายเกมสวมบทบาทผจญภัย (AR RPG / Interactive Story)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เน้นการตัดสินใจ</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> วิชาฝั่งสังคม, ภาษา, ประวัติศาสตร์ หรือวรรณคดี ที่เน้นการเข้าใจบริบทและการตัดสินใจ</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">AR RPG Prompt</span>
+                                    <button onclick="copyTextFromId(this, 'ar-prompt-2')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="ar-prompt-2" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือครูผู้เชี่ยวชาญการสอนด้วย Storytelling และ AR 
+ช่วยสร้างโครงร่างเกมแนว "Interactive AR Adventure" (เกมเลือกเส้นทางเดินชีวิต) 
+
+โดยมีข้อมูลดังนี้:
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น ประถมศึกษาปีที่ 6]</span>
+- วิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น สังคมศึกษา]</span>
+- หัวข้อ/เนื้อหา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น ประวัติศาสตร์อยุธยาตอนต้น]</span>
+
+สิ่งที่ต้องการให้คุณออกแบบ:
+1. "บทบาทของนักเรียน" (เช่น เป็นพ่อค้าชาวต่างชาติในกรุงศรีอยุธยา)
+2. "ฉาก AR 3 ฉาก" ที่นักเรียนต้องเดินไปสแกนดูสภาพแวดล้อม (โมเดล 3D หรือภาพ 360 องศา) 
+3. "สถานการณ์จำลองและตัวเลือก" ในแต่ละฉาก โดยหากสแกนเจอไอเทม AR ชิ้นนี้ จะส่งผลต่อเนื้อเรื่องอย่างไร และโยงเข้าสู่บทเรียนได้อย่างไรบ้าง</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AR Prompt 3 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-flask-vial"></i> 3. Prompt สายเกมจำลองสถานการณ์ / ห้องแล็บเสมือน (AR Virtual Lab)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">เห็นภาพ 3 มิติ</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> วิชาสายวิทย์, คณิตศาสตร์, ศิลปะ หรือวิศวกรรม ที่ต้องการให้นักเรียนเห็นภาพสิ่งที่เป็นนามธรรมหรือจับต้องยาก</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">AR Virtual Lab Prompt</span>
+                                    <button onclick="copyTextFromId(this, 'ar-prompt-3')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="ar-prompt-3" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือผู้เชี่ยวชาญการสร้าง Instructional Design และการใช้ AR ในห้องเรียน 
+ช่วยออกแบบแผนกิจกรรมเกม "AR Virtual Lab / Sandbox" 
+
+โดยมีรายละเอียดดังนี้:
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น มัธยมศึกษาปีที่ 5]</span>
+- วิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[วิชา เช่น เคมี / ศิลปะ]</span>
+- หัวข้อ/เนื้อหา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น โครงสร้างอะตอม / มิติสัมพันธ์และรูปทรง 3 มิติ]</span>
+
+สิ่งที่ต้องการให้คุณออกแบบ:
+1. "กฎของเกม" วิธีการเปลี่ยนเนื้อหาที่เข้าใจยากให้กลายเป็นเกมต่อบล็อก, เกมผสมสาร หรือเกมสร้างเมืองด้วย AR
+2. "ภารกิจท้าทาย (Challenges)" 3 ระดับ (ง่าย-ปานกลาง-ยาก) เพื่อให้นักเรียนแข่งกันทำเวลาหรือทำคะแนนสูงสุด
+3. "ใบงานดิจิทัล (Digital Worksheet)" สั้นๆ ที่นักเรียนต้องบันทึกผลลัพธ์หลังจากสังเกตผ่านกล้อง AR</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AR Prompt 4 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-chess-board"></i> 4. Prompt สายเกมจับคู่ / บอร์ดเกมผสาน AR (Hybrid AR Board Game)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">บอร์ดเกมไฮบริด</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> การทบทวนบทเรียนก่อนสอบ เล่นเป็นกลุ่มเล็กๆ ในห้องเรียนโดยใช้สื่อสิ่งพิมพ์ควบคู่กับสมาร์ตโฟน</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">Hybrid AR Board Game Prompt</span>
+                                    <button onclick="copyTextFromId(this, 'ar-prompt-4')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="ar-prompt-4" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือครูนักออกแบบเกม (Game Designer) 
+ช่วยออกแบบ "บอร์ดเกมการ์ดคำศัพท์/แนวคิด ผสานเทคโนโลยี AR" 
+
+โดยมีรายละเอียดดังนี้:
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น ประถมศึกษาปีที่ 3]</span>
+- วิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น ภาษาอังกฤษ / คณิตศาสตร์]</span>
+- หัวข้อ/เนื้อหา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น คำศัพท์สัตว์โลกและถิ่นที่อยู่ / เศษส่วน]</span>
+
+สิ่งที่ต้องการให้คุณออกแบบ:
+1. "กลไกของเกม (Game Mechanics)" วิธีการเล่นร่วมกันระหว่างการ์ดกระดาษและการใช้แอป AR สแกน (เช่น สแกนการ์ดสัตว์ A และ สแกนการ์ดถิ่นที่อยู่ B ถ้าตรงกันจะเกิดอนิเมชั่น 3D แสดงความยินดี)
+2. "เงื่อนไขการชนะ" และวิธีการขัดขวางกันในเกม (Action Cards) เพื่อเพิ่มความสนุก
+3. "ไอเดียเครื่องมือฟรี" ที่ครูสามารถใช้สร้างเกมนี้ได้จริง (เช่น Assemblr Edu, Artsteps, Aero) พร้อมวิธีทำแบบเข้าใจง่าย</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AR Prompt 5 -->
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
+                            <div class="font-bold flex items-center gap-2 text-base md:text-lg">
+                                <i class="fa-solid fa-users-gear"></i> 5. Prompt สายให้นักเรียนเป็นผู้สร้าง (Students as AR Creators)
+                            </div>
+                            <span class="text-xs bg-orange-900/40 px-2 py-1 rounded font-medium border border-orange-600">นวัตกรรม PBL</span>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <p class="text-sm text-slate-600"><strong>เหมาะสำหรับ:</strong> กิจกรรม Project-based Learning (PBL) เน้นการสร้างทักษะแห่งศตวรรษที่ 21 (Creativity & Tech Literacy)</p>
+                            <div class="bg-stone-50 rounded-lg border border-stone-200 relative overflow-hidden">
+                                <div class="flex justify-between items-center bg-stone-100 px-4 py-2 border-b border-stone-200">
+                                    <span class="text-xs text-slate-500 font-mono">AR Creators Prompt</span>
+                                    <button onclick="copyTextFromId(this, 'ar-prompt-5')" class="text-xs text-orange-700 hover:text-orange-900 font-semibold flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> คัดลอกพรอมต์</button>
+                                </div>
+                                <pre id="ar-prompt-5" class="p-4 overflow-x-auto text-sm text-slate-700 font-mono whitespace-pre-wrap select-all">คุณคือโค้ชด้านนวัตกรรมการศึกษา 
+ช่วยออกแบบ "โปรเจกต์เกมการเรียนรู้ที่ให้นักเรียนเป็นผู้สร้างสรรค์ AR เอง" (Student-Generated AR Game)
+
+โดยมีรายละเอียดดังนี้:
+- ระดับชั้น: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุระดับชั้น เช่น มัธยมศึกษาปีที่ 6]</span>
+- วิชา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุวิชา เช่น ภาษาไทย / สุขศึกษา]</span>
+- หัวข้อ/เนื้อหา: <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded border border-amber-300 font-bold">[ระบุหัวข้อ เช่น การแต่งโคลงสี่สุภาพ / การปฐมพยาบาลเบื้องต้น]</span>
+
+สิ่งที่ต้องการให้คุณออกแบบ:
+1. "โจทย์ของโปรเจกต์" ที่ท้าทายให้นักเรียนแบ่งกลุ่มกันสร้างมินิเกม AR เพื่อไปจัดนิทรรศการให้เพื่อนห้องอื่นเล่น
+2. "ขั้นตอนการทำงาน (Timeline) 4 สัปดาห์" ตั้งแต่รีเสิร์ชเนื้อหา, ออกแบบ Storyboard, สร้าง AR, จนถึงวันจัดแสดง
+3. "เกณฑ์การประเมินผล (Assessment)" ที่วัดทั้งความถูกต้องของเนื้อหาวิชาการ และความคิดสร้างสรรค์ในการใช้เทคโนโลยี</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- AR Tips Callout -->
+                <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl mt-6">
+                    <h4 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> 💡 Tip เพิ่มเติมสำหรับคุณครู:
+                    </h4>
+                    <p class="text-amber-955 text-sm mt-1 leading-relaxed">
+                        เมื่อได้ผลลัพธ์จาก ChatGPT/Gemini แล้ว หากรู้สึกว่าขั้นตอนไหนยังไม่ชัดเจน คุณครูสามารถพิมพ์คุยต่อได้เลยซ้ำๆ เช่น <span class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-semibold">"ช่วยขยายความจุดเช็กอินที่ 2 ให้ละเอียดขึ้นหน่อย"</span> หรือ <span class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-semibold">"แนะนำแอปฟรีที่ใช้ทำตามแผนนี้ให้หน่อย"</span> ครับ
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Ethics & Cautions -->
+            <section id="section-7" class="scroll-mt-24 space-y-6 border-t border-slate-100 pt-8">
+                <div class="border-l-4 border-orange-600 pl-4">
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">ส่วนที่ 7</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">ข้อควรระวังและจรรยาบรรณในการใช้ AI ในชีวิตครู</h2>
+                </div>
+
+                <p class="text-slate-600 leading-relaxed">
+                    AI เป็นผู้ช่วยที่ทรงพลังมากสำหรับครู แต่ไม่ควรใช้แทนวิจารณญาณของครูโดยตรง ทุกครั้งที่นำผลลัพธ์จาก AI ไปใช้กับนักเรียน ควรตรวจสอบความถูกต้อง ความเหมาะสม และผลกระทบต่อผู้เรียนก่อนเสมอ โดยเฉพาะสื่อการสอน แบบทดสอบ คำอธิบายเนื้อหา ภาพประกอบ และกิจกรรมที่เกี่ยวข้องกับข้อมูลส่วนบุคคลของนักเรียน
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-circle-exclamation text-rose-500"></i> 1. ตรวจสอบข้อมูลหลอนของ AI
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            AI อาจแต่งข้อมูลที่ดูน่าเชื่อถือขึ้นมาเอง เช่น ปี พ.ศ. ชื่อบุคคล สูตรวิทยาศาสตร์ เหตุการณ์ประวัติศาสตร์ หรือคำอธิบายที่คลาดเคลื่อน คุณครูควรเทียบกับแหล่งข้อมูลที่เชื่อถือได้อย่างน้อย 1-2 แหล่งก่อนนำไปสอน และหากเป็นข้อมูลสำคัญควรตรวจจากหนังสือเรียน เอกสารราชการ หรือแหล่งวิชาการโดยตรง
+                        </p>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-user-shield text-amber-500"></i> 2. ปกป้องข้อมูลส่วนบุคคลของนักเรียน
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            ห้ามกรอกชื่อ นามสกุล เลขประจำตัว รูปถ่าย คะแนน สุขภาพ ปัญหาครอบครัว หรือข้อมูลอ่อนไหวของนักเรียนลงใน AI สาธารณะ ควรเปลี่ยนเป็นข้อมูลสมมติ เช่น "นักเรียน A" หรือใช้ภาพรวมของห้องแทนรายบุคคล เพื่อรักษาความเป็นส่วนตัวและลดความเสี่ยงข้อมูลรั่วไหล
+                        </p>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-scale-balanced text-orange-600"></i> 3. ระวังลิขสิทธิ์และการอ้างอิง
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            ไม่ควรอัปโหลดหนังสือเรียนทั้งเล่ม เอกสารข้อสอบที่มีลิขสิทธิ์ หรือสื่อของผู้อื่นเข้าสู่ระบบ AI โดยไม่ได้รับอนุญาต หากให้ AI ช่วยสรุปหรือสร้างสื่อ ควรตรวจว่ามีการคัดลอกข้อความ ภาพ หรือแนวคิดจากแหล่งใดมากเกินไปหรือไม่ และควรระบุแหล่งที่มาเมื่อใช้ข้อมูลจากเอกสารจริง
+                        </p>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-people-arrows text-sky-600"></i> 4. ตรวจอคติและความเหมาะสมของภาษา
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            ผลลัพธ์จาก AI อาจมีอคติทางเพศ วัฒนธรรม ศาสนา ภาษา ฐานะ หรือความสามารถของผู้เรียนโดยไม่ตั้งใจ คุณครูควรอ่านทวนตัวอย่าง ชื่อ อาชีพ บทบาท และสถานการณ์ในใบงานหรือเกมการเรียนรู้ ให้เคารพความหลากหลาย ไม่เหมารวม และไม่ทำให้นักเรียนกลุ่มใดรู้สึกถูกลดคุณค่า
+                        </p>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> 5. ครูยังเป็นผู้รับผิดชอบสุดท้าย
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            AI ช่วยร่าง ช่วยคิด และช่วยจัดรูปแบบได้ แต่ครูคือผู้ตัดสินใจว่าสื่อเหมาะกับหลักสูตร ระดับชั้น บริบทของโรงเรียน และเป้าหมายการเรียนรู้หรือไม่ ก่อนใช้จริงควรปรับภาษาให้เป็นสไตล์ของครู ตรวจความสอดคล้องกับตัวชี้วัด และลดส่วนที่ยากหรือง่ายเกินไปสำหรับผู้เรียน
+                        </p>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-clipboard-check text-violet-600"></i> 6. ใช้ AI อย่างโปร่งใสในการวัดผล
+                        </h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            หากใช้ AI ช่วยสร้างแบบทดสอบ เกณฑ์ประเมิน หรือข้อเสนอแนะงานนักเรียน ควรตรวจความยุติธรรมของเกณฑ์และเฉลยทุกข้อ ไม่ควรให้ AI ตัดสินคะแนนแทนครูโดยไม่มีการตรวจทาน และควรออกแบบงานที่ให้นักเรียนแสดงกระบวนการคิด เช่น ร่างงาน หลักฐานการค้นคว้า การอธิบายปากเปล่า หรือการสะท้อนคิดหลังทำงาน
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 border border-orange-200 p-5 rounded-xl">
+                    <h3 class="font-bold text-orange-900 text-base flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-list-check"></i> เช็กลิสต์ก่อนนำสื่อจาก AI ไปใช้จริง
+                    </h3>
+                    <ul class="list-disc pl-5 text-sm text-orange-900 space-y-2">
+                        <li>อ่านทวนทุกบรรทัด และแก้ภาษาหรือระดับความยากให้เหมาะกับนักเรียนของเรา</li>
+                        <li>ตรวจข้อเท็จจริง ตัวเลข วันที่ สูตร นิยาม และเฉลยกับแหล่งข้อมูลที่เชื่อถือได้</li>
+                        <li>ลบข้อมูลส่วนบุคคลของนักเรียน ครู ผู้ปกครอง หรือโรงเรียนที่ไม่จำเป็นออกทั้งหมด</li>
+                        <li>ตรวจว่ากิจกรรมไม่สร้างอคติ ไม่ตีตรา และไม่ทำให้นักเรียนบางกลุ่มเสียเปรียบ</li>
+                        <li>ทดลองทำใบงาน เกม หรือแบบทดสอบด้วยตัวเองหนึ่งรอบ เพื่อดูว่าเวลาที่ใช้และคำสั่งชัดเจนพอหรือไม่</li>
+                    </ul>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-8 mt-16 border-t border-slate-800 text-sm space-y-2">
+        <p>© 2026 คู่มือสำหรับผู้เข้าอบรม การขยายผลอบรม AI ASSISTANTS FOR TEACHERS. ร่วมขับเคลื่อนการเรียนรู้ด้วย AI ยกระดับคุณภาพการสอนอย่างยั่งยืน</p>
+        <p class="text-xs text-slate-500">
+            ขยายผลการศึกษาโดย: <strong>นายธนกฤชช์ โยมไธสง</strong> ครู โรงเรียนบุรีรัมย์พิทยาคม
+        </p>
+    </footer>
+
+    <!-- Script for handling Clipboard -->
+    <script>
+        // Copy standard prompt text using standard copy API or execCommand fallback
+        function copyPrompt(button, textToCopy) {
+            const tempInput = document.createElement("textarea");
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check text-xs"></i> <span class="text-xs">สำเร็จแล้ว!</span>';
+                    button.classList.remove('text-orange-600', 'hover:text-orange-800');
+                    button.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'px-2', 'py-1', 'rounded-lg');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'px-2', 'py-1', 'rounded-lg');
+                        button.classList.add('text-orange-600', 'hover:text-orange-800');
+                    }, 2000);
+                } else {
+                    console.warn('Unable to copy automatically');
+                }
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // Copy text directly from an element ID (great for multi-line super prompts, stripping tags automatically)
+        function copyTextFromId(button, elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            const tempInput = document.createElement("textarea");
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check"></i> คัดลอกสำเร็จแล้ว!';
+                    button.classList.remove('bg-orange-600', 'hover:bg-orange-700', 'text-orange-700', 'hover:text-orange-900', 'font-semibold');
+                    button.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'px-3', 'py-1', 'rounded-lg');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'px-3', 'py-1', 'rounded-lg');
+                        if (elementId.startsWith('game-prompt') || elementId.startsWith('ar-prompt')) {
+                            button.classList.add('text-orange-700', 'hover:text-orange-900', 'font-semibold');
+                        } else {
+                            button.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                        }
+                    }, 2000);
+                } else {
+                    console.warn('Unable to copy automatically');
+                }
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            document.body.removeChild(tempInput);
+        }
+    </script>
+</body>
+</html>
