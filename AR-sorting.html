@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Mastery: Magic Hands AR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MediaPipe Hands CDN Links for Webcam AR Hand Tracking -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc; /* Soft slate light background */
+            color: #0f172a; /* Premium dark slate text */
+            overflow-x: hidden;
+        }
+        .header-font {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+        .light-neon-border {
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.08), 0 8px 10px -6px rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+        /* Floating animation for insertion sort staging card */
+        @keyframes gentleFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .float-card {
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+        .sorting-card {
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+            user-select: none;
+            touch-action: none; /* Critical for mobile touch drag preventing scroll */
+        }
+        .glow-active {
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 1) !important;
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <header class="bg-white/95 backdrop-blur border-b border-slate-200 py-3.5 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-md shadow-blue-100 animate-pulse">
+                    <i class="fa-solid fa-hands-holding text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="header-font text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Sorting Mastery: Magic Hands AR
+                    </h1>
+                    <p class="text-xs text-slate-500 font-semibold">
+                        สื่อการเรียนรู้วิทยาการคำนวณ ม.4 โดย ครูธนกฤชช์ โยมไธสง
+                    </p>
+                </div>
+            </div>
+            
+            <!-- User Status Header Widget -->
+            <div id="user-header-widget" class="hidden flex items-center gap-4 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-200 text-sm shadow-sm">
+                <span class="text-slate-700 font-semibold"><i class="fa-solid fa-user text-blue-600 mr-1"></i> <span id="widget-name">-</span></span>
+                <span class="text-slate-300">|</span>
+                <span class="text-slate-700"><i class="fa-solid fa-graduation-cap text-indigo-600 mr-1"></i> <span id="widget-class">-</span></span>
+                <span class="text-slate-300">|</span>
+                <span class="text-slate-700"><i class="fa-solid fa-hashtag text-emerald-600 mr-1"></i> เลขที่ <span id="widget-no">-</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification system toast container -->
+    <div id="notification-overlay" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] max-w-md w-11/12 transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none">
+        <div class="bg-white border-2 border-blue-500 text-slate-800 px-5 py-4 rounded-xl shadow-2xl flex items-start gap-3">
+            <div id="noti-icon" class="text-blue-600 text-2xl mt-0.5">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="noti-title" class="font-bold text-sm header-font text-blue-600">ระบบแจ้งเตือน</h4>
+                <p id="noti-message" class="text-xs text-slate-600 mt-1">ข้อความระบบ...</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
+        
+        <!-- ================= STAGE 0: REGISTRATION ================= -->
+        <section id="section-register" class="w-full max-w-xl bg-white rounded-2xl p-6 md:p-8 light-neon-border shadow-xl transition-all duration-500">
+            <div class="text-center mb-6">
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider header-font">EdTech Gamification</span>
+                <h2 class="header-font text-2xl md:text-3xl font-black mt-3 text-slate-800">ลงทะเบียนเข้าห้องเรียน</h2>
+                <p class="text-sm text-blue-600 font-bold mt-2"><i class="fa-solid fa-chalkboard-user mr-1"></i> สื่อการเรียนรู้วิทยาการคำนวณ ม.4 โดย ครูธนกฤชช์ โยมไธสง</p>
+                <p class="text-xs text-slate-400 mt-1">กรอกข้อมูลผู้เรียนเพื่อเข้าสู่โปรแกรมจำลองวิเคราะห์ลำดับอัลกอริทึม</p>
+            </div>
+
+            <form id="regForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2"><i class="fa-solid fa-user-graduate mr-2 text-blue-600"></i>ชื่อ - นามสกุล *</label>
+                    <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2.5 px-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="เช่น เด็กหญิงวิภา ขยันเรียน">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2"><i class="fa-solid fa-school mr-2 text-indigo-600"></i>ชั้นมัธยมศึกษาปีที่ *</label>
+                        <select id="reg-class" required class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2.5 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            <option value="" disabled selected>เลือกห้องเรียน...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2"><i class="fa-solid fa-list-ol mr-2 text-emerald-600"></i>เลขที่ (1-30) *</label>
+                        <select id="reg-no" required class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2.5 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            <option value="" disabled selected>เลือกเลขที่...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 header-font flex items-center justify-center gap-2">
+                        เข้าสู่ห้องทดลอง AR <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- ================= STAGE 1: CALIBRATION & TUTORIAL ================= -->
+        <section id="section-calibration" class="hidden w-full max-w-4xl bg-white rounded-2xl p-6 light-neon-border flex flex-col lg:flex-row gap-6 transition-all duration-500 shadow-xl">
+            <!-- Left Side: Interactive Cam Frame -->
+            <div class="flex-1 flex flex-col items-center">
+                <h3 class="header-font text-lg font-bold text-slate-800 mb-3 w-full text-left flex items-center justify-between">
+                    <span><i class="fa-solid fa-camera mr-2 text-blue-600"></i>ระบบตรวจจับเว็บแคม AR</span>
+                    <span id="ar-status-badge" class="text-xs bg-amber-100 text-amber-700 font-semibold px-3 py-1 rounded-full"><i class="fa-solid fa-spinner animate-spin mr-1"></i>กำลังตั้งค่า</span>
+                </h3>
+
+                <!-- AR Monitor Canvas Wrap -->
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center shadow-inner">
+                    <!-- Invisible source video tag -->
+                    <video id="webcam-source" class="hidden" autoplay playsinline></video>
+                    <!-- Displayed processed Canvas -->
+                    <canvas id="ar-display" class="absolute inset-0 w-full h-full object-cover transform scale-x-[-1]"></canvas>
+                    
+                    <!-- Calibration Screen Text Guide overlay -->
+                    <div id="calibration-guide-box" class="absolute bottom-4 left-4 right-4 bg-white/95 border border-slate-200 p-3 rounded-lg text-xs text-center flex items-center justify-center gap-2 shadow-md">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                        <span id="calibration-tip" class="text-slate-700 font-medium">ยกมือขึ้นมาให้กล้องเห็น เพื่อเริ่มปรับตั้งระยะระบบสัมผัสอากาศ</span>
+                    </div>
+
+                    <!-- Webcam Permission Fail Fallback Banner -->
+                    <div id="fallback-banner" class="hidden absolute inset-0 bg-white/95 z-20 p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-rose-500 text-5xl mb-3"><i class="fa-solid fa-video-slash"></i></div>
+                        <h4 class="font-bold text-lg header-font text-slate-800 mb-2">ไม่สามารถเข้าถึงกล้องเว็บแคมได้</h4>
+                        <p class="text-xs text-slate-500 max-w-md">แอย่ากังวล! นักเรียนสามารถเข้าร่วมการทดลองผ่านทางระบบสัมผัสหน้าจอ / เมาส์ ลากการ์ดข้อมูลได้เลยโดยอัตโนมัติ</p>
+                    </div>
+                </div>
+                
+                <div class="w-full mt-4 flex justify-between items-center text-xs text-slate-500">
+                    <span><i class="fa-solid fa-info-circle text-blue-600 mr-1"></i>หากไม่มีกล้อง กดข้ามเพื่อเล่นแบบใช้เมาส์แทนได้</span>
+                    <button id="btn-skip-camera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-1.5 rounded-lg border border-slate-200 hover:text-slate-900 transition">
+                        เล่นด้วยเมาส์/สัมผัส <i class="fa-solid fa-arrow-pointer ml-1 text-slate-500"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Side: AR Control Guide Manual -->
+            <div class="w-full lg:w-80 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-150 pt-6 lg:pt-0 lg:pl-6">
+                <div>
+                    <h3 class="header-font font-bold text-lg text-blue-600 flex items-center"><i class="fa-solid fa-circle-question mr-2"></i>วิธีการเล่นและการควบคุม AR</h3>
+                    <p class="text-xs text-slate-500 mt-1">ศึกษาท่าทางของนิ้วมือในการเล่นเกม เพื่อใช้ดึงข้อมูลและการจัดระเบียบตัวเลข</p>
+                    
+                    <div class="space-y-4 mt-6">
+                        <div class="flex items-start gap-3 bg-slate-50 p-3 rounded-lg border border-slate-150">
+                            <span class="text-3xl">🖐️</span>
+                            <div>
+                                <h4 class="font-semibold text-sm text-slate-800">1. แบมือ (Open Hand)</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">ใช้เลื่อนเป้าชี้ตำแหน่งลอยไปมารอบๆ ตัวเลขที่ต้องการเลือก</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-slate-50 p-3 rounded-lg border border-slate-150">
+                            <span class="text-3xl">✊</span>
+                            <div>
+                                <h4 class="font-semibold text-sm text-slate-800">2. กำมือ (Fist/Grab)</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">กำมือเพื่อคีบตัวเลขนั้นๆ ขึ้นมาเพื่อลากสลับหรือโยกตำแหน่ง</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button id="btn-start-tutorial" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-emerald-100 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 header-font flex items-center justify-center gap-2">
+                        เข้าใจกติกาแล้ว! เริ่มด่านที่ 1 <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 2: CONCEPT TUTORIAL & ALGORITHM PLAY ================= -->
+        <section id="section-game" class="hidden w-full max-w-5xl flex flex-col gap-6 transition-all duration-500">
+            
+            <!-- STAGE HUD (Dashboard) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-100 text-blue-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-layer-group"></i></div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">ด่านปัจจุบัน</p>
+                        <h4 id="hud-stage-name" class="header-font font-bold text-sm text-slate-800">Selection Sort</h4>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-100 text-amber-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-clock animate-pulse"></i></div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">เวลารวม</p>
+                        <h4 id="hud-time" class="header-font font-bold text-sm text-slate-800">00:00</h4>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-100 text-emerald-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-star"></i></div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">คะแนนรวม</p>
+                        <h4 id="hud-score" class="header-font font-bold text-sm text-slate-800">0 คะแนน</h4>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="control-mode-icon" class="bg-purple-100 text-purple-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-arrow-pointer"></i></div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">โหมดการควบคุม</p>
+                        <h4 id="hud-control-mode" class="header-font font-bold text-sm text-slate-800">เมาส์ / สัมผัส</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Interactive Play Area -->
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- AR View (Or Mouse view fallback) inside active play -->
+                <div class="flex-grow flex-1 relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-lg flex flex-col justify-end items-center min-h-[460px]">
+                    
+                    <!-- Web camera mirror background for AR overlay -->
+                    <video id="game-webcam-source" class="hidden" autoplay playsinline></video>
+                    <canvas id="game-ar-canvas" class="absolute inset-0 w-full h-full object-cover transform scale-x-[-1] z-0 pointer-events-none opacity-40"></canvas>
+                    
+                    <!-- Sorting Playground cards overlay wrapper -->
+                    <div id="sorting-playground" class="absolute inset-0 z-10 flex flex-col justify-between p-4 md:p-6">
+                        <!-- Top HUD: Stage Goal Instructions -->
+                        <div class="bg-white/95 border border-slate-200 p-3.5 rounded-xl flex items-center justify-between shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <span id="game-instr-badge" class="bg-blue-600 text-white text-xs px-2.5 py-1 rounded font-bold header-font">ขั้นการทำงาน</span>
+                                <p id="game-instruction" class="text-xs md:text-sm text-slate-800 font-semibold">ค้นหาค่าที่น้อยที่สุดและนำมาสลับกับหลักแรก</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="btn-show-algo-tip" class="bg-blue-50 text-blue-600 hover:text-blue-800 transition text-xs font-bold flex items-center gap-1 px-2.5 py-1.5 rounded-lg">
+                                    <i class="fa-solid fa-lightbulb"></i> วิธีคิด
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MIDDLE & DYNAMIC VIEWPORTS FOR BOTH ALGORITHMS -->
+                        <div id="gameplay-area-wrapper" class="flex-grow flex flex-col justify-center items-center gap-6 py-4 w-full">
+                            <!-- Dynamic Content Rendered Here via JS -->
+                        </div>
+
+                        <!-- BOTTOM TRACE GUIDE -->
+                        <div class="w-full text-center text-slate-500 text-[11px] font-semibold bg-slate-100 py-1.5 rounded-full border border-slate-200">
+                            <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> <span id="lower-guide-text">หยิบการ์ดจากแถวด้านบนลากมาใส่ในช่องแถวด้านล่าง</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Algorithmic side control panel & logs -->
+                <div class="w-full lg:w-80 flex flex-col gap-4">
+                    <!-- Concept Reference Box -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-grow flex flex-col justify-between">
+                        <div>
+                            <h4 class="header-font font-bold text-sm text-slate-800 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-laptop-code text-indigo-600"></i>
+                                คำอธิบายอัลกอริทึม
+                            </h4>
+                            <div id="stage-description" class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                                <!-- Stage specific pseudocode or text instructions -->
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-150 space-y-2">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500 font-medium">ย้ายถูกต้องในรอบนี้:</span>
+                                <span id="stat-correct-moves" class="text-emerald-600 font-bold">0 / 5</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500 font-medium">จำนวนการสลับรวม:</span>
+                                <span id="stat-total-swaps" class="text-indigo-600 font-bold">0 ครั้ง</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500 font-medium">ความผิดพลาด:</span>
+                                <span id="stat-errors" class="text-rose-600 font-bold">0 ครั้ง</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Debug Logs / Live Trace -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 h-36 flex flex-col justify-between shadow-md">
+                        <div class="text-[10px] text-slate-400 font-mono flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            COMPILER TRACE LOG
+                        </div>
+                        <div id="live-console-log" class="flex-grow overflow-y-auto font-mono text-[10px] text-emerald-400 space-y-1 py-1">
+                            <div>[SYSTEM] อัลกอริทึมพร้อมเริ่มประมวลผล...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 3: EDUCATIONAL ALGO POPUP ================= -->
+        <div id="algo-popup-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex justify-center items-center p-4 hidden">
+            <div class="bg-white border border-slate-200 max-w-xl w-full rounded-2xl overflow-hidden shadow-2xl transition-all scale-90 duration-300" id="algo-popup-panel">
+                <div class="bg-gradient-to-r from-blue-700 to-indigo-700 px-6 py-4 flex justify-between items-center border-b border-indigo-200">
+                    <h3 class="header-font text-white font-bold flex items-center gap-2">
+                        <i id="popup-icon" class="fa-solid fa-circle-info text-blue-200"></i>
+                        <span id="popup-title">การจัดเรียงแบบเลือก (Selection Sort)</span>
+                    </h3>
+                    <button id="btn-close-popup" class="text-white/80 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div id="popup-illustration" class="bg-slate-50 p-4 rounded-xl flex justify-center gap-3 border border-slate-150">
+                        <!-- Dynamic visual schema -->
+                    </div>
+                    <div id="popup-body" class="text-slate-700 text-sm space-y-3 leading-relaxed">
+                        <!-- Educational content details -->
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
+                    <button id="btn-popup-ack" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg header-font transition shadow-md shadow-blue-100">
+                        เข้าใจแล้ว เริ่มฝึกฝนกันเลย!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STAGE 4: SCORECARD / CERTIFICATE ================= -->
+        <section id="section-scorecard" class="hidden w-full max-w-2xl bg-white rounded-2xl p-6 md:p-8 light-neon-border shadow-2xl transition-all duration-500">
+            <!-- Screenshot Ready Wrapper -->
+            <div id="certificate-frame" class="bg-gradient-to-br from-white to-slate-50 border-4 border-double border-blue-500 p-6 md:p-8 rounded-xl shadow-inner relative">
+                
+                <!-- Background decoration lines -->
+                <div class="absolute inset-0 border border-blue-100 m-2 pointer-events-none"></div>
+                <div class="absolute top-4 right-4 text-6xl text-blue-500/10"><i class="fa-solid fa-award"></i></div>
+
+                <div class="text-center mb-6">
+                    <h2 class="header-font text-xl md:text-2xl font-bold tracking-wider text-blue-700">ใบรับรองคะแนนการจัดเรียงข้อมูล</h2>
+                    <p class="text-xs uppercase tracking-wider text-slate-500 font-bold mt-0.5">Computing Science Sorting Algorithm Certification</p>
+                    <p class="text-xs text-blue-600 font-semibold mt-1">สื่อการเรียนรู้วิทยาการคำนวณ ม.4 โดย ครูธนกฤชช์ โยมไธสง</p>
+                    <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-emerald-500 mx-auto mt-3 rounded-full"></div>
+                </div>
+
+                <!-- User Personal Info Display -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50/70 p-4 rounded-lg border border-blue-100 text-sm mb-6">
+                    <div>
+                        <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wide">ผู้เข้ารับการประเมิน</p>
+                        <h3 id="scorecard-fullname" class="font-bold text-slate-800 text-base mt-0.5">-</h3>
+                    </div>
+                    <div class="flex justify-between md:justify-start gap-8">
+                        <div>
+                            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wide">ระดับชั้น</p>
+                            <h3 id="scorecard-class" class="font-bold text-slate-800 text-base mt-0.5">-</h3>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wide">เลขที่</p>
+                            <h3 id="scorecard-no" class="font-bold text-slate-800 text-base mt-0.5">-</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Data Grid -->
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 text-center shadow-sm">
+                        <p class="text-[10px] text-slate-500 font-semibold uppercase">คะแนนรวมทั้งหมด</p>
+                        <h4 id="scorecard-total-score" class="header-font text-2xl font-black text-emerald-600 mt-1">0</h4>
+                        <p class="text-[9px] text-slate-500">เต็ม 1000 คะแนน</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 text-center shadow-sm">
+                        <p class="text-[10px] text-slate-500 font-semibold uppercase">เวลารวมที่ใช้</p>
+                        <h4 id="scorecard-total-time" class="header-font text-2xl font-black text-amber-600 mt-1">00:00</h4>
+                        <p class="text-[9px] text-slate-500">วินาที</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 text-center shadow-sm flex flex-col justify-center items-center">
+                        <p class="text-[10px] text-slate-500 font-semibold uppercase">ระดับความเร็ว</p>
+                        <div id="scorecard-speed-stars" class="text-sm text-yellow-400 mt-1 space-x-0.5">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p id="scorecard-rank" class="text-[9px] text-slate-600 font-bold mt-1 uppercase">EXPERT</p>
+                    </div>
+                </div>
+
+                <!-- Stages report breakdown -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wide border-b border-slate-200 pb-1.5">ผลสัมฤทธิ์รายระดับการทำงาน</h4>
+                    
+                    <div class="flex items-center justify-between text-xs bg-white p-2.5 rounded border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500 text-base"><i class="fa-solid fa-circle-check"></i></span>
+                            <div>
+                                <h5 class="font-bold text-slate-700">ด่านที่ 1: การจัดเรียงแบบเลือก (Selection Sort)</h5>
+                                <p class="text-[10px] text-slate-500">ย้ายค่าน้อยสุดลงในคำตอบตามลำดับ</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="scorecard-stage1-score" class="font-mono text-emerald-600 font-bold">500 / 500</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs bg-white p-2.5 rounded border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-emerald-500 text-base"><i class="fa-solid fa-circle-check"></i></span>
+                            <div>
+                                <h5 class="font-bold text-slate-700">ด่านที่ 2: การจัดเรียงแบบแทรก (Insertion Sort)</h5>
+                                <p class="text-[10px] text-slate-500">แทรกข้อมูลลอยตัวให้เรียงต่อเนื่องตามลําดับ</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="scorecard-stage2-score" class="font-mono text-emerald-600 font-bold">500 / 500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer reminder -->
+                <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+                    <p class="text-[10px] text-slate-500 font-medium"><i class="fa-solid fa-camera mr-1 text-slate-400"></i>บันทึกภาพหน้าจอหน้านี้ (แคปเจอร์) เพื่อใช้ในการอัปโหลดส่งคุณครูประจำวิชา</p>
+                    <p class="text-[9px] text-slate-400 mt-1" id="scorecard-timestamp">วันเวลาประเมิน: 15/07/2026 13:45</p>
+                </div>
+            </div>
+
+            <!-- Output Action buttons -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button id="btn-copy-report" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-6 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-copy"></i> คัดลอกข้อความรายงานผล
+                </button>
+                <button id="btn-restart" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-lg shadow-blue-100 hover:shadow-blue-200 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> เล่นใหม่อีกครั้ง
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Credit Banner -->
+    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-600 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <p class="font-medium">
+                สื่อการเรียนรู้วิทยาการคำนวณ ม.4 โดย ครูธนกฤชช์ โยมไธสง
+            </p>
+            <p class="flex items-center gap-1.5 text-slate-500">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                ระบบตรวจจับ AR แม่นยำสูง (Webcam Hand Tracking & Point Engine)
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playBeep(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'grab') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(330, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } else if (type === 'drop') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } else if (type === 'complete') {
+                    const now = audioCtx.currentTime;
+                    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // C Major
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(freq, now + (idx * 0.08));
+                        g.gain.setValueAtTime(0.12, now + (idx * 0.08));
+                        g.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.08) + 0.3);
+                        o.start(now + (idx * 0.08));
+                        o.stop(now + (idx * 0.08) + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio play failed, waiting for user gesture.", e);
+            }
+        }
+
+        const state = {
+            user: {
+                fullname: "",
+                classRoom: "",
+                no: ""
+            },
+            controlMode: 'mouse', // 'mouse' or 'ar'
+            currentStage: 'selection', // 'selection' or 'insertion'
+            score: 0,
+            startTime: null,
+            timerInterval: null,
+            timeElapsed: 0,
+            selectedCardIdx: null, // support click to swap fallback
+            
+            stageScores: {
+                selection: 500,
+                insertion: 500
+            },
+            stats: {
+                correctMoves: 0,
+                totalSwaps: 0,
+                errors: 0
+            },
+            
+            // Selection Sort specific transfer-style state (Top-to-Bottom)
+            selectionSource: [45, 12, 88, 23, 7], // Top Row
+            selectionAnswer: [null, null, null, null, null], // Bottom Row
+            selectionNextSlot: 0, // Current empty slot being filled
+
+            // Insertion Sort specific one-by-one incoming style state
+            insertionDeck: [35, 9, 64, 18, 5], // Full dataset
+            insertionAnswer: [], // Growing sorted array at the bottom
+            insertionCurrentCard: null, // Floating card in staging
+
+            grabbedIdx: null, // Index of dragged item
+            targetOverlayIdx: null, // Target drop index
+            
+            // Camera & Tracking variables
+            handsDetector: null,
+            cameraActive: false,
+            pointerX: 0,
+            pointerY: 0,
+            isFist: false,
+            webcamStream: null
+        };
+
+        let lastKnownPointerX = 0;
+        let lastKnownPointerY = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const classSelect = document.getElementById('reg-class');
+            const noSelect = document.getElementById('reg-no');
+            
+            // Generate classes (ม.4/1ก ถึง ม.4/16ข)
+            for(let room = 1; room <= 16; room++) {
+                ['ก', 'ข'].forEach(suffix => {
+                    const optionVal = `ม.4/${room}${suffix}`;
+                    const opt = document.createElement('option');
+                    opt.value = optionVal;
+                    opt.textContent = optionVal;
+                    classSelect.appendChild(opt);
+                });
+            }
+
+            // Generate numbers 1-30
+            for(let num = 1; num <= 30; num++) {
+                const opt = document.createElement('option');
+                opt.value = num;
+                opt.textContent = num;
+                noSelect.appendChild(opt);
+            }
+        });
+
+        function showNotification(title, msg, type = 'info') {
+            const overlay = document.getElementById('notification-overlay');
+            const icon = document.getElementById('noti-icon');
+            const titleEl = document.getElementById('noti-title');
+            const msgEl = document.getElementById('noti-message');
+            
+            titleEl.textContent = title;
+            msgEl.textContent = msg;
+
+            if (type === 'success') {
+                overlay.className = "fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] max-w-md w-11/12 transition-all duration-300 translate-y-0 opacity-100";
+                overlay.firstElementChild.className = "bg-white border-2 border-emerald-500 text-slate-800 px-5 py-4 rounded-xl shadow-2xl flex items-start gap-3";
+                icon.className = "text-emerald-500 text-2xl mt-0.5";
+                icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                playBeep('success');
+            } else if (type === 'error') {
+                overlay.className = "fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] max-w-md w-11/12 transition-all duration-300 translate-y-0 opacity-100";
+                overlay.firstElementChild.className = "bg-white border-2 border-rose-500 text-slate-800 px-5 py-4 rounded-xl shadow-2xl flex items-start gap-3";
+                icon.className = "text-rose-500 text-2xl mt-0.5";
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                playBeep('error');
+            } else {
+                overlay.className = "fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] max-w-md w-11/12 transition-all duration-300 translate-y-0 opacity-100";
+                overlay.firstElementChild.className = "bg-white border-2 border-blue-500 text-slate-800 px-5 py-4 rounded-xl shadow-2xl flex items-start gap-3";
+                icon.className = "text-blue-500 text-2xl mt-0.5";
+                icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+            }
+
+            setTimeout(() => {
+                overlay.classList.add('opacity-0', 'translate-y-[-100px]');
+                overlay.classList.remove('opacity-100', 'translate-y-0');
+            }, 3500);
+        }
+
+        function analyzeHandGesture(landmarks) {
+            const fingers = [
+                { tip: 8, base: 6 },
+                { tip: 12, base: 10 },
+                { tip: 16, base: 14 },
+                { tip: 20, base: 18 }
+            ];
+
+            let foldedCount = 0;
+            fingers.forEach(f => {
+                if (landmarks[f.tip].y > landmarks[f.base].y) {
+                    foldedCount++;
+                }
+            });
+
+            return foldedCount >= 3;
+        }
+
+        async function setupARCamera() {
+            const videoElement = document.getElementById('webcam-source');
+            const canvasElement = document.getElementById('ar-display');
+            const canvasCtx = canvasElement.getContext('2d');
+            const badge = document.getElementById('ar-status-badge');
+            const tip = document.getElementById('calibration-tip');
+
+            try {
+                const hands = new Hands({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                });
+
+                hands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.65,
+                    minTrackingConfidence: 0.65
+                });
+
+                hands.onResults((results) => {
+                    if (canvasElement.width !== videoElement.videoWidth) {
+                        canvasElement.width = videoElement.videoWidth;
+                        canvasElement.height = videoElement.videoHeight;
+                    }
+
+                    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+                    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                        const landmarks = results.multiHandLandmarks[0];
+                        
+                        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#2563eb', lineWidth: 4});
+                        drawLandmarks(canvasCtx, landmarks, {color: '#10b981', lineWidth: 2});
+
+                        const rawFist = analyzeHandGesture(landmarks);
+                        const cursorNode = landmarks[9];
+                        
+                        const targetX = cursorNode.x * canvasElement.width;
+                        const targetY = cursorNode.y * canvasElement.height;
+                        state.pointerX = state.pointerX * 0.6 + targetX * 0.4;
+                        state.pointerY = state.pointerY * 0.6 + targetY * 0.4;
+
+                        // Maintain viewport coords
+                        lastKnownPointerX = state.pointerX;
+                        lastKnownPointerY = state.pointerY;
+
+                        if (rawFist) {
+                            if (!state.isFist) {
+                                state.isFist = true;
+                                playBeep('grab');
+                            }
+                            tip.innerHTML = "<strong class='text-emerald-600'>✊ ตรวจจับ: กำมือ (Grab)</strong> ระบบพร้อมใช้งานแล้ว กดปุ่มเพื่อเล่น";
+                            badge.className = "text-xs bg-emerald-100 text-emerald-700 font-semibold px-3 py-1 rounded-full";
+                            badge.innerHTML = "<i class='fa-solid fa-circle-check mr-1'></i>เชื่อมต่อแล้ว";
+                        } else {
+                            if (state.isFist) {
+                                state.isFist = false;
+                                playBeep('drop');
+                            }
+                            tip.innerHTML = "<strong class='text-blue-600'>🖐️ ตรวจจับ: แบมือ (Open)</strong> ยินดีด้วย! ลองกำมือค้างเพื่อทดสอบการจับลาก";
+                            badge.className = "text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full";
+                            badge.innerHTML = "<i class='fa-solid fa-hands mr-1'></i>ตรวจจับสมบูรณ์";
+                        }
+
+                        handleHandMovementInGame(state.pointerX, state.pointerY, canvasElement.width, canvasElement.height);
+                    }
+                });
+
+                state.webcamStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: { width: 640, height: 480, facingMode: "user" }
+                });
+
+                videoElement.srcObject = state.webcamStream;
+                await videoElement.play();
+
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                camera.start();
+                state.cameraActive = true;
+                state.controlMode = 'ar';
+                document.getElementById('hud-control-mode').textContent = "กล้อง AR (Hand Tracking)";
+                document.getElementById('control-mode-icon').innerHTML = '<i class="fa-solid fa-hands-holding text-emerald-600"></i>';
+                document.getElementById('control-mode-icon').className = 'bg-emerald-100 text-emerald-600 p-2.5 rounded-lg text-lg';
+
+            } catch (err) {
+                console.error("Camera access failed:", err);
+                document.getElementById('fallback-banner').classList.remove('hidden');
+                badge.className = "text-xs bg-rose-100 text-rose-700 font-semibold px-3 py-1 rounded-full";
+                badge.innerHTML = "<i class='fa-solid fa-triangle-exclamation mr-1'></i>ไม่พบกล้อง";
+                state.controlMode = 'mouse';
+                document.getElementById('hud-control-mode').textContent = "เมาส์ / สัมผัส";
+            }
+        }
+
+        function findActiveSlot(clientX, clientY, tolerance = 40) {
+            const slots = document.querySelectorAll('[data-slot-index]');
+            for (let slot of slots) {
+                const rect = slot.getBoundingClientRect();
+                // Add tolerance to make dropping on targets much easier for students
+                if (clientX >= rect.left - tolerance && clientX <= rect.right + tolerance &&
+                    clientY >= rect.top - tolerance && clientY <= rect.bottom + tolerance) {
+                    return slot;
+                }
+            }
+            return null;
+        }
+
+        function handleHandMovementInGame(x, y, canvasWidth, canvasHeight) {
+            if (state.currentStage === 'scorecard' || state.currentStage === 'register') return;
+
+            const gameCanvas = document.getElementById('game-ar-canvas');
+            if (!gameCanvas) return;
+            
+            const rect = gameCanvas.getBoundingClientRect();
+            const relativeX = x / canvasWidth;
+            const relativeY = y / canvasHeight;
+
+            // Mirror camera mapping (1 - relativeX)
+            const clientX = rect.left + (1 - relativeX) * rect.width;
+            const clientY = rect.top + relativeY * rect.height;
+
+            const virtualCursor = document.getElementById('ar-virtual-cursor');
+            if (virtualCursor) {
+                virtualCursor.style.position = 'fixed';
+                virtualCursor.style.left = `${clientX}px`;
+                virtualCursor.style.top = `${clientY}px`;
+                virtualCursor.style.zIndex = '9999';
+                
+                if (state.isFist) {
+                    virtualCursor.innerHTML = "✊";
+                    virtualCursor.classList.add('scale-125', 'text-emerald-500');
+                } else {
+                    virtualCursor.innerHTML = "🖐️";
+                    virtualCursor.classList.remove('scale-125', 'text-emerald-500');
+                }
+            }
+
+            if (state.isFist && state.grabbedIdx !== null) {
+                const draggedElement = document.getElementById(`sorting-card-${state.grabbedIdx}`);
+                if (draggedElement) {
+                    draggedElement.style.position = 'fixed';
+                    draggedElement.style.left = `${clientX - 45}px`;
+                    draggedElement.style.top = `${clientY - 55}px`;
+                    draggedElement.style.pointerEvents = 'none';
+                    draggedElement.classList.add('glow-active', 'z-50');
+                    
+                    const slot = findActiveSlot(clientX, clientY, 40);
+
+                    document.querySelectorAll('[data-slot-index]').forEach(s => s.classList.remove('border-blue-600', 'bg-blue-100', 'scale-105'));
+                    state.targetOverlayIdx = null;
+
+                    if (slot) {
+                        slot.classList.add('border-blue-600', 'bg-blue-100', 'scale-105');
+                        state.targetOverlayIdx = parseInt(slot.dataset.slotIndex);
+                    }
+                }
+            } else if (!state.isFist && state.grabbedIdx !== null) {
+                const draggedElement = document.getElementById(`sorting-card-${state.grabbedIdx}`);
+                if (draggedElement) {
+                    draggedElement.style.position = '';
+                    draggedElement.style.left = '';
+                    draggedElement.style.top = '';
+                    draggedElement.style.pointerEvents = '';
+                    draggedElement.classList.remove('glow-active', 'z-50');
+                }
+                const sourceIdx = state.grabbedIdx;
+                // Direct geometry extraction on drop for hand-tracking
+                const finalSlot = findActiveSlot(clientX, clientY, 40);
+                const targetIdx = finalSlot ? parseInt(finalSlot.dataset.slotIndex) : null;
+                
+                state.grabbedIdx = null;
+                state.targetOverlayIdx = null;
+
+                if (targetIdx !== null) {
+                    processSortMove(sourceIdx, targetIdx);
+                } else {
+                    renderGamePlayGrid();
+                }
+            } else {
+                const targets = document.elementsFromPoint(clientX, clientY);
+                const hoverCard = targets.find(el => el.classList.contains('sorting-card'));
+                
+                document.querySelectorAll('.sorting-card').forEach(c => c.classList.remove('border-yellow-500', 'scale-105'));
+
+                if (hoverCard) {
+                    hoverCard.classList.add('border-yellow-500', 'scale-105');
+                    if (state.isFist) {
+                        state.grabbedIdx = hoverCard.dataset.index;
+                        playBeep('grab');
+                    }
+                }
+            }
+        }
+
+        document.getElementById('regForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            state.user.fullname = document.getElementById('reg-name').value.trim();
+            state.user.classRoom = document.getElementById('reg-class').value;
+            state.user.no = document.getElementById('reg-no').value;
+
+            document.getElementById('widget-name').textContent = state.user.fullname;
+            document.getElementById('widget-class').textContent = state.user.classRoom;
+            document.getElementById('widget-no').textContent = state.user.no;
+            document.getElementById('user-header-widget').classList.remove('hidden');
+
+            audioCtx.resume();
+
+            document.getElementById('section-register').classList.add('hidden');
+            const calSec = document.getElementById('section-calibration');
+            calSec.classList.remove('hidden');
+            
+            showNotification("ลงทะเบียนเรียบร้อย", "กำลังทำการจัดเตรียมระบบกล้องและท่าทาง...", "success");
+            setupARCamera();
+        });
+
+        document.getElementById('btn-skip-camera').addEventListener('click', () => {
+            state.controlMode = 'mouse';
+            document.getElementById('hud-control-mode').textContent = "เมาส์ / สัมผัส";
+            document.getElementById('control-mode-icon').innerHTML = '<i class="fa-solid fa-arrow-pointer"></i>';
+            document.getElementById('control-mode-icon').className = 'bg-purple-100 text-purple-600 p-2.5 rounded-lg text-lg';
+            
+            if (state.webcamStream) {
+                state.webcamStream.getTracks().forEach(track => track.stop());
+            }
+
+            showNotification("ข้ามระบบกล้องเรียบร้อย", "ระบบสำรองจะใช้การลากด้วยเมาส์และสัมผัสหน้าจอ", "info");
+            document.getElementById('section-calibration').classList.add('hidden');
+            openEducationalPopup('selection');
+        });
+
+        document.getElementById('btn-start-tutorial').addEventListener('click', () => {
+            document.getElementById('section-calibration').classList.add('hidden');
+            openEducationalPopup('selection');
+        });
+
+        function initStage(stageType) {
+            state.currentStage = stageType;
+            state.stats.correctMoves = 0;
+            state.stats.errors = 0;
+            
+            const consoleLog = document.getElementById('live-console-log');
+            consoleLog.innerHTML = `<div>[SYSTEM] กำลังเตรียมฐานกิจกรรมด่าน ${stageType === 'selection' ? 'Selection Sort' : 'Insertion Sort'}...</div>`;
+
+            if (stageType === 'selection') {
+                document.getElementById('hud-stage-name').textContent = "Selection Sort";
+                document.getElementById('game-instruction').textContent = "ค้นหาข้อมูลที่มีค่าน้อยที่สุดจากกลุ่มด้านบน แล้วหยิบลงมาจัดวางในช่องคำตอบว่างๆ ตามลำดับ";
+                document.getElementById('lower-guide-text').textContent = "ลากการ์ดที่มีค่าน้อยที่สุดจากแถวข้อมูลด้านบน มาวางในช่องเป้าหมายด้านล่างตามลำดับจากซ้ายไปขวา";
+                document.getElementById('stage-description').innerHTML = `
+                    <p class="font-bold text-slate-800">💡 Selection Sort (การจัดเรียงแบบเลือก)</p>
+                    <p class="mt-1">มีหลักการคือ ค้นหาค่าตัวเลขที่<b>น้อยที่สุด</b> จากชุดข้อมูลเดิมที่อยู่ด้านบน แล้วทำการดึงแยกออกมาเรียงต่อกันเป็นชุดคำตอบใหม่ทีละตัวจากซ้ายไปขวาที่ด้านล่าง</p>
+                    <div class="bg-slate-50 p-2 rounded mt-2 border border-slate-200 font-mono text-[10px] text-indigo-700 leading-normal">
+                        FOR i = 0 TO 4:<br>
+                        &nbsp;&nbsp;min = FIND_MINIMUM(Source)<br>
+                        &nbsp;&nbsp;Answer[i] = min<br>
+                        &nbsp;&nbsp;REMOVE min FROM Source
+                    </div>
+                `;
+                
+                state.selectionSource = [45, 12, 88, 23, 7];
+                state.selectionAnswer = [null, null, null, null, null];
+                state.selectionNextSlot = 0;
+                renderGamePlayGrid();
+            } else {
+                document.getElementById('hud-stage-name').textContent = "Insertion Sort";
+                document.getElementById('game-instruction').textContent = "การ์ดข้อมูลจะค่อยๆ ลอยมาทีละตัว หยิบไปแทรกในช่องคำตอบด้านล่างให้เรียงลำดับสะสมถูกต้อง";
+                document.getElementById('lower-guide-text').textContent = "หยิบการ์ดตัวเลขลอยตัวตรงกลางแทรกลงในช่องคำตอบที่มีสติ๊กเกอร์สีน้ำเงินนำเสนอ";
+                document.getElementById('stage-description').innerHTML = `
+                    <p class="font-bold text-slate-800">💡 Insertion Sort (การจัดเรียงแบบแทรก)</p>
+                    <p class="mt-1">มีหลักการคือ ดึงข้อมูลทีละตัวจากคิวที่<b>ค่อยๆ ลอยมา</b> จากนั้นพิจารณาแทรก (Insert) ลงไปในตำแหน่งที่ถูกต้องในกลุ่มผลลัพธ์เดิม โดยอาศัยการเปรียบเทียบค่าแบบย้อนกลับ</p>
+                    <div class="bg-slate-50 p-2 rounded mt-2 border border-slate-200 font-mono text-[10px] text-emerald-700 leading-normal">
+                        LOOP FOR each incoming card:<br>
+                        &nbsp;&nbsp;Compare with already sorted items<br>
+                        &nbsp;&nbsp;Insert in correct ordered place<br>
+                        &nbsp;&nbsp;Shift other elements to right
+                    </div>
+                `;
+                
+                state.insertionDeck = [35, 9, 64, 18, 5];
+                state.insertionAnswer = [];
+                state.insertionCurrentCard = state.insertionDeck.shift(); // Fetch first item
+                renderGamePlayGrid();
+            }
+
+            updateStatsHUD();
+            document.getElementById('section-game').classList.remove('hidden');
+
+            if (!state.startTime) {
+                state.startTime = new Date();
+                state.timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((new Date() - state.startTime) / 1000);
+                    state.timeElapsed = elapsed;
+                    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                    const secs = String(elapsed % 60).padStart(2, '0');
+                    document.getElementById('hud-time').textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
+        }
+
+        function renderSelectionSortLayout(wrapper) {
+            // Source (Top Row)
+            const topLabel = document.createElement('div');
+            topLabel.className = 'w-full text-center text-xs font-bold text-blue-600 tracking-wide uppercase header-font mb-2';
+            topLabel.innerHTML = '<i class="fa-solid fa-database mr-1"></i> รายการข้อมูลเดิม (Source Array)';
+            wrapper.appendChild(topLabel);
+
+            const sourceContainer = document.createElement('div');
+            sourceContainer.className = 'flex justify-center items-center gap-3 w-full border border-slate-200/80 bg-slate-50/50 p-4 rounded-xl';
+            
+            state.selectionSource.forEach((val, idx) => {
+                const card = document.createElement('div');
+                if (val !== null) {
+                    card.id = `sorting-card-${idx}`;
+                    card.dataset.index = idx;
+                    card.className = `sorting-card w-14 h-20 md:w-16 md:h-24 bg-white border-2 border-slate-300 rounded-lg flex flex-col justify-between items-center p-2 shadow-sm cursor-pointer select-none touch-none hover:border-blue-500`;
+                    card.innerHTML = `
+                        <span class="text-[8px] font-bold text-slate-400">ดัชนี ${idx}</span>
+                        <span class="text-xl font-bold text-slate-800">${val}</span>
+                        <span class="text-[8px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full font-bold">ข้อมูล</span>
+                    `;
+                    initPointerDragEngine(card, idx);
+                } else {
+                    card.className = 'w-14 h-20 md:w-16 md:h-24 border-2 border-dashed border-slate-200 bg-slate-100/30 rounded-lg flex items-center justify-center text-xs text-slate-300 font-bold';
+                    card.innerHTML = '<i class="fa-solid fa-check"></i>';
+                }
+                sourceContainer.appendChild(card);
+            });
+            wrapper.appendChild(sourceContainer);
+
+            // Spacer line
+            const separator = document.createElement('div');
+            separator.className = 'w-full flex items-center justify-center my-1';
+            separator.innerHTML = '<div class="h-[1px] bg-slate-200 flex-grow"></div><div class="px-3 text-slate-400 text-xs"><i class="fa-solid fa-arrow-down-long animate-bounce text-blue-500"></i> ย้ายลงช่องล่าง</div><div class="h-[1px] bg-slate-200 flex-grow"></div>';
+            wrapper.appendChild(separator);
+
+            // Answer (Bottom Row)
+            const bottomLabel = document.createElement('div');
+            bottomLabel.className = 'w-full text-center text-xs font-bold text-indigo-600 tracking-wide uppercase header-font mb-2';
+            bottomLabel.innerHTML = '<i class="fa-solid fa-check-double mr-1"></i> รายการคำตอบจัดเรียงแล้ว (Answer Array)';
+            wrapper.appendChild(bottomLabel);
+
+            const answerContainer = document.createElement('div');
+            answerContainer.className = 'flex justify-center items-center gap-3 w-full border border-slate-200/80 bg-indigo-50/20 p-4 rounded-xl';
+
+            state.selectionAnswer.forEach((val, idx) => {
+                const card = document.createElement('div');
+                if (val !== null) {
+                    card.className = 'w-14 h-20 md:w-16 md:h-24 bg-gradient-to-b from-emerald-500 to-teal-600 text-white border-2 border-emerald-600 rounded-lg flex flex-col justify-between items-center p-2 shadow-md';
+                    card.innerHTML = `
+                        <span class="text-[8px] text-emerald-100 font-bold">คำตอบ ${idx}</span>
+                        <span class="text-xl font-bold">${val}</span>
+                        <span class="text-[8px] bg-white/20 text-white px-1.5 py-0.5 rounded-full font-bold">เรียงแล้ว</span>
+                    `;
+                } else {
+                    card.dataset.slotIndex = idx;
+                    const isActive = (idx === state.selectionNextSlot);
+                    card.className = `w-14 h-20 md:w-16 md:h-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center p-2 transition-all cursor-pointer ${
+                        isActive 
+                        ? 'border-blue-500 bg-blue-50/50 text-blue-700 font-bold animate-pulse' 
+                        : 'border-slate-300 text-slate-400 bg-slate-50/10'
+                    }`;
+                    card.innerHTML = isActive 
+                        ? `<span class="text-[9px] text-center">🎯 วางคำตอบที่นี่</span>` 
+                        : `<span class="text-[9px] text-slate-300">ช่องว่าง</span>`;
+                    
+                    card.addEventListener('click', () => {
+                        if (state.selectedCardIdx !== null) {
+                            processSortMove(state.selectedCardIdx, idx);
+                        }
+                    });
+                }
+                answerContainer.appendChild(card);
+            });
+            wrapper.appendChild(answerContainer);
+        }
+
+        function renderInsertionSortLayout(wrapper) {
+            // Incoming Staging Area
+            const stagingLabel = document.createElement('div');
+            stagingLabel.className = 'w-full text-center text-xs font-bold text-rose-500 tracking-wide uppercase header-font mb-1';
+            stagingLabel.innerHTML = '<i class="fa-solid fa-truck-ramp-box mr-1"></i> 1. ข้อมูลที่กำลังลอยมา (Incoming Card)';
+            wrapper.appendChild(stagingLabel);
+
+            const stagingArea = document.createElement('div');
+            stagingArea.className = 'flex justify-center items-center h-28 w-full border border-slate-150 bg-slate-50/30 rounded-xl relative';
+
+            if (state.insertionCurrentCard !== null) {
+                const card = document.createElement('div');
+                card.id = `sorting-card-${state.insertionCurrentCard}`;
+                card.dataset.index = state.insertionCurrentCard;
+                card.className = `sorting-card float-card w-16 h-22 bg-gradient-to-br from-rose-50 to-white border-2 border-rose-500 rounded-xl flex flex-col justify-between items-center p-2.5 shadow-lg cursor-pointer select-none touch-none hover:scale-105 active:scale-95`;
+                card.innerHTML = `
+                    <span class="text-[8px] font-bold text-rose-500 uppercase tracking-wider animate-pulse"><i class="fa-solid fa-spinner animate-spin"></i> นำไปแทรก</span>
+                    <span class="text-2xl font-black text-rose-600">${state.insertionCurrentCard}</span>
+                    <span class="text-[8px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-bold">ACTIVE KEY</span>
+                `;
+                stagingArea.appendChild(card);
+                initPointerDragEngine(card, state.insertionCurrentCard);
+            } else {
+                stagingArea.innerHTML = '<span class="text-sm font-semibold text-slate-400"><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> ย้ายข้อมูลมาครบเรียบร้อยแล้ว</span>';
+            }
+            wrapper.appendChild(stagingArea);
+
+            // Spacer line
+            const separator = document.createElement('div');
+            separator.className = 'w-full flex items-center justify-center my-1';
+            separator.innerHTML = '<div class="h-[1px] bg-slate-200 flex-grow"></div><div class="px-3 text-slate-400 text-xs"><i class="fa-solid fa-turn-down text-rose-500 mr-1 animate-bounce"></i> 2. แทรกในกลุ่มคำตอบด้านล่าง</div><div class="h-[1px] bg-slate-200 flex-grow"></div>';
+            wrapper.appendChild(separator);
+
+            // Sorted Answer array
+            const bottomLabel = document.createElement('div');
+            bottomLabel.className = 'w-full text-center text-xs font-bold text-emerald-600 tracking-wide uppercase header-font mb-1';
+            bottomLabel.innerHTML = '<i class="fa-solid fa-database mr-1"></i> รายการคำตอบที่จัดเรียงสะสม (Sorted Subset)';
+            wrapper.appendChild(bottomLabel);
+
+            const answerContainer = document.createElement('div');
+            answerContainer.className = 'flex justify-center items-center flex-wrap gap-2 md:gap-3 w-full border border-slate-200 bg-emerald-50/20 p-4 rounded-xl min-h-[110px]';
+
+            // We render slots interleaving with already inserted items
+            // If answer is length N, we have N+1 slots
+            const size = state.insertionAnswer.length;
+            for (let i = 0; i <= size; i++) {
+                // Render Slot i (With larger, clearer touch/drag areas)
+                const slot = document.createElement('div');
+                slot.dataset.slotIndex = i;
+                slot.className = `w-14 h-20 md:w-16 md:h-24 border-2 border-dashed border-blue-400/80 bg-blue-50/40 hover:bg-blue-100/80 hover:border-blue-600 flex flex-col items-center justify-center rounded-xl text-center cursor-pointer transition-all ${state.selectedCardIdx !== null ? 'animate-pulse scale-105' : ''}`;
+                slot.innerHTML = `<i class="fa-solid fa-arrow-down-to-bracket text-blue-600 text-sm mb-1 animate-bounce"></i><span class="text-[8px] md:text-[9px] leading-tight text-blue-800 font-bold">แทรกที่ ${i}</span>`;
+                
+                slot.addEventListener('click', () => {
+                    if (state.selectedCardIdx !== null) {
+                        processSortMove(state.selectedCardIdx, i);
+                    }
+                });
+                answerContainer.appendChild(slot);
+
+                // If not at the end, render element i
+                if (i < size) {
+                    const elem = state.insertionAnswer[i];
+                    const card = document.createElement('div');
+                    card.className = 'w-12 h-18 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-lg flex flex-col justify-between items-center p-1.5 shadow-sm';
+                    card.innerHTML = `
+                        <span class="text-[7px] text-slate-400 font-bold">ดัชนี ${i}</span>
+                        <span class="text-lg font-bold text-slate-800">${elem}</span>
+                        <span class="text-[7px] bg-emerald-100 text-emerald-800 px-1 py-0.5 rounded-full font-semibold">เรียงอยู่</span>
+                    `;
+                    answerContainer.appendChild(card);
+                }
+            }
+
+            wrapper.appendChild(answerContainer);
+        }
+
+        function renderGamePlayGrid() {
+            const wrapper = document.getElementById('gameplay-area-wrapper');
+            wrapper.innerHTML = "";
+
+            state.selectedCardIdx = null;
+
+            // Trigger canvas mirror draw if active AR
+            const gameVideo = document.getElementById('game-webcam-source');
+            const gameCanvas = document.getElementById('game-ar-canvas');
+            
+            if (state.controlMode === 'ar' && state.webcamStream) {
+                gameCanvas.classList.remove('opacity-0');
+                gameCanvas.classList.add('opacity-40');
+                if (gameVideo.srcObject !== state.webcamStream) {
+                    gameVideo.srcObject = state.webcamStream;
+                    gameVideo.play();
+                    
+                    const drawLoop = () => {
+                        if (state.currentStage === 'scorecard') return;
+                        const ctx = gameCanvas.getContext('2d');
+                        if (gameCanvas.width !== gameVideo.videoWidth) {
+                            gameCanvas.width = gameVideo.videoWidth;
+                            gameCanvas.height = gameVideo.videoHeight;
+                        }
+                        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                        ctx.drawImage(gameVideo, 0, 0, gameCanvas.width, gameCanvas.height);
+                        requestAnimationFrame(drawLoop);
+                    };
+                    requestAnimationFrame(drawLoop);
+                }
+            } else {
+                gameCanvas.classList.add('opacity-0');
+            }
+
+            // Virtual cursor node setup
+            if (state.controlMode === 'ar') {
+                if (!document.getElementById('ar-virtual-cursor')) {
+                    const cursor = document.createElement('div');
+                    cursor.id = 'ar-virtual-cursor';
+                    cursor.className = 'absolute text-3xl z-50 pointer-events-none transition-all duration-75';
+                    cursor.innerHTML = '🖐️';
+                    wrapper.appendChild(cursor);
+                }
+            } else {
+                const cursor = document.getElementById('ar-virtual-cursor');
+                if (cursor) cursor.remove();
+            }
+
+            // Route Layout Rendering
+            if (state.currentStage === 'selection') {
+                renderSelectionSortLayout(wrapper);
+            } else {
+                renderInsertionSortLayout(wrapper);
+            }
+        }
+
+        let activeDragCard = null;
+        let isDraggingActive = false;
+        let startClientX = 0;
+        let startClientY = 0;
+        let cardOriginRect = null;
+
+        function initPointerDragEngine(card, val) {
+            card.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                card.setPointerCapture(e.pointerId);
+
+                activeDragCard = card;
+                isDraggingActive = true;
+                state.grabbedIdx = val;
+
+                cardOriginRect = card.getBoundingClientRect();
+                startClientX = e.clientX;
+                startClientY = e.clientY;
+
+                card.classList.add('glow-active', 'z-50');
+                card.style.position = 'fixed';
+                card.style.width = `${cardOriginRect.width}px`;
+                card.style.height = `${cardOriginRect.height}px`;
+                card.style.left = `${cardOriginRect.left}px`;
+                card.style.top = `${cardOriginRect.top}px`;
+                card.style.cursor = 'grabbing';
+
+                lastKnownPointerX = e.clientX;
+                lastKnownPointerY = e.clientY;
+
+                playBeep('grab');
+            });
+
+            card.addEventListener('pointermove', (e) => {
+                if (!isDraggingActive || activeDragCard !== card) return;
+
+                const deltaX = e.clientX - startClientX;
+                const deltaY = e.clientY - startClientY;
+
+                card.style.left = `${cardOriginRect.left + deltaX}px`;
+                card.style.top = `${cardOriginRect.top + deltaY}px`;
+
+                lastKnownPointerX = e.clientX;
+                lastKnownPointerY = e.clientY;
+
+                // Calculate slot intersections mathematically with tolerance zone (forgiving drop bounds)
+                const slot = findActiveSlot(e.clientX, e.clientY, 40);
+
+                document.querySelectorAll('[data-slot-index]').forEach(s => s.classList.remove('border-blue-600', 'bg-blue-100', 'scale-105'));
+                state.targetOverlayIdx = null;
+
+                if (slot) {
+                    slot.classList.add('border-blue-600', 'bg-blue-100', 'scale-105');
+                    state.targetOverlayIdx = parseInt(slot.dataset.slotIndex);
+                }
+            });
+
+            card.addEventListener('pointerup', (e) => {
+                if (!isDraggingActive || activeDragCard !== card) return;
+                isDraggingActive = false;
+                activeDragCard = null;
+                card.releasePointerCapture(e.pointerId);
+
+                playBeep('drop');
+
+                // Clear all indicators
+                document.querySelectorAll('[data-slot-index]').forEach(s => s.classList.remove('border-blue-600', 'bg-blue-100', 'scale-105'));
+
+                // Prevent touchend coordinate loss using cached last known pointers
+                const clientX = e.clientX || lastKnownPointerX;
+                const clientY = e.clientY || lastKnownPointerY;
+
+                // Calculate targetIdx DIRECTLY from final point coordinate
+                const finalSlot = findActiveSlot(clientX, clientY, 40);
+                const targetIdx = finalSlot ? parseInt(finalSlot.dataset.slotIndex) : null;
+
+                card.style.position = '';
+                card.style.width = '';
+                card.style.height = '';
+                card.style.left = '';
+                card.style.top = '';
+                card.style.cursor = '';
+                card.classList.remove('glow-active', 'z-50');
+
+                const sourceVal = state.grabbedIdx;
+
+                state.grabbedIdx = null;
+                state.targetOverlayIdx = null;
+
+                const deltaX = Math.abs(clientX - startClientX);
+                const deltaY = Math.abs(clientY - startClientY);
+
+                if (deltaX < 6 && deltaY < 6) {
+                    // Click selection logic instead of drag
+                    handleCardClickSelection(val, card);
+                } else if (targetIdx !== null && sourceVal !== null) {
+                    processSortMove(sourceVal, targetIdx);
+                } else {
+                    renderGamePlayGrid();
+                }
+            });
+        }
+
+        function handleCardClickSelection(val, card) {
+            if (state.selectedCardIdx !== null) {
+                if (state.selectedCardIdx === val) {
+                    state.selectedCardIdx = null;
+                    card.classList.remove('ring-4', 'ring-blue-500');
+                    renderGamePlayGrid();
+                } else {
+                    state.selectedCardIdx = val;
+                    document.querySelectorAll('.sorting-card').forEach(c => c.classList.remove('ring-4', 'ring-blue-500'));
+                    card.classList.add('ring-4', 'ring-blue-500');
+                }
+            } else {
+                state.selectedCardIdx = val;
+                document.querySelectorAll('.sorting-card').forEach(c => c.classList.remove('ring-4', 'ring-blue-500'));
+                card.classList.add('ring-4', 'ring-blue-500');
+                
+                showNotification("เลือกตัวเลขแล้ว", "ขั้นตอนต่อไป ให้คลิกเลือกช่องคำตอบสีฟ้าที่มีขอบกระดิกกะพริบเพื่อสั่งย้ายข้อมูล!", "info");
+                renderGamePlayGrid();
+            }
+        }
+
+        function processSortMove(sourceVal, destinationIdx) {
+            const consoleLog = document.getElementById('live-console-log');
+            
+            if (state.currentStage === 'selection') {
+                const valIdx = parseInt(sourceVal); 
+                const cardValue = state.selectionSource[valIdx];
+                if (cardValue === undefined || cardValue === null) return;
+
+                // Selection check: is it minimum?
+                const remaining = state.selectionSource.filter(v => v !== null);
+                const minVal = Math.min(...remaining);
+
+                if (cardValue !== minVal) {
+                    state.stats.errors++;
+                    state.stageScores.selection = Math.max(100, state.stageScores.selection - 50);
+                    showNotification("ผิดขั้นตอน!", `ตัวเลขที่คุณเลือก (${cardValue}) ไม่ใช่ค่าน้อยที่สุดในรายการที่เหลืออยู่! (ค่าน้อยที่สุดคือ ${minVal})`, "error");
+                    consoleLog.innerHTML += `<div class="text-rose-400">[ERROR] เลื่อนตัวเลข ${cardValue} ไม่ผ่าน (ไม่ใช่ค่าน้อยที่สุด)</div>`;
+                    updateStatsHUD();
+                    renderGamePlayGrid();
+                    return;
+                }
+
+                // Check correct destination
+                if (destinationIdx !== state.selectionNextSlot) {
+                    state.stats.errors++;
+                    state.stageScores.selection = Math.max(100, state.stageScores.selection - 30);
+                    showNotification("วางผิดช่อง!", `กรุณาหยิบย้ายลงตามลำดับช่องคำตอบจากซ้ายไปขวา (เป้าหมายปัจจุบันคือช่องดัชนี ${state.selectionNextSlot})`, "error");
+                    consoleLog.innerHTML += `<div class="text-rose-400">[ERROR] เลื่อนค่า ${cardValue} ไปช่องที่ ${destinationIdx} ล้มเหลว (ควรแทรกช่องที่ ${state.selectionNextSlot})</div>`;
+                    updateStatsHUD();
+                    renderGamePlayGrid();
+                    return;
+                }
+
+                // Transfer Success
+                state.stats.correctMoves++;
+                state.stats.totalSwaps++;
+                
+                state.selectionAnswer[state.selectionNextSlot] = cardValue;
+                state.selectionSource[valIdx] = null;
+                state.selectionNextSlot++;
+
+                consoleLog.innerHTML += `<div class="text-emerald-400">[SUCCESS] ย้ายค่าที่น้อยที่สุด ${cardValue} เข้าสู่ช่องเก็บผลลัพธ์ดัชนี ${state.selectionNextSlot-1} สำเร็จ</div>`;
+                showNotification("ถูกต้อง!", `บันทึกค่าน้อยที่สุด ${cardValue} ลงในตำแหน่งที่ ${state.selectionNextSlot-1}`, "success");
+
+                if (state.selectionNextSlot >= 5) {
+                    consoleLog.innerHTML += `<div class="text-blue-400">[SYSTEM] จบการทำงานด่านที่ 1 ชุดผลลัพธ์คำตอบสำเร็จ: [${state.selectionAnswer.join(', ')}]</div>`;
+                    playBeep('complete');
+                    setTimeout(() => {
+                        openEducationalPopup('insertion');
+                    }, 1200);
+                } else {
+                    renderGamePlayGrid();
+                }
+
+            } else {
+                // Insertion Sort validation - robust type checking using parseInt
+                const parsedSourceVal = parseInt(sourceVal);
+                if (parsedSourceVal !== state.insertionCurrentCard) {
+                    state.stats.errors++;
+                    state.stageScores.insertion = Math.max(100, state.stageScores.insertion - 40);
+                    showNotification("เลือกการ์ดผิด!", `คุณต้องเลือกหยิบแผ่นกระดาษลอยตัวที่อยู่ด้านบนเพื่อนำไปแทรกลงข้างล่าง`, "error");
+                    renderGamePlayGrid();
+                    return;
+                }
+
+                // Simulate insertion array with integers
+                let testArr = [...state.insertionAnswer];
+                testArr.splice(destinationIdx, 0, parsedSourceVal);
+
+                // Verify subset is sorted correctly (least to greatest)
+                let isSorted = true;
+                for (let i = 0; i < testArr.length - 1; i++) {
+                    if (testArr[i] > testArr[i+1]) {
+                        isSorted = false;
+                        break;
+                    }
+                }
+
+                if (!isSorted) {
+                    state.stats.errors++;
+                    state.stageScores.insertion = Math.max(100, state.stageScores.insertion - 50);
+                    showNotification("วางผิดช่องแทรก!", `ค่าตัวเลข ${parsedSourceVal} ไม่สามารถแทรกลงในช่องที่ ${destinationIdx} ได้ เนื่องจากกลุ่มเป้าหมายด้านล่างจะไม่เรียงจากน้อยไปหามาก`, "error");
+                    consoleLog.innerHTML += `<div class="text-rose-500">[ERROR] การแทรก ${parsedSourceVal} ที่ตำแหน่งที่ ${destinationIdx} ทำให้สูญเสียคุณสมบัติการจัดเรียง</div>`;
+                    updateStatsHUD();
+                    renderGamePlayGrid();
+                    return;
+                }
+
+                // Insertion Success
+                state.stats.correctMoves++;
+                state.stats.totalSwaps++;
+
+                state.insertionAnswer = testArr;
+                consoleLog.innerHTML += `<div class="text-emerald-400">[SUCCESS] แทรกข้อมูล ${parsedSourceVal} ลงดัชนีช่องว่างที่ ${destinationIdx} ส่งผลให้กลุ่มเรียงถูกต้อง: [${state.insertionAnswer.join(', ')}]</div>`;
+                showNotification("แทรกสำเร็จ!", `เรียงข้อมูลแทรก ${parsedSourceVal} ลงช่องว่างที่ ${destinationIdx} ได้ถูกตำแหน่งย่อย!`, "success");
+
+                // Get next card from deck
+                if (state.insertionDeck.length > 0) {
+                    state.insertionCurrentCard = state.insertionDeck.shift();
+                    renderGamePlayGrid();
+                } else {
+                    state.insertionCurrentCard = null;
+                    consoleLog.innerHTML += `<div class="text-blue-400">[SYSTEM] จบการทำงานด่านที่ 2 อัลกอริทึมเรียงสมบูรณ์: [${state.insertionAnswer.join(', ')}]</div>`;
+                    playBeep('complete');
+                    clearInterval(state.timerInterval);
+                    setTimeout(() => {
+                        triggerFinalScorecard();
+                    }, 1500);
+                }
+            }
+
+            updateStatsHUD();
+        }
+
+        function updateStatsHUD() {
+            document.getElementById('stat-correct-moves').textContent = `${state.stats.correctMoves} / 5`;
+            document.getElementById('stat-total-swaps').textContent = `${state.stats.totalSwaps} ครั้ง`;
+            document.getElementById('stat-errors').textContent = `${state.stats.errors} ครั้ง`;
+            
+            state.score = state.stageScores.selection + state.stageScores.insertion;
+            document.getElementById('hud-score').textContent = `${state.score} คะแนน`;
+        }
+
+        function openEducationalPopup(stageKey) {
+            const overlay = document.getElementById('algo-popup-overlay');
+            const title = document.getElementById('popup-title');
+            const icon = document.getElementById('popup-icon');
+            const illustration = document.getElementById('popup-illustration');
+            const body = document.getElementById('popup-body');
+            const ackBtn = document.getElementById('btn-popup-ack');
+
+            if (stageKey === 'selection') {
+                title.textContent = "ด่านที่ 1: การจัดเรียงแบบเลือก (Selection Sort)";
+                icon.className = "fa-solid fa-list-check text-blue-200 text-xl";
+                illustration.innerHTML = `
+                    <div class="border border-slate-300 bg-white text-slate-700 w-12 h-16 rounded-xl flex items-center justify-center text-lg">45</div>
+                    <div class="border border-slate-300 bg-white text-slate-700 w-12 h-16 rounded-xl flex items-center justify-center text-lg">12</div>
+                    <div class="border-2 border-rose-500 bg-rose-100 text-rose-800 w-12 h-16 rounded-xl flex items-center justify-center font-bold text-lg animate-bounce">7</div>
+                    <div class="border border-slate-300 bg-white text-slate-700 w-12 h-16 rounded-xl flex items-center justify-center text-lg">23</div>
+                `;
+                body.innerHTML = `
+                    <p class="font-bold text-slate-800">เป้าหมายของกติกาใหม่:</p>
+                    <p class="text-slate-600">วิเคราะห์ข้อมูลเดิมที่อยู่ด้านบน ค้นหา <strong class="text-emerald-600 font-bold">ค่าน้อยที่สุดในส่วนที่เหลือ</strong> จากนั้นหยิบย้ายมาจัดวางในช่องคำตอบว่างๆ ด้านล่าง เรียงทีละกล่องจากซ้ายไปขวาจนครบถ้วนครับ!</p>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+                        <p class="text-blue-700 font-bold"><i class="fa-solid fa-hand-fist mr-1"></i>วิธีการหยิบควบคุม AR:</p>
+                        <p class="text-slate-600">1. ขยับตัวชี้ไปทับตัวเลขน้อยที่สุดที่ด้านบน</p>
+                        <p class="text-slate-600">2. กำมือค้างไว้ลากตัวการ์ดดึงลงมาวางทับช่องเป้าหมายกระดิกสีฟ้าด้านล่าง</p>
+                        <p class="text-slate-600">3. แบมือปล่อยตัวการ์ดเพื่อนำไปกรอกตำแหน่งเรียบร้อย</p>
+                    </div>
+                `;
+                ackBtn.onclick = () => {
+                    overlay.classList.add('hidden');
+                    initStage('selection');
+                };
+            } else {
+                title.textContent = "ด่านที่ 2: การจัดเรียงแบบแทรก (Insertion Sort)";
+                icon.className = "fa-solid fa-folder-plus text-blue-200 text-xl";
+                illustration.innerHTML = `
+                    <div class="border border-emerald-500 bg-emerald-50 text-emerald-700 w-12 h-16 rounded-xl flex items-center justify-center font-bold text-sm">9</div>
+                    <div class="border-2 border-rose-500 bg-rose-100 text-rose-800 w-12 h-16 rounded-xl flex items-center justify-center font-bold text-lg animate-bounce">18</div>
+                    <div class="border border-emerald-500 bg-emerald-50 text-emerald-700 w-12 h-16 rounded-xl flex items-center justify-center font-bold text-sm">35</div>
+                `;
+                body.innerHTML = `
+                    <p class="font-bold text-slate-800">เป้าหมายของกติกาใหม่:</p>
+                    <p class="text-slate-600">ตัวการ์ดข้อมูลจะปรากฏขึ้น <strong class="text-rose-600 font-bold">ลอยทีละใบ</strong> ในบริเวณพื้นที่พักด้านบน ให้นักเรียนคีบแล้วดึงลงมาสอดแทรกระหว่างช่องว่างของผลตอบชุดเก่าที่จัดเรียงลำดับล่างสุด เพื่อให้คอลเลกชันยังเป็นระเบียบเรียบร้อยครับ!</p>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+                        <p class="text-emerald-700 font-bold"><i class="fa-solid fa-hand-fist mr-1"></i>เทคนิคการวิเคราะห์:</p>
+                        <p class="text-slate-600">1. ดึงกระดาษเป้าหมายสีแดงที่ลอยลอยอยู่ลงมา</p>
+                        <p class="text-slate-600">2. วางทับช่องที่มีระบุ <strong class="text-blue-700">\"แทรกที่ X\"</strong> ซึ่งเหมาะสมต่อระเบียบเชิงตัวเลข</p>
+                    </div>
+                `;
+                ackBtn.onclick = () => {
+                    overlay.classList.add('hidden');
+                    initStage('insertion');
+                };
+            }
+
+            overlay.classList.remove('hidden');
+        }
+
+        document.getElementById('btn-close-popup').addEventListener('click', () => {
+            document.getElementById('algo-popup-overlay').classList.add('hidden');
+        });
+
+        document.getElementById('btn-show-algo-tip').addEventListener('click', () => {
+            openEducationalPopup(state.currentStage);
+        });
+
+        function triggerFinalScorecard() {
+            state.currentStage = 'scorecard';
+            
+            if (state.webcamStream) {
+                state.webcamStream.getTracks().forEach(track => track.stop());
+            }
+
+            document.getElementById('section-game').classList.add('hidden');
+            const scoreSec = document.getElementById('section-scorecard');
+            scoreSec.classList.remove('hidden');
+
+            document.getElementById('scorecard-fullname').textContent = state.user.fullname;
+            document.getElementById('scorecard-class').textContent = state.user.classRoom;
+            document.getElementById('scorecard-no').textContent = state.user.no;
+            
+            const finalScore = state.stageScores.selection + state.stageScores.insertion;
+            document.getElementById('scorecard-total-score').textContent = finalScore;
+            
+            const mins = String(Math.floor(state.timeElapsed / 60)).padStart(2, '0');
+            const secs = String(state.timeElapsed % 60).padStart(2, '0');
+            document.getElementById('scorecard-total-time').textContent = `${mins}:${secs}`;
+            
+            const now = new Date();
+            document.getElementById('scorecard-timestamp').textContent = `วันเวลาประเมิน: ${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH')} น.`;
+
+            document.getElementById('scorecard-stage1-score').textContent = `${state.stageScores.selection} / 500 คะแนน`;
+            document.getElementById('scorecard-stage2-score').textContent = `${state.stageScores.insertion} / 500 คะแนน`;
+
+            let rank = "BEGINNER";
+            let starsHtml = '<i class="fa-solid fa-star"></i>';
+            
+            if (finalScore >= 900 && state.timeElapsed < 120) {
+                rank = "GRAND MASTER";
+                starsHtml = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+            } else if (finalScore >= 800 && state.timeElapsed < 240) {
+                rank = "MASTER";
+                starsHtml = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+            } else if (finalScore >= 600) {
+                rank = "COMPUTING EXPERT";
+                starsHtml = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+            } else {
+                rank = "LEARNER";
+                starsHtml = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+            }
+
+            document.getElementById('scorecard-rank').textContent = rank;
+            document.getElementById('scorecard-speed-stars').innerHTML = starsHtml;
+
+            showNotification("สำเร็จการฝึกอบรม!", "จัดพิมพ์ใบรับรองคะแนนเสร็จสิ้น แคปหน้าจอเพื่อส่งครูผู้จัดทำได้เลยครับ!", "success");
+        }
+
+        document.getElementById('btn-copy-report').addEventListener('click', () => {
+            const elapsedMins = Math.floor(state.timeElapsed / 60);
+            const elapsedSecs = state.timeElapsed % 60;
+            const reportText = `🏆 รายงานผลคะแนนกิจกรรม AR Sorting Mastery\n` +
+                               `ชื่อ-สกุล: ${state.user.fullname}\n` +
+                               `ชั้น: ${state.user.classRoom} | เลขที่: ${state.user.no}\n` +
+                               `คะแนนรวม: ${state.score} / 1000 คะแนน\n` +
+                               `เวลารวมที่ใช้: ${elapsedMins} นาที ${elapsedSecs} วินาที\n` +
+                               `ผลประเมินด่าน 1 (Selection Sort): ${state.stageScores.selection}/500 คะแนน\n` +
+                               `ผลประเมินด่าน 2 (Insertion Sort): ${state.stageScores.insertion}/500 คะแนน\n` +
+                               `ระดับความเชี่ยวชาญ: ${document.getElementById('scorecard-rank').textContent}\n` +
+                               `ผู้พัฒนาสื่อการสอน: ครูธนกฤชช์ โยมไธสง\n` +
+                               `ตราประทับเวลาประเมิน: ${new Date().toLocaleString('th-TH')}`;
+            
+            const el = document.createElement('textarea');
+            el.value = reportText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            showNotification("คัดลอกสำเร็จ", "บันทึกรายงานผลลงคลิปบอร์ดแล้ว คุณสามารถกดวางส่งรายงานให้คุณครูได้เลย", "success");
+        });
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
