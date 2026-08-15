@@ -209,7 +209,7 @@
                         <a href="#ai-basics" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50/80 border-l-4 border-indigo-600 smooth-transition">
                             <span>บทนำ: ความเข้าใจพื้นฐานเกี่ยวกับ AI</span>
                         </a>
-                        <a href="#prep" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50/80 border-l-4 border-indigo-600 smooth-transition">
+                        <a href="#prep" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
                             <span>1. การเตรียมตัวและเตรียมคิดแนวทาง PR</span>
                         </a>
                         <a href="#copywriting" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
@@ -2073,25 +2073,59 @@
             markEditableFields();
             initializePromptEditors();
             initializeBlueprintDownloads();
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    const id = entry.target.getAttribute('id');
-                    if (sidebarVisible() && entry.intersectionRatio > 0.25) {
-                        document.querySelectorAll('.toc-link').forEach(link => {
-                            if (link.getAttribute('href') === `#${id}`) {
-                                link.className = "toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50/80 border-l-4 border-indigo-600 smooth-transition";
-                            } else {
-                                link.className = "toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition";
-                            }
-                        });
-                    }
-                });
-            }, { threshold: [0.1, 0.25, 0.5] });
-
-            document.querySelectorAll('section').forEach(section => {
-                observer.observe(section);
-            });
+            initializeTocScrollSpy();
         });
+
+        // Select exactly one TOC item from the section currently below the sticky header.
+        function initializeTocScrollSpy() {
+            const links = Array.from(document.querySelectorAll('.toc-link[href^="#"]'));
+            const items = links.map(link => {
+                const id = decodeURIComponent(link.getAttribute('href').slice(1));
+                return { link, section: document.getElementById(id) };
+            }).filter(item => item.section);
+            if (!items.length) return;
+
+            const activeClasses = ['font-semibold', 'text-indigo-700', 'bg-indigo-50/80', 'border-indigo-600'];
+            const inactiveClasses = ['font-medium', 'text-slate-600', 'hover:bg-slate-100', 'hover:text-slate-900', 'border-transparent'];
+
+            function setActiveToc(activeLink) {
+                items.forEach(({ link }) => {
+                    const isActive = link === activeLink;
+                    link.classList.remove(...(isActive ? inactiveClasses : activeClasses));
+                    link.classList.add(...(isActive ? activeClasses : inactiveClasses));
+                    if (isActive) link.setAttribute('aria-current', 'location');
+                    else link.removeAttribute('aria-current');
+                });
+            }
+
+            let scheduled = false;
+            function updateActiveToc() {
+                scheduled = false;
+                const header = document.querySelector('.theme-header');
+                const marker = (header ? header.getBoundingClientRect().height : 0) + 28;
+                let current = items[0];
+
+                for (const item of items) {
+                    if (item.section.getBoundingClientRect().top <= marker) current = item;
+                    else break;
+                }
+
+                const atPageBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+                if (atPageBottom) current = items[items.length - 1];
+                setActiveToc(current.link);
+            }
+
+            function requestUpdate() {
+                if (scheduled) return;
+                scheduled = true;
+                window.requestAnimationFrame(updateActiveToc);
+            }
+
+            links.forEach(link => link.addEventListener('click', () => setActiveToc(link)));
+            window.addEventListener('scroll', requestUpdate, { passive: true });
+            window.addEventListener('resize', requestUpdate);
+            updateActiveToc();
+        }
 
         function sidebarVisible() {
             return !document.getElementById('sidebar-container').classList.contains('hidden');
