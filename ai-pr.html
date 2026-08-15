@@ -6,6 +6,8 @@
     <title>โครงการพัฒนาสมรรถนะบุคลากร &quot;การประยุกต์ใช้เทคโนโลยี AI เพื่อการสื่อสารองค์กรและประชาสัมพันธ์เชิงรุก&quot; สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาบุรีรัมย์</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Export Canva blueprint previews as PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Google Fonts (Kanit & Sarabun) -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
@@ -96,6 +98,24 @@
             transition:all .2s ease;
             white-space:nowrap;
         }
+        .blueprint-save-btn {
+            width:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:.45rem;
+            margin-top:.65rem;
+            padding:.55rem .8rem;
+            border-radius:.5rem;
+            background:#0f766e;
+            color:#fff;
+            font-family:'Kanit',sans-serif;
+            font-size:.75rem;
+            font-weight:600;
+            transition:background-color .2s, transform .2s;
+        }
+        .blueprint-save-btn:hover { background:#115e59; transform:translateY(-1px); }
+        .blueprint-save-btn:disabled { cursor:wait; opacity:.7; transform:none; }
         .prompt-edit-btn {
             background:#fff;
             color:#721b36;
@@ -205,7 +225,7 @@
                             <span>5. สร้างโปสเตอร์ประชาสัมพันธ์</span>
                         </a>
                         <a href="#canva-workshop" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
-                            <span>6. แม่แบบ Canva 4:5 และพรอมต์เติมเนื้อหา</span>
+                            <span>6. แม่แบบ Canva 4:5 และพรอมต์เติมเนื้อหา (10 แบบ)</span>
                         </a>
                         <a href="#video-ai" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
                             <span>7. สร้างวิดีโอประชาสัมพันธ์ (8 พรอมต์)</span>
@@ -940,7 +960,7 @@
 
                     </div>
 
-                    <!-- Practical workflow for all six Canva blueprints -->
+                    <!-- Practical workflow for all ten Canva blueprints -->
                     <div id="canva-practical-workflow" class="mt-10 border-t-2 border-rose-200 pt-8 font-kanit">
                         <div class="mb-6">
                             <span class="inline-flex items-center gap-2 rounded-full bg-rose-900 px-3 py-1 text-xs font-bold text-white">
@@ -951,7 +971,7 @@
                         </div>
 
                         <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-7">
-                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">01</span><h4 class="mt-1 text-sm font-bold text-slate-900">สร้างแม่แบบ</h4><p class="mt-1 text-xs text-slate-600">สร้าง Canva ขนาด 1080 × 1350 px จำนวน 6 หน้า</p></div>
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">01</span><h4 class="mt-1 text-sm font-bold text-slate-900">สร้างแม่แบบ</h4><p class="mt-1 text-xs text-slate-600">สร้าง Canva ขนาด 1080 × 1350 px จำนวน 10 หน้า</p></div>
                             <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">02</span><h4 class="mt-1 text-sm font-bold text-slate-900">เลือกบลูพริ้นต์</h4><p class="mt-1 text-xs text-slate-600">เลือกหน้าให้ตรงกับวัตถุประสงค์ของข่าว</p></div>
                             <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">03</span><h4 class="mt-1 text-sm font-bold text-slate-900">ให้ AI ร่างข้อความ</h4><p class="mt-1 text-xs text-slate-600">แก้ช่องสีเหลืองแล้วคัดลอกพรอมต์ไปใช้กับ AI</p></div>
                             <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">04</span><h4 class="mt-1 text-sm font-bold text-slate-900">วางใน Canva</h4><p class="mt-1 text-xs text-slate-600">ใช้เฉพาะพาดหัว ข้อความรอง ประเด็นสำคัญ และ CTA</p></div>
@@ -969,6 +989,10 @@
                                     <tr class="bg-rose-50/60"><td class="p-3">รายงานสถิติและผลการดำเนินงาน</td><td class="p-3 font-bold text-rose-800">4. ตัวเลขผลสำเร็จ</td><td class="p-3">ตัวเลข หน่วย ช่วงเวลา และแหล่งอ้างอิง</td></tr>
                                     <tr><td class="p-3">เชิญอบรม ประชุม หรือเปิดรับสมัคร</td><td class="p-3 font-bold text-rose-800">5. ประกาศและเชิญชวน</td><td class="p-3">ชื่องาน วัน เวลา สถานที่ กลุ่มเป้าหมาย และ QR Code</td></tr>
                                     <tr class="bg-rose-50/60"><td class="p-3">นำเสนอการแก้ปัญหาและผลลัพธ์</td><td class="p-3 font-bold text-rose-800">6. เรื่องเล่าก่อน–หลัง</td><td class="p-3">ปัญหา วิธีดำเนินงาน หลักฐานผลลัพธ์ และก้าวต่อไป</td></tr>
+                                    <tr><td class="p-3">สรุปลำดับเหตุการณ์หรือแผนดำเนินงาน</td><td class="p-3 font-bold text-rose-800">7. ไทม์ไลน์และโรดแมป</td><td class="p-3">ช่วงเวลา เหตุการณ์สำคัญ ผู้รับผิดชอบ และผลลัพธ์แต่ละระยะ</td></tr>
+                                    <tr class="bg-rose-50/60"><td class="p-3">สื่อสารวิสัยทัศน์หรือสารจากผู้บริหาร</td><td class="p-3 font-bold text-rose-800">8. ข้อความบุคคลสำคัญ</td><td class="p-3">ภาพที่ได้รับอนุญาต คำพูดต้นฉบับ ชื่อ–ตำแหน่ง และบริบท</td></tr>
+                                    <tr><td class="p-3">แจ้งเตือนหรือประกาศเร่งด่วน</td><td class="p-3 font-bold text-rose-800">9. ประกาศเร่งด่วน</td><td class="p-3">ข้อเท็จจริง มาตรการ ช่วงเวลา ช่องทางติดต่อ และแหล่งอ้างอิง</td></tr>
+                                    <tr class="bg-rose-50/60"><td class="p-3">ตอบคำถามเกี่ยวกับบริการหรือโครงการ</td><td class="p-3 font-bold text-rose-800">10. คำถามที่พบบ่อย</td><td class="p-3">คำถาม คำตอบ เงื่อนไข เอกสารที่ใช้ และช่องทางสอบถาม</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1000,7 +1024,7 @@
 
                         <div class="overflow-hidden rounded-xl border border-slate-700 bg-slate-950 shadow-sm">
                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 bg-slate-900 px-4 py-3">
-                                <div><h4 class="text-sm font-bold text-white">พรอมต์กลางสำหรับบลูพริ้นต์ทั้ง 6 แบบ</h4><p class="mt-1 text-[10px] text-slate-400">แก้ข้อความในช่องสีเหลือง แล้วคัดลอกไปใช้กับ ChatGPT หรือ AI ที่ต้องการ</p></div>
+                                <div><h4 class="text-sm font-bold text-white">พรอมต์กลางสำหรับบลูพริ้นต์ทั้ง 10 แบบ</h4><p class="mt-1 text-[10px] text-slate-400">แก้ข้อความในช่องสีเหลือง แล้วคัดลอกไปใช้กับ ChatGPT หรือ AI ที่ต้องการ</p></div>
                                 <button id="btn-lv-workflow" onclick="copyPrompt('btn-lv-workflow','lv-workflow-text')" class="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white"><i class="fa-solid fa-copy mr-1"></i> คัดลอกพรอมต์</button>
                             </div>
                             <pre id="lv-workflow-text" class="readable-prompt p-4 text-xs sm:text-sm">ช่วยเตรียมข้อความสำหรับกราฟิกประชาสัมพันธ์ของ สพม.บุรีรัมย์
@@ -1034,7 +1058,7 @@
                             <i class="fa-solid fa-palette"></i>
                         </div>
                         <div>
-                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">6. โครงสร้างดีไซน์กราฟิกใน Canva (6 สัดส่วนบลูพริ้นต์ และ Prompt เติมเนื้อหา)</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">6. โครงสร้างดีไซน์กราฟิกใน Canva (10 สัดส่วนบลูพริ้นต์ และ Prompt เติมเนื้อหา)</h2>
                             <p class="text-xs text-slate-500 mt-0.5">แผนผังจัดสัดส่วนแบบ 4:5 แนวตั้ง เพื่อแสดงผลบนหน้าฟีด Facebook ได้มีประสิทธิภาพดีที่สุด</p>
                         </div>
                     </div>
@@ -1112,6 +1136,34 @@
                             <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">6. เรื่องเล่าผลลัพธ์ (Before–After Story)</span><p class="text-xs text-slate-500 mt-2 mb-3">เปรียบเทียบก่อนและหลังดำเนินงาน พร้อมภาพจริงและคำอธิบายผลที่ตรวจสอบได้ เหมาะกับนวัตกรรมและการแก้ปัญหา</p></div>
                             <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt เล่า Before–After:</span><button id="btn-lv6" onclick="copyPrompt('btn-lv6','lv6-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv6-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยสรุปเรื่องราว [ชื่อโครงการ] เป็น ก่อนดำเนินงาน: [ปัญหาและหลักฐาน] วิธีดำเนินงาน: [กิจกรรม] หลังดำเนินงาน: [ผลลัพธ์ที่ยืนยันแล้ว] และก้าวต่อไป: [แผนงาน] แต่ละส่วนไม่เกิน 25 คำ พร้อมเสนอพาดหัวที่ไม่กล่าวอ้างเกินจริง</pre></div>
                             <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col gap-2 text-[9px]"><div class="text-center font-bold text-rose-900">[จากปัญหา สู่ผลลัพธ์]</div><div class="grid grid-cols-2 gap-2 flex-1"><div class="bg-slate-100 border border-dashed p-2">ก่อน<br>[ภาพ/ปัญหา]</div><div class="bg-rose-50 border border-dashed p-2">หลัง<br>[ภาพ/ผลลัพธ์]</div></div><div class="bg-slate-900 text-white p-2">[วิธีดำเนินงาน] → [ก้าวต่อไป]</div></div>
+                        </div>
+
+                        <!-- Layout 7 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">7. ไทม์ไลน์และโรดแมป (Timeline & Roadmap)</span><p class="text-xs text-slate-500 mt-2 mb-3">เหมาะกับแผนดำเนินงาน กำหนดการ และสรุปเหตุการณ์ โดยเรียงข้อมูลตามช่วงเวลา 4–6 จุด</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt สร้างไทม์ไลน์:</span><button id="btn-lv7" onclick="copyPrompt('btn-lv7','lv7-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv7-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยสรุป [ชื่อโครงการหรือเหตุการณ์] เป็นไทม์ไลน์ [จำนวนช่วง] ช่วง จากข้อมูล [วางข้อมูลต้นทาง] โดยแต่ละช่วงระบุ วัน/ระยะเวลา หัวข้อไม่เกิน 7 คำ รายละเอียดไม่เกิน 18 คำ ผู้รับผิดชอบ และผลลัพธ์ ห้ามสร้างวันที่หรือเหตุการณ์ที่ไม่มีในข้อมูล</pre></div>
+                            <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col text-[9px]"><div class="bg-rose-950 text-white p-2 text-center font-bold">[ชื่อแผนงาน / ช่วงเวลา]</div><div class="flex-1 flex flex-col justify-around border-l-2 border-amber-400 ml-4 pl-4 my-3"><div>● [ระยะที่ 1] — [กิจกรรม]</div><div>● [ระยะที่ 2] — [กิจกรรม]</div><div>● [ระยะที่ 3] — [กิจกรรม]</div><div>● [ระยะที่ 4] — [ผลลัพธ์]</div></div><div class="bg-slate-100 p-2 text-center">[ผู้รับผิดชอบ / ติดต่อ]</div></div>
+                        </div>
+
+                        <!-- Layout 8 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">8. ข้อความบุคคลสำคัญ (Executive Quote)</span><p class="text-xs text-slate-500 mt-2 mb-3">ใช้สื่อสารวิสัยทัศน์หรือสารสำคัญ โดยเน้นภาพหนึ่งภาพ คำพูดจริง และชื่อ–ตำแหน่งที่ตรวจสอบแล้ว</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt ขัดเกลาคำกล่าว:</span><button id="btn-lv8" onclick="copyPrompt('btn-lv8','lv8-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv8-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยคัดเลือกข้อความเด่นจากคำกล่าวจริง [วางคำกล่าวต้นฉบับ] สำหรับกราฟิกคำคมของ [ชื่อ–นามสกุลและตำแหน่ง] ให้ยาวไม่เกิน 30 คำ คงความหมายเดิม ไม่แต่งคำพูดเพิ่ม พร้อมเสนอพาดหัวบริบทหนึ่งบรรทัดและรายการที่ต้องให้เจ้าตัวยืนยัน</pre></div>
+                            <div class="aspect-[4/5] bg-gradient-to-br from-rose-950 to-slate-900 rounded-lg p-3 text-white flex flex-col justify-between text-[9px]"><div class="text-amber-300">“</div><div class="text-center text-sm font-bold px-3">[คำกล่าวสำคัญที่ได้รับการยืนยัน]</div><div class="grid grid-cols-[1fr_2fr] gap-2 items-end"><div class="aspect-square bg-white/10 border border-dashed flex items-center justify-center">[ภาพ]</div><div><b>[ชื่อ–นามสกุล]</b><br>[ตำแหน่ง]</div></div></div>
+                        </div>
+
+                        <!-- Layout 9 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">9. ประกาศเร่งด่วน (Urgent Notice)</span><p class="text-xs text-slate-500 mt-2 mb-3">ใช้แจ้งเตือนเหตุการณ์ มาตรการ หรือการเปลี่ยนแปลง โดยเน้นสิ่งที่ต้องทำและช่องทางติดตามข้อมูล</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt ประกาศเร่งด่วน:</span><button id="btn-lv9" onclick="copyPrompt('btn-lv9','lv9-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv9-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยจัดข้อความสำหรับกราฟิกประกาศเรื่อง [หัวข้อประกาศ] มีผล [วัน เวลา และพื้นที่] กลุ่มเป้าหมาย [ระบุ] มาตรการที่ต้องปฏิบัติ [วางข้อมูล] และช่องทางติดตาม [ระบุ] ใช้เฉพาะประกาศจาก [หน่วยงานต้นทาง] ส่งมอบพาดหัว สรุป 3 ข้อ CTA และรายการข้อมูลที่ต้องยืนยัน</pre></div>
+                            <div class="aspect-[4/5] bg-white border-2 border-red-500 rounded-lg p-3 flex flex-col gap-3 text-[9px]"><div class="bg-red-700 text-white p-3 text-center font-bold text-sm">ประกาศสำคัญ</div><div class="text-center font-bold text-red-900">[หัวข้อประกาศ]</div><div class="bg-red-50 p-3 flex-1">• [สิ่งที่เกิดขึ้น]<br><br>• [สิ่งที่ต้องปฏิบัติ]<br><br>• [ช่วงเวลาบังคับใช้]</div><div class="bg-slate-900 text-white p-2 text-center">[ช่องทางติดตาม / ติดต่อ]</div></div>
+                        </div>
+
+                        <!-- Layout 10 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">10. คำถามที่พบบ่อย (FAQ Service Guide)</span><p class="text-xs text-slate-500 mt-2 mb-3">เหมาะกับการอธิบายบริการ การสมัคร หรือโครงการ โดยจัดคำถาม–คำตอบสั้น 3–5 ข้อในภาพเดียว</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt สร้าง FAQ:</span><button id="btn-lv10" onclick="copyPrompt('btn-lv10','lv10-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv10-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">จากข้อมูลบริการ [วางข้อมูลต้นทาง] ช่วยสร้างคำถามที่พบบ่อย [จำนวนข้อ] ข้อ สำหรับ [กลุ่มเป้าหมาย] แต่ละข้อมีคำถามไม่เกิน 12 คำและคำตอบไม่เกิน 25 คำ ปิดท้ายด้วย [ช่องทางสอบถาม] หากข้อมูลไม่ครบให้ระบุว่า รอยืนยัน ห้ามคาดเดาเงื่อนไขหรือเอกสารที่ใช้</pre></div>
+                            <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col gap-2 text-[9px]"><div class="bg-rose-950 text-white p-3 text-center font-bold">คำถามที่พบบ่อย: [ชื่อบริการ]</div><div class="bg-rose-50 p-2"><b>Q1 [คำถาม]</b><br>A [คำตอบสั้น]</div><div class="bg-amber-50 p-2"><b>Q2 [คำถาม]</b><br>A [คำตอบสั้น]</div><div class="bg-rose-50 p-2"><b>Q3 [คำถาม]</b><br>A [คำตอบสั้น]</div><div class="mt-auto bg-slate-900 text-white p-2 text-center">[สอบถามเพิ่มเติม / QR Code]</div></div>
                         </div>
 
                     </div>
@@ -1842,6 +1894,66 @@
             });
         }
 
+        // Add a PNG download button beneath each of the 10 Canva blueprint previews.
+        function initializeBlueprintDownloads() {
+            for (let number = 1; number <= 10; number += 1) {
+                const promptButton = document.getElementById(`btn-lv${number}`);
+                if (!promptButton) continue;
+
+                const card = promptButton.closest('.grid > div');
+                if (!card || card.querySelector(`[data-blueprint-save="${number}"]`)) continue;
+
+                const directDivs = Array.from(card.children).filter(element => element.tagName === 'DIV');
+                const preview = directDivs[directDivs.length - 1];
+                if (!preview) continue;
+
+                preview.id = `blueprint-preview-${number}`;
+                preview.dataset.blueprintPreview = number;
+
+                const saveButton = document.createElement('button');
+                saveButton.type = 'button';
+                saveButton.className = 'blueprint-save-btn';
+                saveButton.dataset.blueprintSave = number;
+                saveButton.innerHTML = '<i class="fa-solid fa-image"></i><span>บันทึกบลูพริ้นต์เป็นภาพ PNG</span>';
+                saveButton.addEventListener('click', () => saveBlueprintImage(number, saveButton));
+                preview.insertAdjacentElement('afterend', saveButton);
+            }
+        }
+
+        async function saveBlueprintImage(number, button) {
+            const preview = document.getElementById(`blueprint-preview-${number}`);
+            if (!preview) return;
+
+            const originalContent = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังสร้างภาพ...</span>';
+
+            try {
+                if (typeof html2canvas !== 'function') throw new Error('ไม่พบเครื่องมือสร้างภาพ');
+                if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+                const canvas = await html2canvas(preview, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+                const link = document.createElement('a');
+                link.download = `canva-blueprint-${String(number).padStart(2, '0')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                button.innerHTML = '<i class="fa-solid fa-check"></i><span>บันทึกภาพแล้ว</span>';
+            } catch (error) {
+                console.error('บันทึกบลูพริ้นต์ไม่สำเร็จ:', error);
+                button.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง</span>';
+            } finally {
+                window.setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = originalContent;
+                }, 2000);
+            }
+        }
+
         // Track active section and update right sidebar active state dynamically
         window.addEventListener('DOMContentLoaded', () => {
             addAdditionalImagePrompts();
@@ -1859,6 +1971,7 @@
             });
             markEditableFields();
             initializePromptEditors();
+            initializeBlueprintDownloads();
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
                     const id = entry.target.getAttribute('id');
