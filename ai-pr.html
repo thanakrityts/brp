@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือปฏิบัติการ AI เพื่อการประชาสัมพันธ์เชิงรุก สพม.บุรีรัมย์</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Kanit & Sarabun) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .font-kanit {
+            font-family: 'Kanit', sans-serif;
+        }
+        .font-mono {
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Offset scroll anchor for sticky headers */
+        section {
+            scroll-margin-top: 120px;
+        }
+        /* Sticky Left Sidebar styling */
+        .sticky-sidebar {
+            position: sticky;
+            top: 110px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        /* Custom prompt styles for maximum readability */
+        .readable-prompt {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            letter-spacing: 0.025em;
+            color: #f8fafc; /* super bright white-slate */
+        }
+        /* Modern burgundy theme */
+        :root { --wine-950:#3b0717; --wine-900:#541126; --wine-800:#721b36; --wine-700:#922544; }
+        body { background: linear-gradient(135deg, #fffafa 0%, #f8fafc 48%, #fff3f6 100%); }
+        .theme-header { background: linear-gradient(110deg, var(--wine-950), var(--wine-800) 58%, #1e293b); }
+        .sticky-sidebar { border-top:4px solid var(--wine-700) !important; box-shadow:0 18px 45px rgba(84,17,38,.12); }
+        .toc-link:hover { background:#fff1f4 !important; color:var(--wine-800) !important; }
+        .toc-link.bg-indigo-50\/80 { background:#fff1f4 !important; color:var(--wine-800) !important; border-color:var(--wine-700) !important; }
+        main > section { box-shadow:0 14px 38px rgba(84,17,38,.07) !important; }
+        /* Alternate numbered sections: even = pale burgundy, odd = white */
+        #copywriting, #infographic-ai, #canva-workshop, #ai-safety { background:#fbe1e7 !important; }
+        #prep, #image-gen, #poster-ai, #video-ai { background:#ffffff !important; }
+        #pr-calendar { display:none !important; }
+        [class*="bg-indigo-600"] { background-color:var(--wine-700) !important; }
+        [class*="bg-indigo-950"] { background-color:var(--wine-950) !important; }
+        [class*="text-indigo-700"], [class*="text-indigo-800"], [class*="text-indigo-900"], [class*="text-indigo-950"] { color:var(--wine-800) !important; }
+        [class*="border-indigo-"], [class*="hover:border-indigo-"] { border-color:#d8a4b1 !important; }
+        .editable-field { background:#fbbf24; color:#1e293b; font-weight:700; padding:.05rem .3rem; border-radius:.3rem; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+        .prompt-action-group {
+            display:flex;
+            align-items:center;
+            justify-content:flex-end;
+            flex-wrap:wrap;
+            gap:.35rem;
+            margin-left:.5rem;
+        }
+        .prompt-edit-btn, .prompt-reset-btn {
+            display:inline-flex;
+            align-items:center;
+            gap:.3rem;
+            border-radius:.375rem;
+            padding:.3rem .55rem;
+            font-family:'Kanit', sans-serif;
+            font-size:.7rem;
+            font-weight:600;
+            line-height:1;
+            transition:all .2s ease;
+            white-space:nowrap;
+        }
+        .prompt-edit-btn {
+            background:#fff;
+            color:#721b36;
+            border:1px solid #d8a4b1;
+        }
+        .prompt-edit-btn:hover, .prompt-edit-btn.is-editing {
+            background:#922544;
+            border-color:#922544;
+            color:#fff;
+        }
+        .prompt-reset-btn {
+            background:#f1f5f9;
+            color:#475569;
+            border:1px solid #cbd5e1;
+        }
+        .prompt-reset-btn:hover { background:#e2e8f0; color:#0f172a; }
+        .prompt-editing {
+            outline:2px solid #fbbf24;
+            outline-offset:-2px;
+            border-radius:.4rem;
+            background-color:rgba(251,191,36,.08);
+            cursor:text;
+        }
+        .prompt-editing:focus {
+            outline:3px solid #f59e0b;
+            outline-offset:-3px;
+        }
+        pre, code, .readable-prompt {
+            display:block;
+            max-width:100%;
+            min-width:0;
+            white-space:pre-wrap !important;
+            overflow-wrap:anywhere;
+            word-break:break-word;
+        }
+        pre span, code span { white-space:normal; overflow-wrap:anywhere; }
+        .bg-slate-950 { min-width:0; overflow:hidden; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- Top Navigation Bar -->
+    <header class="theme-header text-white shadow-xl sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-amber-500 rounded-lg text-slate-950 text-xl font-bold flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-robot animate-pulse"></i>
+                </div>
+                <div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1 font-kanit">
+                        สพม.บุรีรัมย์ • เอกสารปฏิบัติการและคลัง Prompt ปรับแต่งตามตัวแปรฉบับสมบูรณ์
+                    </span>
+                    <h1 class="text-lg sm:text-xl font-bold font-kanit tracking-tight text-white">
+                        คู่มือปฏิบัติการ AI PR & Digital Media สำหรับ สพม.บุรีรัมย์
+                    </h1>
+                    <p class="mt-1 text-[11px] sm:text-xs font-kanit text-rose-100 flex items-center gap-1.5">
+                        <i class="fa-solid fa-person-chalkboard text-amber-300"></i>
+                        วิทยากรการอบรม นายธนกฤชช์ โยมไธสง ครู โรงเรียนบุรีรัมย์พิทยาคม
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                <!-- Sidebar Toggle Button -->
+                <button onclick="toggleSidebar()" class="order-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-amber-200 border border-slate-700 rounded-lg text-xs font-bold font-kanit flex items-center gap-2 smooth-transition shadow-md">
+                    <i id="toggle-sidebar-icon" class="fa-solid fa-indent"></i>
+                    <span id="toggle-sidebar-text">ซ่อนสารบัญ</span>
+                </button>
+
+                <div class="order-1 relative flex-grow md:w-64 max-w-xs">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="prompt-search" oninput="searchPrompts()" placeholder="พิมพ์คำเพื่อค้นหาพรอมต์/หัวข้อ..." class="w-full pl-9 pr-4 py-2 bg-slate-800/80 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-kanit">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Container with always-visible left sidebar layout -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-12 gap-4 md:gap-8">
+            
+            <!-- Right Sidebar Navigation -->
+            <aside id="sidebar-container" class="col-span-12 md:col-span-4 lg:col-span-3 md:order-2 transition-all duration-300 block">
+                <div class="sticky-sidebar bg-white rounded-xl shadow-md border border-slate-200 p-2 sm:p-4 font-kanit">
+                    <p class="text-[10px] sm:text-xs font-bold text-indigo-900 uppercase tracking-wider px-2 mb-3 flex items-center">
+                        <i class="fa-solid fa-compass mr-1.5 text-indigo-500 text-sm sm:text-base"></i> สารบัญนำทาง
+                    </p>
+                    <div class="space-y-1.5" id="desktop-toc">
+                        <a href="#prep" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50/80 border-l-4 border-indigo-600 smooth-transition">
+                            <span>1. การเตรียมตัวและเตรียมคิดแนวทาง PR</span>
+                        </a>
+                        <a href="#copywriting" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>2. เขียนข่าว PR & สื่อสารองค์กร (10 พรอมต์)</span>
+                        </a>
+                        <a href="#prompt-builder-sec" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition pl-4 sm:pl-6">
+                            <span>👉 2.1 เครื่องมือสร้าง Prompt ด่วน</span>
+                        </a>
+                        <a href="#image-gen" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>3. สร้างภาพประกอบข่าวด้วย AI (20 พรอมต์สองภาษา)</span>
+                        </a>
+                        <a href="#infographic-ai" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>4. สร้างอินโฟกราฟิกประชาสัมพันธ์</span>
+                        </a>
+                        <a href="#poster-ai" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>5. สร้างโปสเตอร์ประชาสัมพันธ์</span>
+                        </a>
+                        <a href="#canva-workshop" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>6. แม่แบบ Canva 4:5 และพรอมต์เติมเนื้อหา</span>
+                        </a>
+                        <a href="#video-ai" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>7. สร้างวิดีโอประชาสัมพันธ์ (8 พรอมต์)</span>
+                        </a>
+                        <a href="#ai-safety" class="toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition">
+                            <span>8. ข้อควรระวังในการใช้ AI</span>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-slate-100 px-2">
+                        <div class="bg-amber-50 rounded-lg p-2.5 border border-amber-200">
+                            <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wider block mb-1">💡 คำแนะนำในการใช้งาน:</span>
+                            <p class="text-[10px] text-slate-600 leading-relaxed font-sans">
+                                เปลี่ยนข้อความใน <span class="bg-amber-400 text-slate-950 font-bold px-1 rounded">[ ... ]</span> ให้ตรงกับข้อมูลจริงของ สพม.บุรีรัมย์ ตรวจสอบชื่อ–ตำแหน่ง วันเวลา ตัวเลข และแหล่งอ้างอิงทุกครั้ง ห้ามใส่ข้อมูลส่วนบุคคลหรือข้อมูลอ่อนไหวลงใน AI และต้องผ่านผู้รับผิดชอบก่อนเผยแพร่
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main id="main-content-container" class="col-span-12 md:col-span-8 lg:col-span-9 md:order-1 space-y-12 transition-all duration-300">
+                
+                <!-- Section 1: Preparation -->
+                <section id="prep" class="bg-white rounded-xl shadow-md border border-slate-200 p-4 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-toolbox"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">1. การเตรียมข้อมูลและวางแผนงานประชาสัมพันธ์</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">เช็กลิสต์เตรียมระบบงาน ข้อมูลต้นทาง และพรอมต์สำหรับวางแผนการสื่อสารล่วงหน้า</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="p-5 bg-gradient-to-br from-indigo-50 to-slate-50 rounded-xl border border-indigo-100 shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 mb-3.5 flex items-center text-base">
+                                <i class="fa-solid fa-laptop-code mr-2 text-indigo-600"></i> อุปกรณ์และทรัพย์สินระบบงาน (Hardware & Data Prep)
+                            </h3>
+                            <ul class="space-y-3 text-sm text-slate-600">
+                                <li class="flex items-start">
+                                    <span class="text-indigo-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>1. คอมพิวเตอร์พกพา (Notebook):</strong> ชาร์จแบตเตอรี่มาให้พร้อมเชื่อมต่อการทำงานกราฟิกและคัดลอกพรอมต์ได้สะดวก</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-indigo-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>2. ชุดข้อมูลและภาพกิจกรรม:</strong> เตรียมกำหนดการ รายชื่อผู้เกี่ยวข้อง ผลลัพธ์เชิงประจักษ์ ภาพที่ได้รับอนุญาต และเครดิตภาพจากกลุ่มงานหรือสถานศึกษาในสังกัด</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-indigo-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>3. แม่แบบอัตลักษณ์หน่วยงาน:</strong> เตรียมตราสัญลักษณ์ สีประจำหน่วยงาน แบบอักษร และแม่แบบ Canva ที่ได้รับอนุมัติ เพื่อให้สื่อทุกชิ้นเป็นมาตรฐานเดียวกัน</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-5 bg-gradient-to-br from-amber-50 to-slate-50 rounded-xl border border-amber-100 shadow-sm">
+                            <h3 class="font-bold font-kanit text-amber-950 mb-3.5 flex items-center text-base">
+                                <i class="fa-solid fa-users-gear mr-2 text-amber-600"></i> บัญชีและการเปิดสิทธิ์ใช้งานล่วงหน้า (Accounts & Subscriptions)
+                            </h3>
+                            <ul class="space-y-3 text-sm text-slate-600 font-kanit">
+                                <li class="flex items-start">
+                                    <span class="text-amber-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>4. OpenAI/Gemini Account:</strong> เปิดและเข้าสู่ระบบฝั่งแชตบอตหน้าต่างสนทนาให้พร้อมพิมพ์คำสั่ง</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-amber-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>5. บัญชี CapCut:</strong> ล็อกอินสำหรับใช้งานฟังก์ชันช่วยพากย์เสียงไทยอัตโนมัติ</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-amber-600 mt-1 mr-2.5"><i class="fa-solid fa-circle-check text-sm"></i></span>
+                                    <span><strong>6. ช่องทางและผู้อนุมัติ:</strong> ตรวจสอบสิทธิ์ผู้ดูแลเว็บไซต์และ Facebook ของ สพม.บุรีรัมย์ พร้อมกำหนดผู้ตรวจข้อเท็จจริง ผู้ตรวจภาษา และผู้อนุมัติก่อนเผยแพร่</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Prep Prompts (5 templates) -->
+                    <h3 class="font-bold font-kanit text-slate-900 mb-4 text-base border-t border-slate-100 pt-6">💡 พรอมต์ช่วยเตรียมข้อมูลและวางแผน (5 รูปแบบ)</h3>
+                    <div class="space-y-4">
+                        <!-- Prep Prompt 1 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-xs font-bold text-slate-800 font-kanit">1.1 พรอมต์วิเคราะห์มุมมองและประเด็นน่าสนใจ (Story Angle Brainstorming)</span>
+                                <button id="btn-prep1" onclick="copyPrompt('btn-prep1', 'prep1-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                    <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap rounded-b-xl"><pre id="prep1-text" class="readable-prompt">ฉันกำลังเตรียมประชาสัมพันธ์ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อนโยบาย/โครงการ/กิจกรรม]</span> ของ สพม.บุรีรัมย์ โดยมีเป้าหมาย <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ผลลัพธ์ที่ต้องการให้เกิดกับผู้เรียน ครู หรือสถานศึกษา]</span> และมีกลุ่มเป้าหมายหลักคือ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุกลุ่มเป้าหมาย]</span>
+ช่วยเสนอ 5 มุมข่าว โดยแต่ละมุมให้ระบุ: พาดหัวตั้งต้น, ประเด็นคุณค่าต่อผู้เรียน/สถานศึกษา, หลักฐานที่ต้องขอจากกลุ่มงานเจ้าของเรื่อง, บุคคลที่ควรสัมภาษณ์ และช่องทางเผยแพร่ที่เหมาะสม ห้ามแต่งตัวเลข ผลลัพธ์ หรือคำกล่าวที่ไม่มีในข้อมูลต้นทาง</pre></div>
+                        </div>
+
+                        <!-- Prep Prompt 2 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-xs font-bold text-slate-800 font-kanit">1.2 พรอมต์สร้างแบบร่างสแกนรายละเอียดก่อนลงพื้นที่ (On-site PR Checklist)</span>
+                                <button id="btn-prep2" onclick="copyPrompt('btn-prep2', 'prep2-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                    <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-250 leading-relaxed whitespace-pre-wrap rounded-b-xl"><pre id="prep2-text" class="readable-prompt">ช่วยสร้างเช็กลิสต์เก็บข้อมูลภาคสนามสำหรับกิจกรรม <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อกิจกรรม]</span> ของ สพม.บุรีรัมย์
+จัดเป็นตาราง: ช่วงเวลา | ภาพที่ต้องถ่าย | ข้อมูลที่ต้องยืนยัน | บุคคลที่ควรสัมภาษณ์ | คำถาม | ผู้รับผิดชอบ | สถานะการอนุญาตใช้ภาพ โดยครอบคลุมชื่อ–ตำแหน่ง วัตถุประสงค์ ผลลัพธ์ แหล่งอ้างอิง และช่องทางติดต่อ</pre></div>
+                        </div>
+
+                        <!-- Prep Prompt 3 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-xs font-bold text-slate-800 font-kanit">1.3 พรอมต์สร้างสคริปต์คำถามสัมภาษณ์ผู้เข้าร่วมงานด่วน (Quick Interview Questions)</span>
+                                <button id="btn-prep3" onclick="copyPrompt('btn-prep3', 'prep3-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                    <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-250 leading-relaxed whitespace-pre-wrap rounded-b-xl"><pre id="prep3-text" class="readable-prompt">ช่วยออกแบบคำถามสัมภาษณ์ 5 ข้อสำหรับ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ผู้บริหาร/ผู้อำนวยการโรงเรียน/ครู/นักเรียน/ภาคีเครือข่าย]</span> ในกิจกรรม <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อกิจกรรมของ สพม.บุรีรัมย์]</span> ให้ได้ข้อมูลเรื่องปัญหาก่อนดำเนินงาน วิธีดำเนินงาน ผลที่เกิดขึ้นจริง และสิ่งที่จะทำต่อไป ใช้คำถามปลายเปิด สุภาพ ไม่ชี้นำ และเตือนผู้สัมภาษณ์ให้ขออนุญาตก่อนบันทึกหรือเผยแพร่ชื่อ ภาพ และคำพูด</pre></div>
+                        </div>
+
+                        <!-- Prep Prompt 4 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-xs font-bold text-slate-800 font-kanit">1.4 พรอมต์ช่วยวิเคราะห์ช่องทางการสื่อสารที่เหมาะสม (Target Channel Analysis)</span>
+                                <button id="btn-prep4" onclick="copyPrompt('btn-prep4', 'prep4-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                    <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-250 leading-relaxed whitespace-pre-wrap rounded-b-xl"><pre id="prep4-text" class="readable-prompt">สพม.บุรีรัมย์ต้องการสื่อสารเรื่อง <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[นโยบาย/ประกาศ/บริการ/ผลการดำเนินงาน]</span> ไปยัง <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ผู้บริหารสถานศึกษา ครู บุคลากร นักเรียน ผู้ปกครอง หรือประชาชน]</span> 
+จงแนะนำ 3 ช่องทางพร้อมรูปแบบวิธีนำเสนอคอนเทนต์ (เช่น คลิปวิดีโอสั้น ภาพอินโฟกราฟิก หรือแผ่นพับ) ที่เหมาะกับพฤติกรรมของกลุ่มเป้าหมายนี้มากที่สุด</pre></div>
+                        </div>
+
+                        <!-- Prep Prompt 5 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-xs font-bold text-slate-800 font-kanit">1.5 พรอมต์ช่วยคิดสโลแกนหรือแก่นสารหลักของแคมเปญ (Campaign Catchphrase Generator)</span>
+                                <button id="btn-prep5" onclick="copyPrompt('btn-prep5', 'prep5-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                    <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-250 leading-relaxed whitespace-pre-wrap rounded-b-xl"><pre id="prep5-text" class="readable-prompt">ช่วยออกแบบสโลแกน 5 ตัวเลือกสำหรับแคมเปญ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อแคมเปญ]</span> ของ สพม.บุรีรัมย์ โดยสะท้อนคุณค่า <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[คุณภาพผู้เรียน/โอกาส/ความปลอดภัย/นวัตกรรม/ธรรมาภิบาล]</span> ใช้ภาษาไทยชัดเจน ไม่เกิน 10 คำ ไม่กล่าวอ้างเกินจริง และอธิบายแนวคิดของแต่ละตัวเลือกหนึ่งบรรทัด</pre></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Copywriting (10 Prompts) -->
+                <section id="copywriting" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">2. คลังพรอมต์เขียนข่าวและสื่อสารองค์กร (10 รูปแบบ)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">ชุด Prompt เปลี่ยนข้อมูลดิบให้กลายเป็นงานเขียนทางการ ภาษาเว็บราชการ หรือแคปชันโซเชียลมีเดียได้อย่างง่ายดาย</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Copywriting Prompt 1 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">1</span>
+                                    ข่าวพิธีลงนามบันทึกข้อตกลงความร่วมมือ (MOU)
+                                </span>
+                                <button id="btn-cp1" onclick="copyPrompt('btn-cp1', 'cp1-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp1-text" class="readable-prompt">จงสวมบทบาทเป็น "นักประชาสัมพันธ์ภาครัฐของ สพม.บุรีรัมย์" เขียนอย่างถูกต้อง เป็นกลาง กระชับ และยึดข้อมูลต้นทางเท่านั้น
+เขียนข่าวประชาสัมพันธ์จากข้อมูลดิบต่อไปนี้โดยใช้สไตล์ภาษาราชการยุคใหม่ มีความสละสลวย สุภาพ มีพลัง ไม่ใช้คำฟุ่มเฟือยเกินไป
+
+[ข้อมูลกิจกรรม]:
+- กิจกรรม: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุชื่อพิธีลงนามบันทึกข้อตกลงความร่วมมือ]</span>
+- กลุ่มงานเจ้าของเรื่อง/ภาคีเครือข่าย: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุชื่อหน่วยงานจากเอกสารต้นทาง]</span>
+- ประธานในพิธี: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ผู้อำนวยการสำนักงานเขตพื้นที่การศึกษามัธยมศึกษาบุรีรัมย์]</span>
+- วัตถุประสงค์และจุดมุ่งหมาย: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น เพื่อพัฒนาสมรรถนะการจัดอบรมทางเทคโนโลยีดิจิทัลสมัยใหม่ให้แก่ครูผู้สอน]</span>
+- วันที่และสถานที่: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[วัน เดือน ปี เวลา และสถานที่ตามกำหนดการ]</span>
+- ผลลัพธ์/หลักฐาน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[จำนวนผู้เข้าร่วม ผลงาน หรือผลลัพธ์ที่ตรวจสอบได้]</span>
+- แหล่งอ้างอิงและผู้ตรวจข้อมูล: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อเอกสาร/กลุ่มงาน/ผู้รับผิดชอบ]</span>
+
+ผลลัพธ์ที่ต้องการ: พาดหัว 3 ตัวเลือก, โปรยข่าว 1 ย่อหน้า, ข่าวฉบับเว็บไซต์ 3-5 ย่อหน้า, แคปชัน Facebook, ข้อความ Alt Text สำหรับภาพ และรายการ "ข้อมูลที่ต้องตรวจสอบก่อนเผยแพร่" หากข้อมูลไม่พอให้ทำเครื่องหมาย [รอยืนยัน] ห้ามเดาหรือสร้างข้อมูลขึ้นเอง
+
+รูปแบบผลลัพธ์:
+1. ขอพาดหัวข่าวสไตล์เป็นทางการ 3 ทางเลือก
+2. เนื้อหาข่าวยาว 3 ย่อหน้า (ย่อหน้าแรก: ใครทำอะไรที่ไหน, ย่อหน้าที่สอง: รายละเอียดวิสัยทัศน์ความร่วมมือ, ย่อหน้าที่สาม: ทิศทางความก้าวหน้าในอนาคต)
+3. รหัสแฮชแท็กประกอบงานราชการ 4 รายการ</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 2 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">2</span>
+                                    ข่าวสรุปความเด่นนวัตกรรม/รางวัลเชิดชูเกียรติของนักเรียนและครู
+                                </span>
+                                <button id="btn-cp2" onclick="copyPrompt('btn-cp2', 'cp2-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp2-text" class="readable-prompt">จงสวมบทบาทเป็นนักเขียนบทความวิชาการและการศึกษาเชิงสร้างสรรค์ 
+สรุปผลงานความยอดเยี่ยมต่อไปนี้ให้กลายเป็นบทความสรุปสั้นและข่าวสำหรับเผยแพร่ทางเว็บไซต์ สพฐ. เพื่อแสดงความยินดีในความอุตสาหะ
+
+[ข้อมูลผลงาน]:
+- ชื่อครู/นักเรียน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น เด็กชายใจดี รักชาติ นักเรียนชั้น ม.3]</span>
+- ชื่อผลงาน/รางวัลที่ได้รับ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น รางวัลชนะเลิศเหรียญทอง การแข่งขันหุ่นยนต์ปัญญาประดิษฐ์ระดับประเทศ]</span>
+- รายละเอียดผลงานเด่น: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น สิ่งประดิษฐ์แขนกลเพื่อผู้พิการ ควบคุมด้วยสัญญาณคลื่นสมอง]</span>
+- ถ้อยความรู้สึกหรือคำขอบคุณสั้นๆ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น อยากให้นวัตกรรมนี้ได้นำไปใช้งานได้จริงเพื่อช่วยเหลือผู้ป่วยติดเตียง]</span>
+
+แนวทางการเรียบเรียง:
+- บรรยายเชิงรุก ยกย่องความสามารถและการสนับสนุนของครูที่ปรึกษาและสถาบันโรงเรียนอย่างเต็มภาคภูมิ
+- นำเสนอสรุปจุดเด่นของนวัตกรรมเป็นข้อๆ (Bullet Points) เพื่อความง่ายในการกวาดสายตาอ่านด่วน</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 3 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">3</span>
+                                    การเกลาภาษา ตรวจคำผิด และปรับประโยคภาษาดิบให้เป็นภาษาราชการ
+                                </span>
+                                <button id="btn-cp3" onclick="copyPrompt('btn-cp3', 'cp3-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp3-text" class="readable-prompt">จงสวมบทบาทเป็น "หัวหน้าผู้ตรวจทานหนังสือราชการและสารบรรณของสำนักงานเขตพื้นที่การศึกษา" 
+ช่วยตรวจหาคำสะกดผิด ตกแต่งโครงสร้างประโยค และปรับระดับภาษาของข้อความดิบต่อไปนี้ ให้กลายเป็นข้อเขียนประชาสัมพันธ์ที่สละสลวย ถูกกฎไวยากรณ์ภาษาไทย มีความสง่างามตามแบบฉบับงานราชการที่เป็นกลาง
+
+ข้อความดิบที่ต้องการเกลา:
+"<span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ป้อนประโยคที่จดมาลวกๆ หรือคำสัมภาษณ์/ข้อความที่ยังไม่ได้เกลา]</span>"
+
+รูปแบบการแสดงข้อมูลส่งมอบ:
+1. ชี้แจงรายการคำผิดหรือคำที่ไม่เหมาะสมที่ตรวจพบ พร้อมแนะนำแนวทางแก้ไข
+2. แสดงข้อความฉบับปรับปรุง พร้อมระบุจุดที่ยังต้องตรวจสอบกับเจ้าของข้อมูลก่อนนำไปใช้</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 4 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">4</span>
+                                    ประกาศเร่งด่วน / มาตรการความปลอดภัยและสภาพอากาศภัยพิบัติ
+                                </span>
+                                <button id="btn-cp4" onclick="copyPrompt('btn-cp4', 'cp4-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp4-text" class="readable-prompt">ช่วยร่างประกาศแจ้งเตือนและแนวทางปฏิบัติของ สพม.บุรีรัมย์ เรื่อง <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุหัวข้อ เช่น สภาพอากาศรุนแรง หรือฝุ่น PM 2.5]</span> สำหรับสถานศึกษา ครู นักเรียน และผู้ปกครอง โดยใช้เฉพาะข้อมูลจากหน่วยงานที่มีอำนาจและประกาศที่แนบมา
+
+[เงื่อนไขที่ต้องชี้แจง]:
+- มาตรการและการปรับตัว: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ปรับรูปแบบการสอนเป็นออนไลน์ หรือ งดการทำกิจกรรมกลางแจ้ง]</span>
+- ช่วงระยะเวลาบังคับใช้: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ระหว่างวันที่ 20 - 22 มีนาคม]</span>
+- รายการติดต่อสอบถามส่วนกลาง: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ช่องแชตเพจหลักโรงเรียน หรือเบอร์โทรศัพท์ 044-XXXXXX]</span>
+
+โทนเสียง: สุภาพ ชัดเจน มีความห่วงใย กระชับ สั้น และเข้าใจง่ายทันทีตั้งแต่สามวินาทีแรกที่อ่าน</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 5 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">5</span>
+                                    การจัดการวิกฤตสื่อและการชี้แจงข่าวลือเชิงลบ (Crisis PR Control)
+                                </span>
+                                <button id="btn-cp5" onclick="copyPrompt('btn-cp5', 'cp5-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp5-text" class="readable-prompt">จงสวมบทบาทเป็น "ผู้อำนวยการฝ่ายการสื่อสารและตอบสนองวิกฤตความน่าเชื่อถือขององค์กร" 
+เขียนข้อความแถลงชี้แจงความจริงเกี่ยวกับสถานการณ์เชิงลบหรือข่าวลือที่คลาดเคลื่อน เพื่อสร้างความเข้าใจที่ถูกต้องให้แก่สาธารณชน
+
+ข้อเท็จจริง:
+- ประเด็นปัญหาที่เกิดขึ้น: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ความเข้าใจผิดเกี่ยวกับกระบวนการประเมินคุณภาพอาหารกลางวัน]</span>
+- ข้อชี้แจงและขั้นตอนการแก้ไขอย่างเป็นรูปธรรม: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น มีการจัดตรวจประเมินคุณภาพจากหน่วยงานภายนอกทุกสัปดาห์ และยินดีให้ชุมชนตรวจสอบได้ตลอดเวลา]</span>
+
+เป้าหมายชิ้นงาน:
+- ภาษาต้องแสดงออกถึงความรับผิดชอบ โปร่งใส นอบน้อม อ่อนโยนแต่ชัดเจนเด็ดขาดในข้อเท็จจริง และไม่นำไปสู่การขัดแย้งตอบโต้เพิ่มเติม</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 6 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">6</span>
+                                    แคปชัน Facebook เล่าเรื่องราวนักเรียนอบอุ่นใจ (Casual Storytelling)
+                                </span>
+                                <button id="btn-cp6" onclick="copyPrompt('btn-cp6', 'cp6-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp6-text" class="readable-prompt">ช่วยเขียนแคปชัน Facebook แบบเล่าเรื่องอย่างเป็นธรรมชาติ เพื่อสะท้อนผลที่เกิดกับผู้เรียน ครู หรือชุมชน โดยใช้เฉพาะเหตุการณ์และคำพูดจริงที่ให้มา
+
+[ข้อมูลเหตุการณ์ดิบ]:
+- สิ่งที่เกิดขึ้น: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น คุณครูและสภานักเรียนร่วมกันจัดตั้งตู้น้ำเย็นฟรีให้แก่น้องๆ ช่วงฤดูร้อน]</span>
+- ความประทับใจหรือการตอบรับในเหตุการณ์: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น น้องๆ ได้ดื่มน้ำใจที่ชุมชนร่วมบริจาค มีเสียงหัวเราะและรอยยิ้มทั่วบริเวณโรงเรียน]</span>
+
+ลักษณะการจัดข้อความ:
+- ขึ้นต้นด้วยวลีที่ดึงดูดสายตา มีการเว้นระยะวรรคตอนให้อ่านสบายตา และระบุอิโมจิที่เข้าคู่กันเพื่อสร้างสีสัน</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 7 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">7</span>
+                                    ข่าวสรุปความยาวจำกัด สำหรับหน้าแรกของเว็บไซต์โรงเรียน (News Digest)
+                                </span>
+                                <button id="btn-cp7" onclick="copyPrompt('btn-cp7', 'cp7-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp7-text" class="readable-prompt">จงนำบทความข่าวฉบับเต็มด้านล่างนี้ มาสรุปย่นย่อให้เหลือเนื้อหาความเข้มข้นที่สั้นและกระชับมากที่สุด ความยาวไม่เกิน 150 คำ สำหรับนำไปพิมพ์วางลงในสไลด์โชว์แบนเนอร์หรือกล่องรายงานด่วนหน้าแรกของเว็บไซต์สถานศึกษา
+
+ข้อความข่าวดิบ:
+<span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[วางเนื้อความข่าวประชาสัมพันธ์ฉบับเต็มที่นี่]</span>
+
+เป้าหมายสรุป:
+- แจ้งชัดเจนทันทีว่า "ใคร ทำงานอะไร ได้ความสำเร็จที่สำคัญคืออะไร และขั้นตอนการดำเนินการคืออะไร"</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 8 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">8</span>
+                                    สรุปถอดความวิสัยทัศน์หรือบทสัมภาษณ์ของผู้บริหารออกมาเป็นข่าว PR
+                                </span>
+                                <button id="btn-cp8" onclick="copyPrompt('btn-cp8', 'cp8-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp8-text" class="readable-prompt">ช่วยนำเอาท่อนถอดบทสนทนาคำสัมภาษณ์ไม่เป็นทางการด้านล่างนี้ มาร้อยเรียงและเรียบเรียงใหม่ทั้งหมดให้กลายเป็นสปีช แถลงการณ์วิสัยทัศน์ที่ทรงพลัง มีความเป็นผู้นำวิชาชีพครู และน่าเชื่อถือเพื่อบรรจุลงในจดหมายข่าวรายเดือนสพม.
+
+บทสนทนาถอดความสัมภาษณ์:
+"<span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ป้อนประโยคสัมภาษณ์สั้นๆ หรือแนวคิดดิบของผู้บริหาร]</span>"
+
+จุดประสงค์งานเขียน:
+- ปรับสำนวนพูดให้เรียบลื่น สุภาพ น่าเชื่อถือ ขัดเกลาคำสะดุดใจ และทำให้วิสัยทัศน์ออกมาแจ่มแจ้ง</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 9 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">9</span>
+                                    ประกาศเปิดบ้านวิชาการและเปิดรับสมัครนักเรียนใหม่ (Open House Call)
+                                </span>
+                                <button id="btn-cp9" onclick="copyPrompt('btn-cp9', 'cp9-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp9-text" class="readable-prompt">ช่วยเขียนข้อความเชิญชวนนักเรียนและผู้ปกครองเข้าร่วมกิจกรรมเปิดบ้านวิชาการ (Open House) ให้ข้อมูลชัดเจน เป็นธรรม และไม่กล่าวอ้างเกินจริง
+
+[รายละเอียดหลัก]:
+- แผนการเรียนและจุดเด่นเด่นชัด: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น แผนการเรียนเทคโนโลยีหุ่นยนต์ และภาษาต่างประเทศพรีเมียม]</span>
+- กำหนดการกิจกรรมและขั้นตอนสมัคร: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น จัดกิจกรรมวันที่ 10 พฤษภาคม สแกนคิวอาร์โค้ดลงทะเบียนล่วงหน้า]</span>
+- สิ่งที่จะได้รับพิเศษ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น โควตารับตรงพิเศษ, เกียรติบัตรอิเล็กทรอนิกส์, และของรางวัลในงาน]</span>
+
+โทนการนำเสนอ: ตื่นตาตื่นใจ ให้ความรู้สึกถึงโอกาสอนาคตที่ดีงามของเยาวชน อบอุ่น และเป็นมืออาชีพ</pre></div>
+                        </div>
+
+                        <!-- Copywriting Prompt 10 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 font-kanit flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">10</span>
+                                    ข่าวโรงเรียนจัดกิจกรรมจิตอาสาช่วยเหลือชุมชน (CSR)
+                                </span>
+                                <button id="btn-cp10" onclick="copyPrompt('btn-cp10', 'cp10-text')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="cp10-text" class="readable-prompt">ช่วยร่างข่าวประชาสัมพันธ์กิจกรรมจิตอาสาหรือความร่วมมือระหว่างสถานศึกษา บ้าน และชุมชน โดยเน้นปัญหาที่ต้องการแก้ วิธีดำเนินงาน ผู้มีส่วนร่วม และผลลัพธ์ที่ตรวจสอบได้
+
+[รายละเอียดกิจกรรม]:
+- ชื่องาน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น กิจกรรมลงพื้นที่บูรณะศูนย์พัฒนาเด็กเล็กและมอบถุงยังชีพสู่ชุมชน]</span>
+- กลุ่มจิตอาสา: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น คณะคุณครู สมาคมศิษย์เก่า และกลุ่มนักเรียนมัธยมตอนปลาย]</span>
+- ผลสัมฤทธิ์ที่ส่งมอบ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น มอบถุงปันสุขช่วยเหลือครอบครัวนักเรียนผู้มีรายได้น้อยจำนวน 120 ครัวเรือน]</span>
+
+ทิศทางภาษา: สุภาพ ซาบซึ้งใจ ปลุกกระแสจิตอาสาและการทำความดี หลีกเลี่ยงถ้อยคำเชิงการโฆษณาพาณิชย์ใดๆ</pre></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dynamic Prompt Generator Sub-section -->
+                <section id="prompt-builder-sec" class="bg-gradient-to-br from-indigo-950 to-slate-900 rounded-xl shadow-md p-6 sm:p-8 text-white">
+                    <div class="flex items-center space-x-3 border-b border-indigo-800 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-500/20 text-indigo-300 rounded-lg flex items-center justify-center text-xl border border-indigo-500/30">
+                            <i class="fa-solid fa-gears animate-spin" style="animation-duration: 8s;"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-white">2.1 เครื่องมือช่วยสร้าง Prompt ประชาสัมพันธ์ด่วน (Interactive Generator)</h2>
+                            <p class="text-xs text-indigo-200 mt-0.5">กรอกข้อมูลด่วนของสถานศึกษาคุณ ระบบจะประกอบให้เป็นข้อเขียน Prompt สั่งงาน AI ได้ทันที!</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 font-kanit text-slate-300 text-sm">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">1. ชื่องานกิจกรรม / โครงการ</label>
+                                <input type="text" id="gen-title" value="อบรมวิทยากรการใช้เทคโนโลยี AI เพื่อประชาสัมพันธ์" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">2. ประธาน/ผู้บริหาร/ผู้ให้ข้อมูลสำคัญ (ตรวจสอบตำแหน่ง)</label>
+                                <input type="text" id="gen-president" value="[ชื่อ–นามสกุล และตำแหน่งตามข้อมูลที่ยืนยันแล้ว]" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">3. สถานที่จัดกิจกรรม</label>
+                                <input type="text" id="gen-location" value="ห้องประชุมศรีสว่างรัตน์ สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาบุรีรัมย์" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">4. ผู้เข้าร่วมอบรม และจำนวนคน</label>
+                                <input type="text" id="gen-attendees" value="คณะคุณครูและครูผู้รับผิดชอบงานสื่อประชาสัมพันธ์ จำนวน 70 คน" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">5. ผลลัพธ์หรือจุดเด่นกิจกรรม</label>
+                            <input type="text" id="gen-highlights" value="ผู้ร่วมเรียนทุกคนได้ทดลองปฏิบัติงานเขียนคำสั่ง ภาพกราฟิกผ่าน Canva และผลิตวิดีโอส่งงานจริงคนละ 1 ผลงาน" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="generateCustomPrompt()" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-lg hover:bg-amber-400 transition-colors flex items-center gap-2 text-sm shadow-lg">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> สกัดข้อความคำสั่ง (Generate Prompt)
+                            </button>
+                        </div>
+
+                        <!-- Result Area -->
+                        <div id="builder-result-box" class="mt-6 border border-slate-700 rounded-lg p-4 bg-slate-950 hidden">
+                            <div class="flex justify-between items-center mb-2.5">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check"></i> สร้างสำเร็จ! คัดลอกแล้วนำไปแปะใน ChatGPT หรือ Gemini ได้ทันที</span>
+                                <button id="btn-custom-copy" onclick="copyPrompt('btn-custom-copy', 'custom-prompt-text')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded transition-colors flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <pre id="custom-prompt-text" class="readable-prompt bg-slate-900 p-3.5 rounded border border-slate-800"></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: AI Image Generation (10 double prompt cards with distinct button copies) -->
+                <section id="image-gen" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">3. การสร้างภาพประกอบข่าวด้วย AI (20 พรอมต์สองภาษา)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">พรอมต์ภาษาไทยและอังกฤษสำหรับสร้างภาพประกอบเชิงแนวคิด โดยแยกจากภาพหลักฐานเหตุการณ์จริงอย่างชัดเจน</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-950">
+                        <strong>แนวปฏิบัติของ สพม.บุรีรัมย์:</strong> ภาพจาก AI ใช้เป็นภาพประกอบเชิงแนวคิด ไม่ใช้แทนหลักฐานเหตุการณ์จริง ไม่สร้างภาพบุคคลจริงหรือเลียนแบบผู้บริหาร ครู และนักเรียน หลีกเลี่ยงตราสัญลักษณ์ ข้อความบนภาพ และเครื่องแบบที่อาจทำให้เข้าใจผิด พร้อมระบุว่า “ภาพประกอบสร้างด้วย AI” เมื่อเผยแพร่
+                    </div>
+
+                    <div class="space-y-8">
+                        
+                        <!-- Image Prompt Card 1 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🏫</span> 1. กิจกรรมทดลองวิทยาศาสตร์ / โครงงานนวัตกรรม (Smart Classroom)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ (คุณภาพสูงที่สุด)</span>
+                                        <button id="btn-img1-en" onclick="copyPrompt('btn-img1-en', 'img1-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img1-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A high-quality realistic photo of happy Thai high school students in modern blue uniforms collaborating on a robotics project in a high-tech smart classroom. Warm natural sunlight, shallow depth of field, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย (เข้าใจง่าย)</span>
+                                        <button id="btn-img1-th" onclick="copyPrompt('btn-img1-th', 'img1-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img1-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายคุณภาพสูงสมจริงของนักเรียนมัธยมไทยในเครื่องแบบนักเรียน กำลังช่วยกันประดิษฐ์หุ่นยนต์เทคโนโลยีในห้องเรียนอัจฉริยะ แสงแดดธรรมชาตินุ่มนวล หน้าชัดหลังเบลอ 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 2 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">📚</span> 2. บรรยากาศมุมรักการอ่านและห้องสมุดทันสมัย (Modern Eco Library)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img2-en" onclick="copyPrompt('btn-img2-en', 'img2-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img2-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A highly detailed architectural interior shot of a sunlit modern eco-friendly high school library in Thailand, sleek wooden furniture, students reading peacefully, warm and cozy mood, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img2-th" onclick="copyPrompt('btn-img2-th', 'img2-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img2-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายสถาปัตยกรรมภายในห้องสมุดโรงเรียนมัธยมไทยที่ทันสมัยและเป็นมิตรกับสิ่งแวดล้อม เฟอร์นิเจอร์ไม้เรียบหรู แสงแดดส่องสว่าง มีระเบียบสวยงามและอบอุ่น 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 3 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🏀</span> 3. การแข่งขันกีฬาสีและกิจกรรมกลางแจ้ง (Sports Day Action)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img3-en" onclick="copyPrompt('btn-img3-en', 'img3-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img3-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">Dynamic action shot of energetic Thai high school students playing basketball in an outdoor court. Bright afternoon sun, happy determined expressions, vibrant motion blur, cinematic 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img3-th" onclick="copyPrompt('btn-img3-th', 'img3-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img3-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายแอ็กชันความเร็วสูงของนักเรียนไทยกำลังแข่งขันบาสเกตบอลกลางสนามโรงเรียนตอนกลางวัน แสงอาทิตย์แจ่มใส สีหน้าตื่นเต้นและมุ่งมั่น มีมิติตำแหน่งการจัดภาพแบบภาพยนตร์ 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 4 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🏆</span> 4. เวทีประกาศรางวัลเกียรติยศเชิงวิชาการ (Academic Award Stage)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img4-en" onclick="copyPrompt('btn-img4-en', 'img4-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img4-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A clean, elegant award ceremony stage design for academic achievements. Gold and deep navy blue color scheme, soft glowing spotlight, space in the center for adding titles, professional layout, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img4-th" onclick="copyPrompt('btn-img4-th', 'img4-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img4-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">เวทีประกาศเกียรติยศวิชาการที่หรูหราสง่างาม ตกแต่งด้วยโทนสีทองและกรมท่าเข้ม มีแสงไฟสปอตไลท์นุ่มนวล มีพื้นที่ว่างส่วนกลางเพื่อเขียนพาดหัวข่าวในสื่อประชาสัมพันธ์ 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 5 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🎪</span> 5. งานนิทรรศการศิลปวัฒนธรรมพื้นบ้านท้องถิ่น (Thai Cultural Exhibition)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img5-en" onclick="copyPrompt('btn-img5-en', 'img5-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img5-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A vibrant display of traditional Thai handcrafted silk fabrics and local art pieces inside a beautifully decorated wooden pavilion, warm soft gallery lighting, highly detailed textures, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img5-th" onclick="copyPrompt('btn-img5-th', 'img5-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img5-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">งานนิทรรศการจัดแสดงผ้าทอไหมไทยและผลงานวิชาการศิลปะท้องถิ่นภายในศาลาศิลปวัฒนธรรมที่สว่างไสว แสงไฟหอศิลป์อบอุ่น เก็บรายละเอียดสิ่งทอคมชัดและวิจิตรบรรจง 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 6 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🤖</span> 6. โครงงานประกวดเทคโนโลยีและหุ่นยนต์ (Science & Robotics Expo)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img6-en" onclick="copyPrompt('btn-img6-en', 'img6-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img6-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A medium close-up of a small programmable smart robot vehicle on a grid table, proud high school students in background blurred, glowing blue LED indicator light, modern science fair expo, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img6-th" onclick="copyPrompt('btn-img6-th', 'img6-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img6-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพโคลสอัพโมเดลยานยนต์หุ่นยนต์อัจฉริยะบนโต๊ะทดลอง มีประกายแสงไฟ LED สีฟ้าเท่ๆ ด้านหลังเป็นภาพเด็กมัธยมไทยยิ้มเบลอๆ ในงานมหกรรมสิ่งประดิษฐ์โรงเรียน 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 7 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">💻</span> 7. ห้องสัมมนาเพิ่มสมรรถนะครู (Teacher Tech Seminar)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img7-en" onclick="copyPrompt('btn-img7-en', 'img7-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img7-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">Young energetic Thai school teachers inside a sleek modern seminar hall, smiling, holding tablets, participating in a digital graphics AI design workshop. Vibrant professional atmosphere, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img7-th" onclick="copyPrompt('btn-img7-th', 'img7-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img7-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายระยะกลางของกลุ่มครูผู้สอนชายหญิงชาวไทยในห้องอบรมสัมมนาที่ล้ำยุค กำลังใช้งานแท็บเล็ตและเรียนรู้การออกแบบภาพกราฟิกด้วยปัญญาประดิษฐ์ ท่าทางกระฉับกระเฉง 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 8 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🌱</span> 8. โครงการโรงเรียนสีเขียวรักษ์สิ่งแวดล้อม (School Planting Tree CSR)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img8-en" onclick="copyPrompt('btn-img8-en', 'img8-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img8-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A close-up shot of students' hands carefully planting a small organic green seedling into fertile dark soil, blur natural green trees background, cinematic environmental PR look, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img8-th" onclick="copyPrompt('btn-img8-th', 'img8-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img8-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพซูมโคลสอัพมือสองข้างของเด็กนักเรียนกำลังวางต้นไม้อ่อนสีเขียวลงในดินป่นชุ่มชื้นเพื่อช่วยกันปลูกป่าชุมชน รอบข้างเป็นฉากต้นไม้ใบหญ้าสีเขียวเบลอสะอาดตา สดชื่นรักษ์โลก 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 9 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🏛️</span> 9. ตึกสถาปัตยกรรมอาคารเรียนล้ำสมัย (Innovative Modern School Architecture)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img9-en" onclick="copyPrompt('btn-img9-en', 'img9-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img9-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A clean architectural wide-angle exterior shot of a modern, sustainable high school campus building with solar panels, green gardens, beautiful blue sky in afternoon, photorealistic, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img9-th" onclick="copyPrompt('btn-img9-th', 'img9-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img9-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายมุมมองภายนอกตึกอาคารเรียนสมัยใหม่ที่ทันสมัยและประหยัดพลังงาน มีการติดโซล่าเซลล์ มีสวนหย่อมสีเขียวสะอาดสะดุดตา ท้องฟ้าโปร่งใสสีฟ้าสว่างตาช่วงบ่าย 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Prompt Card 10 -->
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm">
+                            <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center">
+                                <span class="mr-2 text-xl">🤝</span> 10. การประชุมปรึกษาของสภานักเรียนและพัฒนาความเป็นผู้นำ (Student Council Meeting)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span>
+                                        <button id="btn-img10-en" onclick="copyPrompt('btn-img10-en', 'img10-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ
+                                        </button>
+                                    </div>
+                                    <code id="img10-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">A realistic group photo of diverse Thai student leaders sitting around a clean conference table, smiling, engaged in discussion, smart-casual school uniforms, professional boardroom setting, 4k.</code>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs font-semibold text-amber-300">ภาษาไทย</span>
+                                        <button id="btn-img10-th" onclick="copyPrompt('btn-img10-th', 'img10-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded transition-colors font-kanit flex items-center gap-1">
+                                            <i class="fa-solid fa-copy"></i> คัดลอกไทย
+                                        </button>
+                                    </div>
+                                    <code id="img10-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">ภาพถ่ายกลุ่มแบบเป็นทางการของคณะแกนนำสภานักเรียนโรงเรียนมัธยม นั่งปรึกษาหารือกันรอบโต๊ะประชุมห้องสภาคณาจารย์ ใบหน้ายิ้มแย้ม มั่นใจ สวมใส่ชุดนักเรียนเรียบร้อยมีเสน่ห์ 4k</code>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Practical workflow for all six Canva blueprints -->
+                    <div id="canva-practical-workflow" class="mt-10 border-t-2 border-rose-200 pt-8 font-kanit">
+                        <div class="mb-6">
+                            <span class="inline-flex items-center gap-2 rounded-full bg-rose-900 px-3 py-1 text-xs font-bold text-white">
+                                <i class="fa-solid fa-rocket"></i> นำไปใช้งานจริง
+                            </span>
+                            <h3 class="mt-3 text-xl font-bold text-slate-900">ขั้นตอนสร้างกราฟิกจากบลูพริ้นต์ภายใน 5–10 นาที</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-slate-600">แนวทางที่ควบคุมคุณภาพได้ง่ายที่สุดคือ <strong>ให้ AI จัดเตรียมข้อความ และใช้ Canva จัดวางภาพ</strong> โดยสร้างแม่แบบกลางไว้ครั้งเดียวแล้วทำสำเนาสำหรับงานใหม่</p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-7">
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">01</span><h4 class="mt-1 text-sm font-bold text-slate-900">สร้างแม่แบบ</h4><p class="mt-1 text-xs text-slate-600">สร้าง Canva ขนาด 1080 × 1350 px จำนวน 6 หน้า</p></div>
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">02</span><h4 class="mt-1 text-sm font-bold text-slate-900">เลือกบลูพริ้นต์</h4><p class="mt-1 text-xs text-slate-600">เลือกหน้าให้ตรงกับวัตถุประสงค์ของข่าว</p></div>
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">03</span><h4 class="mt-1 text-sm font-bold text-slate-900">ให้ AI ร่างข้อความ</h4><p class="mt-1 text-xs text-slate-600">แก้ช่องสีเหลืองแล้วคัดลอกพรอมต์ไปใช้กับ AI</p></div>
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">04</span><h4 class="mt-1 text-sm font-bold text-slate-900">วางใน Canva</h4><p class="mt-1 text-xs text-slate-600">ใช้เฉพาะพาดหัว ข้อความรอง ประเด็นสำคัญ และ CTA</p></div>
+                            <div class="rounded-xl border border-rose-200 bg-white p-4"><span class="text-lg font-bold text-rose-800">05</span><h4 class="mt-1 text-sm font-bold text-slate-900">ตรวจและส่งออก</h4><p class="mt-1 text-xs text-slate-600">ตรวจชื่อ ตัวเลข สิทธิ์ภาพ และ QR Code ก่อนบันทึก PNG</p></div>
+                        </div>
+
+                        <h4 class="mb-3 text-base font-bold text-slate-900"><i class="fa-solid fa-table-list mr-2 text-rose-700"></i>เลือกบลูพริ้นต์ให้ตรงกับงาน</h4>
+                        <div class="mb-7 overflow-x-auto rounded-xl border border-rose-200 bg-white">
+                            <table class="min-w-full text-left text-xs text-slate-700">
+                                <thead class="bg-rose-950 text-white"><tr><th class="p-3">ลักษณะงานประชาสัมพันธ์</th><th class="p-3">บลูพริ้นต์ที่แนะนำ</th><th class="p-3">ข้อมูลที่ต้องเตรียม</th></tr></thead>
+                                <tbody class="divide-y divide-rose-100">
+                                    <tr><td class="p-3">แสดงความยินดีหรือประกาศรางวัล</td><td class="p-3 font-bold text-rose-800">1. ข่าวรางวัล</td><td class="p-3">ชื่อผู้ได้รับรางวัล ชื่อรางวัล ระดับ และภาพที่ได้รับอนุญาต</td></tr>
+                                    <tr class="bg-rose-50/60"><td class="p-3">รายงานกิจกรรมด้วยภาพหลายภาพ</td><td class="p-3 font-bold text-rose-800">2. แกลเลอรีกิจกรรม</td><td class="p-3">ภาพหลัก ภาพรอง วัตถุประสงค์ และผลที่เกิดขึ้น</td></tr>
+                                    <tr><td class="p-3">อธิบายนโยบาย ขั้นตอนสมัคร หรือแนวปฏิบัติ</td><td class="p-3 font-bold text-rose-800">3. นโยบายและขั้นตอน</td><td class="p-3">ขั้นตอน เงื่อนไข กำหนดเวลา และช่องทางติดต่อ</td></tr>
+                                    <tr class="bg-rose-50/60"><td class="p-3">รายงานสถิติและผลการดำเนินงาน</td><td class="p-3 font-bold text-rose-800">4. ตัวเลขผลสำเร็จ</td><td class="p-3">ตัวเลข หน่วย ช่วงเวลา และแหล่งอ้างอิง</td></tr>
+                                    <tr><td class="p-3">เชิญอบรม ประชุม หรือเปิดรับสมัคร</td><td class="p-3 font-bold text-rose-800">5. ประกาศและเชิญชวน</td><td class="p-3">ชื่องาน วัน เวลา สถานที่ กลุ่มเป้าหมาย และ QR Code</td></tr>
+                                    <tr class="bg-rose-50/60"><td class="p-3">นำเสนอการแก้ปัญหาและผลลัพธ์</td><td class="p-3 font-bold text-rose-800">6. เรื่องเล่าก่อน–หลัง</td><td class="p-3">ปัญหา วิธีดำเนินงาน หลักฐานผลลัพธ์ และก้าวต่อไป</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="grid lg:grid-cols-2 gap-6 mb-7">
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-5">
+                                <h4 class="font-bold text-amber-950"><i class="fa-solid fa-lightbulb mr-2"></i>ตัวอย่าง: โปสเตอร์เชิญอบรม AI</h4>
+                                <p class="mt-2 text-xs leading-relaxed text-slate-700">เลือกบลูพริ้นต์ที่ 5 แล้วใส่ข้อความบนภาพเฉพาะชื่อการอบรม กลุ่มเป้าหมาย วัน เวลา สถานที่ และปุ่มลงทะเบียน ส่วนรายละเอียดทั้งหมดนำไปใส่ในแคปชัน</p>
+                                <div class="mt-4 rounded-lg bg-white p-4 text-center shadow-sm">
+                                    <p class="text-lg font-bold text-rose-900">ยกระดับงานประชาสัมพันธ์ด้วย AI</p>
+                                    <p class="mt-2 text-xs text-slate-600">อบรมเชิงปฏิบัติการสำหรับครูและผู้รับผิดชอบงานประชาสัมพันธ์</p>
+                                    <p class="mt-3 text-xs font-semibold text-slate-800">วันที่และเวลา • ห้องประชุมศรีสว่างรัตน์ สพม.บุรีรัมย์</p>
+                                    <p class="mt-3 rounded bg-amber-400 px-3 py-2 text-xs font-bold text-slate-950">สแกน QR Code เพื่อลงทะเบียน</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-slate-200 bg-white p-5">
+                                <h4 class="font-bold text-slate-900"><i class="fa-solid fa-circle-check mr-2 text-emerald-600"></i>ตรวจสอบก่อนส่งออก</h4>
+                                <ul class="mt-3 space-y-2 text-xs leading-relaxed text-slate-600">
+                                    <li>✓ ใช้พาดหัวหนึ่งประเด็นและอ่านเข้าใจได้ภายใน 3 วินาที</li>
+                                    <li>✓ ตัวอักษรบนภาพไม่มากเกินไป รายละเอียดให้อยู่ในแคปชัน</li>
+                                    <li>✓ ตรวจชื่อ–ตำแหน่ง วันเวลา สถานที่ และตัวเลขกับต้นทาง</li>
+                                    <li>✓ ใช้ตราสัญลักษณ์ สี และฟอนต์ตามมาตรฐานหน่วยงาน</li>
+                                    <li>✓ ตรวจสิทธิ์ภาพบุคคล โดยเฉพาะผู้เยาว์</li>
+                                    <li>✓ ทดสอบ QR Code และจัดทำ Alt Text ก่อนเผยแพร่</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="overflow-hidden rounded-xl border border-slate-700 bg-slate-950 shadow-sm">
+                            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 bg-slate-900 px-4 py-3">
+                                <div><h4 class="text-sm font-bold text-white">พรอมต์กลางสำหรับบลูพริ้นต์ทั้ง 6 แบบ</h4><p class="mt-1 text-[10px] text-slate-400">แก้ข้อความในช่องสีเหลือง แล้วคัดลอกไปใช้กับ ChatGPT หรือ AI ที่ต้องการ</p></div>
+                                <button id="btn-lv-workflow" onclick="copyPrompt('btn-lv-workflow','lv-workflow-text')" class="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white"><i class="fa-solid fa-copy mr-1"></i> คัดลอกพรอมต์</button>
+                            </div>
+                            <pre id="lv-workflow-text" class="readable-prompt p-4 text-xs sm:text-sm">ช่วยเตรียมข้อความสำหรับกราฟิกประชาสัมพันธ์ของ สพม.บุรีรัมย์
+
+บลูพริ้นต์ที่ใช้: [หมายเลขและชื่อรูปแบบ]
+หัวข้อ: [ชื่อเรื่อง]
+วัตถุประสงค์: [ระบุวัตถุประสงค์]
+กลุ่มเป้าหมาย: [ระบุกลุ่มเป้าหมาย]
+ข้อมูลที่ตรวจสอบแล้ว: [วางข้อมูลต้นทาง]
+ช่องทางเผยแพร่: [Facebook / เว็บไซต์ / LINE]
+สิ่งที่ต้องการให้ผู้อ่านทำ: [CTA]
+
+จัดทำผลลัพธ์ดังนี้:
+1. พาดหัว 3 ตัวเลือก แต่ละตัวเลือกไม่เกิน 10 คำ
+2. ข้อความรองไม่เกิน 25 คำ
+3. ข้อความสำหรับแต่ละพื้นที่ของบลูพริ้นต์
+4. CTA หนึ่งประโยค
+5. แคปชัน Facebook
+6. Alt Text
+7. รายการข้อมูลที่ต้องตรวจสอบก่อนเผยแพร่
+
+ใช้ภาษาราชการที่อ่านง่าย ไม่แต่งชื่อ ตำแหน่ง วันที่ ตัวเลข ผลลัพธ์ หรือคำกล่าวที่ไม่มีในข้อมูลต้นทาง หากข้อมูลไม่ครบให้ระบุว่า “รอยืนยัน”</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Canva Layout Blueprints (6 Templates with Prompts) -->
+                <section id="canva-workshop" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-palette"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">6. โครงสร้างดีไซน์กราฟิกใน Canva (6 สัดส่วนบลูพริ้นต์ และ Prompt เติมเนื้อหา)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">แผนผังจัดสัดส่วนแบบ 4:5 แนวตั้ง เพื่อแสดงผลบนหน้าฟีด Facebook ได้มีประสิทธิภาพดีที่สุด</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-kanit">
+                        
+                        <!-- Layout 1 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div>
+                                <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">1. ข่าวรางวัลเชิดชูเกียรติยศ (Award Classic)</span>
+                                <p class="text-xs text-slate-500 mt-1 mb-3">กรอบขอบบนเป็นโลโก้หน่วยงาน ตรงกลางเป็นภาพถ่ายเด่นเดี่ยวของคนรับรางวัล ส่วนฐานล่างเป็นแถบสีทึบพาดหัวข่าวตัวโต</p>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-950 mb-3 font-mono">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold text-indigo-400">Prompt ปล่อยเนื้อหารอบป้าย:</span>
+                                    <button id="btn-lv1" onclick="copyPrompt('btn-lv1', 'lv1-text')" class="px-1.5 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] rounded flex items-center gap-0.5"><i class="fa-solid fa-copy"></i> คัดลอก</button>
+                                </div>
+                                <pre id="lv1-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">ช่วยคิดข้อความสั้น 3 บรรทัด สำหรับนำไปแปะลงบนโปสเตอร์กราฟิก Canva สดุดี <span class="bg-amber-400 text-slate-950 font-bold px-1 rounded">[ระบุรางวัลที่ได้ เช่น ยอดผู้บริหารนวัตกรรมดิจิทัล]</span> ของ <span class="bg-amber-400 text-slate-950 font-bold px-1 rounded">[ชื่อผู้ได้รับเกียรติบัตร]</span> สังกัดสพม.บุรีรัมย์ โดยขอแบบข้อความเน้นพลังเชิงบวก สั้นกระชับ สรุปจบได้ใน 10 วินาที</pre>
+                            </div>
+                            <div class="w-full aspect-[4/5] bg-white border border-slate-300 rounded-lg shadow-inner p-2 flex flex-col justify-between text-[8px]">
+                                <div class="bg-slate-200 p-1 text-center font-bold text-slate-700">🏛️ ตราสัญลักษณ์ และชื่อโรงเรียนสังกัด สพม.บุรีรัมย์</div>
+                                <div class="flex-grow bg-slate-100 my-2 flex items-center justify-center text-slate-400 font-bold border-2 border-dashed border-slate-200">[รูปผู้ได้รับรางวัล เด่นอยู่ตรงกลางหน้าคู่เกียรติบัตร]</div>
+                                <div class="bg-indigo-950 text-white p-1.5 text-center font-semibold">"พาดหัวข้อความแสดงความยินดีในความอุตสาหะ"</div>
+                            </div>
+                        </div>
+
+                        <!-- Layout 2 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div>
+                                <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">2. แกลเลอรีภาพกิจกรรมร่วม (Activity Grid Collage)</span>
+                                <p class="text-xs text-slate-500 mt-1 mb-3">จัดกลุ่มโมเมนต์เด็ดโรงเรียน แบ่งกรอบเป็น 3 ช่อง (ช่องซ้ายรูปหลักขนาดใหญ่ ช่องขวาซอย 2 แถวรูปองค์ประกอบสนับสนุน)</p>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-950 mb-3 font-mono">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold text-indigo-400">Prompt เขียนแคปชันรองภาพ:</span>
+                                    <button id="btn-lv2" onclick="copyPrompt('btn-lv2', 'lv2-text')" class="px-1.5 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] rounded flex items-center gap-0.5"><i class="fa-solid fa-copy"></i> คัดลอก</button>
+                                </div>
+                                <pre id="lv2-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">ช่วยเขียนข้อความพาดหัวหลักและข้อความอธิบายใต้ภาพสั้นๆ 3 ภาพสไตล์ประทับใจ สำหรับกิจกรรม <span class="bg-amber-400 text-slate-950 font-bold px-1 rounded">[ระบุชื่องานกิจกรรม เช่น โครงงานประดิษฐ์เพื่อโรงเรียน]</span> เพื่อบอกจุดประสงค์ของการเคลื่อนไหวกิจกรรมในแต่ละภาพ</pre>
+                            </div>
+                            <div class="w-full aspect-[4/5] bg-white border border-slate-300 rounded-lg shadow-inner p-2 flex flex-col justify-between text-[8px]">
+                                <div class="grid grid-cols-2 gap-1 h-[75%]">
+                                    <div class="bg-slate-100 flex items-center justify-center text-slate-400 font-bold border-2 border-dashed border-slate-200">[รูปภาพประธานเปิดงาน]</div>
+                                    <div class="grid grid-rows-2 gap-1">
+                                        <div class="bg-slate-100 flex items-center justify-center text-slate-300 border border-dashed border-slate-200">[รูปผู้ร่วมงานย่อย]</div>
+                                        <div class="bg-slate-100 flex items-center justify-center text-slate-300 border border-dashed border-slate-200">[รูปความสนใจในบูธ]</div>
+                                    </div>
+                                </div>
+                                <div class="h-[20%] bg-amber-500 text-slate-950 p-1 text-center font-bold flex items-center justify-center">"ข่าวสรุปความสำเร็จกิจกรรมเด่นในสัปดาห์นี้"</div>
+                            </div>
+                        </div>
+
+                        <!-- Layout 3 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">3. สรุปนโยบาย/ขั้นตอน (Policy Steps)</span><p class="text-xs text-slate-500 mt-2 mb-3">เหมาะกับประกาศ ขั้นตอนสมัคร หรือแนวปฏิบัติ วางพาดหัวด้านบนและเรียงขั้นตอน 1–4 ลงมาอย่างชัดเจน</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt สรุปขั้นตอน:</span><button id="btn-lv3" onclick="copyPrompt('btn-lv3','lv3-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv3-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">สรุปข้อมูลเรื่อง [ชื่อนโยบายหรือบริการ] สำหรับ [กลุ่มเป้าหมาย] เป็นขั้นตอน 4 ข้อ แต่ละข้อมีหัวข้อไม่เกิน 6 คำและคำอธิบายไม่เกิน 18 คำ ปิดท้ายด้วย [ช่องทางติดต่อ/CTA] ใช้เฉพาะข้อมูลจาก [แหล่งข้อมูล] และใส่ [รอยืนยัน] เมื่อข้อมูลไม่ครบ</pre></div>
+                            <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col gap-2 text-[9px]"><div class="bg-rose-900 text-white p-3 text-center font-bold">[พาดหัวนโยบาย]</div><div class="grid grid-cols-2 gap-2 flex-1"><div class="bg-rose-50 p-2">01 [ขั้นตอน]</div><div class="bg-amber-50 p-2">02 [ขั้นตอน]</div><div class="bg-amber-50 p-2">03 [ขั้นตอน]</div><div class="bg-rose-50 p-2">04 [ขั้นตอน]</div></div><div class="bg-slate-900 text-white p-2 text-center">[QR Code / ติดต่อ]</div></div>
+                        </div>
+
+                        <!-- Layout 4 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">4. ตัวเลขผลสำเร็จ (Impact Numbers)</span><p class="text-xs text-slate-500 mt-2 mb-3">ใช้รายงานผลโครงการ โดยเน้นตัวเลขสำคัญ 3 ค่า พร้อมคำอธิบายและแหล่งอ้างอิงที่ตรวจสอบได้</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt คัดตัวเลขเด่น:</span><button id="btn-lv4" onclick="copyPrompt('btn-lv4','lv4-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv4-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">จากข้อมูลผลดำเนินงาน [วางข้อมูล] ช่วยเลือกตัวเลขเด่น 3 ค่า พร้อมคำอธิบายค่าละไม่เกิน 15 คำ พาดหัวสรุปหนึ่งบรรทัด และข้อความผลลัพธ์ต่อ [ผู้เรียน/ครู/สถานศึกษา] ระบุแหล่งอ้างอิง [ชื่อรายงาน/กลุ่มงาน] ห้ามคำนวณเพิ่มหรือแต่งตัวเลข</pre></div>
+                            <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col justify-between text-center"><div class="text-sm font-bold text-rose-900">[ผลสำเร็จของโครงการ]</div><div class="grid grid-cols-3 gap-2"><div class="bg-rose-50 p-2"><b>[85%]</b><br><small>[ความหมาย]</small></div><div class="bg-amber-50 p-2"><b>[120]</b><br><small>[ความหมาย]</small></div><div class="bg-rose-50 p-2"><b>[42]</b><br><small>[ความหมาย]</small></div></div><div class="text-[9px] text-slate-500">ที่มา: [ชื่อรายงานและวันที่]</div></div>
+                        </div>
+
+                        <!-- Layout 5 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">5. ประกาศ/เชิญชวน (Event Invitation)</span><p class="text-xs text-slate-500 mt-2 mb-3">เน้นชื่องาน วัน เวลา สถานที่ คุณสมบัติ และปุ่มดำเนินการ เหมาะกับการอบรม ประชุม และรับสมัคร</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt ข้อความเชิญชวน:</span><button id="btn-lv5" onclick="copyPrompt('btn-lv5','lv5-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv5-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">เขียนข้อความสำหรับกราฟิกเชิญชวน [ชื่อกิจกรรม] ของ สพม.บุรีรัมย์ กลุ่มเป้าหมาย [ระบุ] จัดวันที่ [วัน/เวลา] ณ [สถานที่] สมัครภายใน [กำหนด] ทาง [ลิงก์/QR Code] ส่งมอบพาดหัวไม่เกิน 10 คำ ข้อความรองไม่เกิน 20 คำ และ CTA หนึ่งประโยค</pre></div>
+                            <div class="aspect-[4/5] bg-gradient-to-b from-rose-950 to-rose-700 rounded-lg p-3 text-white flex flex-col justify-between text-center"><div class="text-[9px]">สพม.บุรีรัมย์ ขอเชิญ</div><div><div class="text-lg font-bold">[ชื่อกิจกรรม]</div><div class="text-[10px] mt-2">[วัน เวลา]<br>[สถานที่]</div></div><div class="bg-amber-400 text-slate-950 rounded p-2 text-[9px] font-bold">[สมัคร / QR Code]</div></div>
+                        </div>
+
+                        <!-- Layout 6 -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-between hover:border-indigo-500 transition-all">
+                            <div><span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">6. เรื่องเล่าผลลัพธ์ (Before–After Story)</span><p class="text-xs text-slate-500 mt-2 mb-3">เปรียบเทียบก่อนและหลังดำเนินงาน พร้อมภาพจริงและคำอธิบายผลที่ตรวจสอบได้ เหมาะกับนวัตกรรมและการแก้ปัญหา</p></div>
+                            <div class="bg-slate-950 rounded-lg p-3 mb-3"><div class="flex justify-between mb-2"><span class="text-[10px] text-rose-300 font-bold">Prompt เล่า Before–After:</span><button id="btn-lv6" onclick="copyPrompt('btn-lv6','lv6-text')" class="px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] rounded"><i class="fa-solid fa-copy"></i> คัดลอก</button></div><pre id="lv6-text" class="text-[10px] text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยสรุปเรื่องราว [ชื่อโครงการ] เป็น ก่อนดำเนินงาน: [ปัญหาและหลักฐาน] วิธีดำเนินงาน: [กิจกรรม] หลังดำเนินงาน: [ผลลัพธ์ที่ยืนยันแล้ว] และก้าวต่อไป: [แผนงาน] แต่ละส่วนไม่เกิน 25 คำ พร้อมเสนอพาดหัวที่ไม่กล่าวอ้างเกินจริง</pre></div>
+                            <div class="aspect-[4/5] bg-white border rounded-lg p-3 flex flex-col gap-2 text-[9px]"><div class="text-center font-bold text-rose-900">[จากปัญหา สู่ผลลัพธ์]</div><div class="grid grid-cols-2 gap-2 flex-1"><div class="bg-slate-100 border border-dashed p-2">ก่อน<br>[ภาพ/ปัญหา]</div><div class="bg-rose-50 border border-dashed p-2">หลัง<br>[ภาพ/ผลลัพธ์]</div></div><div class="bg-slate-900 text-white p-2">[วิธีดำเนินงาน] → [ก้าวต่อไป]</div></div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 5: AI Prompts for Video Script Generation (8 templates) -->
+                <section id="video-ai" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clapperboard"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">7. การสร้างวิดีโอประชาสัมพันธ์ด้วย AI (8 รูปแบบ)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">ครอบคลุมวิดีโอแนวตั้ง แนวนอน ข่าวกิจกรรม อธิบายนโยบาย สัมภาษณ์ และสารคดีสั้น ความยาวตั้งแต่ 30 วินาทีถึง 3 นาที</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-xs leading-relaxed text-indigo-950">
+                        <strong>ก่อนถ่ายทำและเผยแพร่:</strong> ยืนยันชื่อ–ตำแหน่งและตัวเลข ขออนุญาตบุคคลที่ปรากฏในภาพโดยเฉพาะผู้เยาว์ หลีกเลี่ยงข้อมูลส่วนบุคคลในเอกสารหรือหน้าจอ และจัดทำคำบรรยายเพื่อการเข้าถึง สคริปต์จาก AI เป็นเพียงร่างที่ต้องผ่านเจ้าของเรื่องและผู้อนุมัติ
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 font-kanit text-xs">
+                        <div class="rounded-lg bg-rose-50 border border-rose-200 p-3"><strong class="text-rose-900">วิดีโอข่าว</strong><p class="mt-1 text-slate-600">สรุปกิจกรรมและผลลัพธ์ 60–90 วินาที</p></div>
+                        <div class="rounded-lg bg-amber-50 border border-amber-200 p-3"><strong class="text-amber-900">วิดีโออธิบาย</strong><p class="mt-1 text-slate-600">อธิบายนโยบายหรือขั้นตอน 1–3 นาที</p></div>
+                        <div class="rounded-lg bg-indigo-50 border border-indigo-200 p-3"><strong class="text-indigo-900">วิดีโอสัมภาษณ์</strong><p class="mt-1 text-slate-600">ใช้คำถามจริงและคำตอบจากผู้ให้สัมภาษณ์</p></div>
+                        <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-3"><strong class="text-emerald-900">วิดีโอแนวตั้ง</strong><p class="mt-1 text-slate-600">Reels, Shorts หรือ TikTok 30–60 วินาที</p></div>
+                    </div>
+
+                    <div class="space-y-8 font-kanit">
+                        
+                        <!-- Video Prompt 1 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">1</span>
+                                    พรอมต์วิดีโอ "รับสมัครนักเรียนใหม่ / เปิดบ้านวิชาการ"
+                                </span>
+                                <button id="btn-vd1" onclick="copyPrompt('btn-vd1', 'vd1-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="bg-slate-900 text-slate-300 border-b border-slate-800 flex text-xs">
+                                <button onclick="switchTab('tab-vd1-code', 'tab-vd1-out', this)" class="px-4 py-2 bg-slate-800 text-white border-b-2 border-indigo-500 focus:outline-none tab-btn-active">
+                                    <i class="fa-solid fa-terminal mr-1"></i> โครงสร้างพรอมต์สำหรับคัดลอก
+                                </button>
+                                <button onclick="switchTab('tab-vd1-out', 'tab-vd1-code', this)" class="px-4 py-2 text-slate-400 hover:text-white focus:outline-none">
+                                    <i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> ตัวอย่างผลลัพธ์จาก AI จำลอง
+                                </button>
+                            </div>
+                            <div id="tab-vd1-code" class="p-4 bg-slate-950 block">
+                                <pre id="vd1-prompt" class="readable-prompt font-mono text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">ช่วยเขียนสคริปต์วิดีโอประชาสัมพันธ์การรับสมัครนักเรียนใหม่หรือกิจกรรมเปิดบ้านของ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อสถานศึกษา]</span> สังกัด สพม.บุรีรัมย์ สำหรับ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ช่องทางเผยแพร่]</span> ความยาว <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระยะเวลา เช่น 60 วินาที หรือ 2 นาที]</span>
+
+[เงื่อนไขที่กำหนด]:
+- จุดเด่นสถาบัน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น มีห้องแล็บคอมพิวเตอร์ล้ำสมัย มีรางวัลเทคโนโลยีหุ่นยนต์เด่นระดับชาติ]</span>
+- แผนการเรียน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น แผนวิทยาศาสตร์-คอมพิวเตอร์ และ แผนภาษาอังกฤษพรีเมียม]</span>
+- สลอตการสมัคร: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น สมัครด่วนภายในวันที่ 15 พฤษภาคมนี้]</span>
+
+รูปแบบตารางผลผลิต:
+แบ่งออกเป็น 3 คอลัมน์ (คอลัมน์ที่ 1: ช่วงวินาที, คอลัมน์ที่ 2: ภาพวาดความเคลื่อนไหวบนจอ Visual & Camera, คอลัมน์ที่ 3: สคริปต์เสียงพูดพากย์ภาษาไทย Voiceover)
+โทนวิดีโอ: ตื่นเต้น มีแรงบันดาลใจ ดนตรีประกอบสนุก และปิดฉากด้วยคิวอาร์โค้ดสมัครอย่างรวดเร็ว</pre>
+                            </div>
+                            <div id="tab-vd1-out" class="p-4 bg-slate-950 hidden text-sm text-slate-300 leading-relaxed">
+                                <strong class="text-amber-400">📋 ตัวอย่างสคริปต์จำลองที่ AI จะส่งมอบให้ท่าน:</strong><br>
+                                <div class="overflow-x-auto mt-2 text-xs">
+                                    <table class="min-w-full text-left text-slate-300 bg-slate-900 border border-slate-800">
+                                        <thead>
+                                            <tr class="bg-slate-800 text-white">
+                                                <th class="p-2 border border-slate-700">วินาทีที่</th>
+                                                <th class="p-2 border border-slate-700">ภาพที่แสดงผล (Visual)</th>
+                                                <th class="p-2 border border-slate-700">คำพูดพากย์เสียงภาษาไทย (Voiceover)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="p-2 border border-slate-700">00:00 - 00:03</td>
+                                                <td class="p-2 border border-slate-700">ภาพถ่ายสโลว์โมชันนักเรียนมัธยมยิ้มอย่างมั่นใจในห้องวิทยาศาสตร์สุดล้ำ</td>
+                                                <td class="p-2 border border-slate-700">"พร้อมหรือยัง? ที่จะเปิดรับโอกาสสู่การเดินทางในอนาคตที่ก้าวไกลกว่าเดิม..."</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-2 border border-slate-700">00:03 - 00:20</td>
+                                                <td class="p-2 border border-slate-700">ซูมภาพความล้ำสมัยของห้องคอมพิวเตอร์และการทดลองเขียนโค้ดของสภานักเรียน</td>
+                                                <td class="p-2 border border-slate-700">"พบกับแผนการเรียนไอทีและภาษาอังกฤษสมัยใหม่ ที่โรงเรียนเราเน้นการลงมือปฏิบัติจริงกับปัญญาประดิษฐ์และครูผู้ดูแลอย่างใกล้ชิด"</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-2 border border-slate-700">00:20 - 00:45</td>
+                                                <td class="p-2 border border-slate-700">ขึ้นโลโก้โรงเรียนพร้อมกราฟิกช่องทางสมัครสแกนคิวอาร์โค้ดด่วน</td>
+                                                <td class="p-2 border border-slate-700">"อย่ารอช้า! เปิดโอกาสความก้าวหน้าการเรียนรู้ด้วยตัวคุณเองได้แล้ววันนี้ สมัครด่วนภายในวันที่ 15 พฤษภาคมนี้แล้วเจอกันครับ!"</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Prompt 2 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">2</span>
+                                    พรอมต์วิดีโอเชิดชูเกียรติบุคลากรและผลงาน
+                                </span>
+                                <button id="btn-vd2" onclick="copyPrompt('btn-vd2', 'vd2-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd2-prompt" class="readable-prompt">ช่วยเขียนสคริปต์วิดีโอเชิดชูเกียรติ ความยาว <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระยะเวลาที่ต้องการ]</span> สำหรับ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ช่องทางเผยแพร่]</span> โดยใช้ข้อมูลรางวัลที่ตรวจสอบแล้วเท่านั้น
+
+[ข้อมูลครูผู้ได้รับเกียรติ]:
+- ชื่อคุณครูและวิทยฐานะ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น คุณครูอารีย์ รักการสอน กลุ่มสาระคณิตศาสตร์]</span>
+- รางวัลเด่น: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น รางวัลครูผู้สอนดีเด่นแห่งปี ระดับภาคตะวันออกเฉียงเหนือ]</span>
+- ความทุ่มเทหลัก: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ผลิตสื่อการสอนเชิงรุก Active Learning พัฒนาผลการเรียนนักเรียนสูงขึ้น 40%]</span>
+
+ผลลัพธ์โครงสร้าง:
+แบ่งแถววินาที ระบุสคริปต์เสียงพูดด้วยสำเนียงอบอุ่น ซาบซึ้ง ทรงพลัง และเหมาะสมกับประเพณีความดีงามของงานราชการศึกษาไทย</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 3 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">3</span>
+                                    พรอมต์สร้างสคริปต์แนะแนวความรู้ "เคล็ดลับสอบผ่านเตรียมมหาลัย" (30 วินาที)
+                                </span>
+                                <button id="btn-vd3" onclick="copyPrompt('btn-vd3', 'vd3-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd3-prompt" class="readable-prompt">ช่วยเขียนบทพูดนำเสนอความรู้สไตล์ TikTok ความยาว 30 วินาที เรื่องเคล็ดลับพิชิตคะแนนสอบระดับชาติสำหรับเด็กมัธยมปลายโรงเรียน <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อโรงเรียน]</span> 
+
+[เนื้อหาที่จะแนะแนว]:
+- 3 เคล็ดลับด่วน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[1. เทคนิคจำสีหมึกปากกาไฮไลต์, 2. จัดสูตรทวนโจทย์ยามเช้า 15 นาที, 3. เทคนิคจับจังหวะสมาธิ 25 นาทีพัก 5 นาที]</span>
+
+โทนเสียง: สนุกสนาน คล่องตัว เป็นกันเองแบบพี่แนะแนวสู่น้อง เพื่อเรียกยอดเข้าชม ยอดแชร์ และมีประโยชน์ต่อนักเรียนเปิดดู</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 4 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">4</span>
+                                    พรอมต์สร้างสคริปต์ "พรีเซนต์สิ่งประดิษฐ์สภานักเรียน" (45 วินาที)
+                                </span>
+                                <button id="btn-vd4" onclick="copyPrompt('btn-vd4', 'vd4-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd4-prompt" class="readable-prompt">ช่วยเขียนบทร่างวิดีโอพรีเซนต์ความภูมิใจของนักเรียนเสนอโครงงานสิ่งประดิษฐ์ ความยาว 45 วินาที
+
+[ผลผลิตโครงงาน]:
+- ชื่อโครงงาน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น โครงงานถังขยะอัตโนมัติแจ้งเตือนด้วยสัญญาณ LINE]</span>
+- คณะผู้พัฒนาหลัก: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ทีมสภานักเรียนและกลุ่มพัฒนาไอที ม.5]</span>
+- ผลลัพธ์ที่ตรวจสอบได้: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุตัวเลขหรือผลลัพธ์จากรายงาน พร้อมช่วงเวลาและแหล่งอ้างอิง]</span>
+
+ลักษณะภาษา: เร้าอารมณ์ ชี้ปัญหาล้นห้องเรียน สลับภาพโมเมนท์แกนนำถือโครงงานยิ้มด้วยความภาคภูมิใจ</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 5 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">5</span>
+                                    พรอมต์วิดีโอเชิญชวนชุมชนร่วมกิจกรรม
+                                </span>
+                                <button id="btn-vd5" onclick="copyPrompt('btn-vd5', 'vd5-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd5-prompt" class="readable-prompt">ช่วยออกแบบสคริปต์วิดีโอเชิญชวน ความยาว <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระยะเวลาที่ต้องการ]</span> เพื่อเชิญผู้ปกครอง ศิษย์เก่า หรือชุมชนเข้าร่วม <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อกิจกรรม]</span>
+
+[ไฮไลท์กิจกรรม]:
+- วันเวลาสถานที่: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น จัดกิจกรรมวันที่ 25 มกราคม ณ สนามกีฬากลางโรงเรียน]</span>
+- รายละเอียดเด่นงาน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ริ้วขบวนดนตรีพื้นบ้านตระการตา และ แฟลชม็อบเต้นความตระหนักรักษ์สิ่งแวดล้อม]</span>
+
+ลักษณะเสียงดนตรีประกอบประกอบฉาก: ปัดขึ้นเสียงกลองพุ่งเร้าใจ ทรงพลัง ชวนให้อยากเดินทางมาร่วมโมเมนท์แห่งความสามัคคีนี้</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 6 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">6</span>
+                                    พรอมต์สร้างสคริปต์สัมภาษณ์พิเศษผู้บริหาร "นโยบายพัฒนาไอทีเพื่ออนาคต" (45 วินาที)
+                                </span>
+                                <button id="btn-vd6" onclick="copyPrompt('btn-vd6', 'vd6-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd6-prompt" class="readable-prompt">ช่วยวางโครงสคริปต์วิดีโอสัมภาษณ์ผู้บริหาร ความยาว 45 วินาที เรื่อง <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุนโยบายหรือประเด็นที่ต้องการสื่อสาร]</span> โดยใช้เฉพาะข้อมูลนโยบายที่ยืนยันแล้ว และไม่เขียนคำพูดแทนผู้ให้สัมภาษณ์
+
+[ข้อมูลเพื่อชี้แจง]:
+- ผู้ให้สัมภาษณ์: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อ–นามสกุลและตำแหน่งที่ตรวจสอบแล้ว]</span>
+- เป้าหมายและสารสำคัญ: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[วางสารจากเอกสารนโยบายหรือข้อมูลที่เจ้าของเรื่องยืนยัน]</span>
+
+ส่งมอบเป็นคำถามสัมภาษณ์ 3 ข้อ ลำดับภาพ ข้อความบนจอ CTA และรายการข้อมูลที่ต้องตรวจสอบ ห้ามแต่งคำกล่าวหรือคำรับรองแทนบุคคล</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 7 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">7</span>
+                                    พรอมต์วิดีโอเบื้องหลังการทำงาน (Behind the Scenes)
+                                </span>
+                                <button id="btn-vd7" onclick="copyPrompt('btn-vd7', 'vd7-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd7-prompt" class="readable-prompt">ช่วยเขียนสคริปต์วิดีโอเบื้องหลังการทำงาน (Behind the Scenes) ของกิจกรรม <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ชื่อกิจกรรม]</span> ความยาว <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระยะเวลาที่ต้องการ]</span> และรูปแบบ <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[แนวตั้งหรือแนวนอน]</span>
+
+[เนื้อหาเบื้องหลัง]:
+- ช่วงเวลาซ้อม/เตรียมงาน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น การร่วมแรงร่วมใจทำพรอพคัดกระดาษตั้งแต่เย็นจนมืด และเสียงหัวเราะเหนื่อยล้าแต่มีความสุข]</span>
+- คำพูดจากการสัมภาษณ์จริง: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[วางคำพูดที่เจ้าตัวยืนยันและอนุญาตให้เผยแพร่]</span>
+
+โทนการนำเสนอ: อบอุ่น สดใส ดนตรีเบาสบาย แสดงความสามัคคีพากเพียรของเยาวชน</pre></div>
+                        </div>
+
+                        <!-- Video Prompt 8 -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="bg-slate-100 px-4 py-3 flex justify-between items-center border-b border-slate-200">
+                                <span class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="bg-indigo-600 text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs mr-2">8</span>
+                                    พรอมต์สร้างสคริปต์วิดีโอพาทัวร์อาคารสถานที่โรงเรียน (Modern School Tour)
+                                </span>
+                                <button id="btn-vd8" onclick="copyPrompt('btn-vd8', 'vd8-prompt')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-copy"></i> คัดลอก Prompt
+                                </button>
+                            </div>
+                            <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm leading-relaxed text-slate-200"><pre id="vd8-prompt" class="readable-prompt">ช่วยเขียนสคริปต์วิดีโอแนวตั้งสไตล์พาทัวร์ (School Tour) แนะนำ 3 สถานที่และเทคโนโลยีอำนวยความสะดวกในโรงเรียน <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ระบุชื่อโรงเรียนของคุณ]</span> ความยาว 60 วินาที
+
+[3 สถานที่เด่นที่อยากแนะนำ]:
+- จุดที่ 1: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น ห้องสมุดสีเขียวดีไซน์ล้ำสมัย]</span>
+- จุดที่ 2: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น โรงอาหารมาตรฐานระดับโรงแรมปลอดสารพิษ]</span>
+- จุดที่ 3: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น สนามโดมกีฬาอเนกประสงค์หลังคาใหญ่]</span>
+
+สไตล์ผู้พรีเซนต์: นักเรียน 2 คน คอยผลัดกันพูด แนะนำแบบกระฉับกระเฉง พานั่งทัวร์วิ่งสไลด์ฉากอย่างรวดเร็วและเป็นธรรมชาติ</pre></div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 6: Infographic -->
+                <section id="infographic-ai" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">4. การสร้างอินโฟกราฟิกประชาสัมพันธ์</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">เปลี่ยนข้อมูลนโยบาย ผลการดำเนินงาน และขั้นตอนบริการของ สพม.บุรีรัมย์ให้เข้าใจง่ายภายในภาพเดียว</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-4 mb-6 font-kanit">
+                        <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50"><strong class="text-emerald-900">1. คัดข้อมูล</strong><p class="text-xs text-slate-600 mt-2">เลือกสารหลักเพียงเรื่องเดียว ใช้ตัวเลขที่มีแหล่งอ้างอิง และตัดรายละเอียดที่ไม่ช่วยการตัดสินใจ</p></div>
+                        <div class="p-4 rounded-xl border border-indigo-100 bg-indigo-50"><strong class="text-indigo-900">2. วางลำดับ</strong><p class="text-xs text-slate-600 mt-2">พาดหัว → ประเด็นสำคัญ → หลักฐาน/ขั้นตอน → สิ่งที่ต้องทำต่อ พร้อมพื้นที่ว่างให้สายตาพัก</p></div>
+                        <div class="p-4 rounded-xl border border-amber-100 bg-amber-50"><strong class="text-amber-900">3. ตรวจและเผยแพร่</strong><p class="text-xs text-slate-600 mt-2">ตรวจหน่วย ตัวเลข วันที่ แหล่งอ้างอิง QR Code ความคมชัด และจัดทำ Alt Text ทุกครั้ง</p></div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm mb-6">
+                        <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                            <span class="text-xs font-bold text-slate-800 font-kanit">พรอมต์วางโครงอินโฟกราฟิกจากข้อมูลจริง</span>
+                            <button id="btn-info1" onclick="copyPrompt('btn-info1', 'info1-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md font-kanit flex items-center gap-1"><i class="fa-solid fa-copy text-[10px]"></i> คัดลอก</button>
+                        </div>
+                        <div class="p-4 bg-slate-950"><pre id="info1-text" class="readable-prompt font-mono whitespace-pre-wrap">จงสวมบทบาทเป็นนักออกแบบข้อมูลภาครัฐ ช่วยวางโครงอินโฟกราฟิกของ สพม.บุรีรัมย์ เรื่อง [หัวข้อ] สำหรับ [กลุ่มเป้าหมาย] โดยใช้เฉพาะข้อมูลต่อไปนี้: [วางข้อมูลและแหล่งอ้างอิง]
+
+สร้างผลลัพธ์เป็น 1) พาดหัวไม่เกิน 12 คำ 2) สารหลักหนึ่งประโยค 3) ข้อมูลสำคัญ 3-5 จุด 4) ลำดับการอ่านและข้อเสนอไอคอน 5) CTA และช่องทางติดต่อ 6) Alt Text 7) รายการข้อมูลที่ต้องตรวจสอบก่อนเผยแพร่ ใช้ภาษาราชการที่อ่านง่าย ห้ามแต่งตัวเลขหรือแหล่งอ้างอิง หากข้อมูลไม่ครบให้ใส่ [รอยืนยัน]</pre></div>
+                    </div>
+
+                    <div class="p-5 rounded-xl border border-indigo-200 bg-indigo-50 font-kanit">
+                        <h3 class="font-bold text-indigo-950 mb-3">ตัวอย่างการใช้งาน: สรุปผลการพัฒนาครู</h3>
+                        <div class="grid sm:grid-cols-2 gap-4 text-xs text-slate-700">
+                            <div><strong>ข้อมูลนำเข้า</strong><p class="mt-1">ชื่อโครงการ กลุ่มเป้าหมาย ระยะเวลา จำนวนผู้เข้าร่วม ผลประเมิน แหล่งข้อมูล และผู้รับผิดชอบ</p></div>
+                            <div><strong>ชิ้นงานที่ได้</strong><p class="mt-1">พาดหัว “พัฒนาครู สู่ห้องเรียนที่เรียนรู้ได้จริง” พร้อมตัวเลขเด่น 3 ค่า ผลลัพธ์สำคัญ CTA และ QR Code ไปยังรายงานฉบับเต็ม</p></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 7: Poster -->
+                <section id="poster-ai" class="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-rose-100 text-rose-700 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-image"></i></div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">5. การสร้างโปสเตอร์ประชาสัมพันธ์</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">ออกแบบโปสเตอร์ประกาศ เชิญชวน และยกย่องผลงานให้สารสำคัญชัดเจนและคงอัตลักษณ์ของหน่วยงาน</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-5 mb-6 font-kanit">
+                        <div class="p-5 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-3">องค์ประกอบที่ต้องมี</h3><ul class="text-sm text-slate-600 space-y-2"><li>• ชื่องานหรือข้อความหลักที่อ่านได้ใน 3 วินาที</li><li>• วัน เวลา สถานที่ และกลุ่มเป้าหมาย</li><li>• ผู้จัด ช่องทางติดต่อ CTA และ QR Code ที่ทดสอบแล้ว</li><li>• ตราสัญลักษณ์ตามคู่มืออัตลักษณ์และลำดับหน่วยงานที่ถูกต้อง</li></ul></div>
+                        <div class="p-5 border border-rose-200 bg-rose-50 rounded-xl"><h3 class="font-bold text-rose-950 mb-3">ขนาดแนะนำ</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Facebook/Instagram Feed: 1080 × 1350 px (4:5)</li><li>• Story/Reels Cover: 1080 × 1920 px (9:16)</li><li>• เว็บไซต์: 1200 × 628 px โดยเผื่อพื้นที่ครอป</li><li>• งานพิมพ์: A4/A3, 300 dpi และตรวจระยะตัดตก</li></ul></div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm mb-6">
+                        <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                            <span class="text-xs font-bold text-slate-800 font-kanit">พรอมต์สร้างข้อความและบรีฟโปสเตอร์</span>
+                            <button id="btn-poster1" onclick="copyPrompt('btn-poster1', 'poster1-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md font-kanit flex items-center gap-1"><i class="fa-solid fa-copy text-[10px]"></i> คัดลอก</button>
+                        </div>
+                        <div class="p-4 bg-slate-950"><pre id="poster1-text" class="readable-prompt font-mono whitespace-pre-wrap">ช่วยจัดทำข้อความและบรีฟออกแบบโปสเตอร์ประชาสัมพันธ์ของ สพม.บุรีรัมย์
+หัวข้อ: [ชื่อกิจกรรม/ประกาศ] | เป้าหมาย: [เชิญชวน/แจ้งกำหนดการ/ยกย่องผลงาน] | กลุ่มเป้าหมาย: [ระบุ] | วันเวลา/สถานที่: [ข้อมูลยืนยันแล้ว] | CTA/ช่องทางติดต่อ: [ระบุ] | ขนาด: [4:5/9:16/A4]
+
+ส่งมอบ 1) พาดหัว 3 ตัวเลือกไม่เกิน 10 คำ 2) ข้อความรองไม่เกิน 25 คำ 3) ลำดับชั้นข้อมูล 4) แนวทางภาพ สี และพื้นที่ว่างที่สอดคล้องกับอัตลักษณ์หน่วยงาน 5) ข้อความ CTA 6) แคปชันประกอบโพสต์ 7) Alt Text ห้ามสร้างตราสัญลักษณ์ ตัวบุคคลจริง หรือรายละเอียดที่ไม่มีในข้อมูล และทำเครื่องหมาย [รอยืนยัน] ในจุดที่ต้องตรวจสอบ</pre></div>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-900 text-slate-100 p-5 font-kanit"><strong class="text-amber-300">ตัวอย่างโครงโปสเตอร์เชิญอบรม</strong><p class="text-xs mt-2 leading-relaxed">ด้านบน: ตราหน่วยงานและชื่อผู้จัด → กลางภาพ: “ยกระดับการสื่อสารด้วย AI” → รองลงมา: วัน เวลา สถานที่ และคุณสมบัติผู้เข้าร่วม → ด้านล่าง: ปุ่ม “สมัครภายใน [วัน/เวลา]” พร้อม QR Code และช่องทางสอบถาม โดยไม่วางข้อความทับใบหน้าหรือภาพสำคัญ</p></div>
+                </section>
+
+                <!-- Removed content calendar retained as an inert template for backward compatibility -->
+                <template id="pr-calendar">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">8. แผนปฏิทินโพสต์สื่อประชาสัมพันธ์เชิงรุกรายเดือน (PR Content Calendar)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">พรอมต์และตารางตัวอย่างสำหรับวางแผนเผยแพร่ผ่านเว็บไซต์และ Facebook อย่างต่อเนื่อง</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 font-kanit">
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl shadow-sm mb-6">
+                            <h3 class="font-bold text-indigo-950 mb-3.5 flex items-center text-base">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-2 text-indigo-600"></i> พรอมต์วิเคราะห์และสร้างปฏิทินการโพสต์ประชาสัมพันธ์ส่วนบุคคล (PR Calendar Generator)
+                            </h3>
+                            <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                                    <span class="text-xs font-bold text-slate-800 font-kanit">พรอมต์สร้างตารางวางโพสต์รายสัปดาห์ (Weekly Content Calendar Prompt)</span>
+                                    <button id="btn-cal1" onclick="copyPrompt('btn-cal1', 'cal1-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1">
+                                        <i class="fa-solid fa-copy text-[10px]"></i> คัดลอก
+                                    </button>
+                                </div>
+                                <div class="p-4 bg-slate-950 font-mono text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap"><pre id="cal1-text" class="readable-prompt">จงสวมบทบาทเป็น "นักการตลาดโซเชียลมีเดียและการประชาสัมพันธ์ทางการศึกษา" 
+ช่วยออกแบบปฏิทินประชาสัมพันธ์ 4 สัปดาห์สำหรับเว็บไซต์และ Facebook ของ สพม.บุรีรัมย์ โดยเชื่อมโยงข่าวจากกลุ่มงานและสถานศึกษาในสังกัดอย่างสมดุล
+
+[รายละเอียดที่ต้องบรรจุให้สมดุล]:
+- เป้าหมายการสื่อสารประจำเดือน: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[นโยบายสำคัญ บริการ ผลงานผู้เรียน การพัฒนาครู หรือความปลอดภัย]</span>
+- กิจกรรม/กำหนดการที่ยืนยันแล้ว: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[วางรายการจากปฏิทินราชการ]</span>
+- กลุ่มเป้าหมาย: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[ผู้บริหาร ครู บุคลากร นักเรียน ผู้ปกครอง ประชาชน]</span>
+
+จัดตารางให้มี: วันที่/เวลา, เสาหลักเนื้อหา, ประเด็น, กลุ่มเป้าหมาย, ช่องทาง, รูปแบบสื่อ, เจ้าของข้อมูล, หลักฐานที่ต้องใช้, ผู้ตรวจทาน, CTA และสถานะอนุมัติ พร้อมเว้นพื้นที่สำหรับข่าวเร่งด่วน ห้ามกำหนดวันหรือข้อเท็จจริงแทนข้อมูลที่ยังไม่ยืนยัน
+- กิจกรรมเด่นในสัปดาห์แรก: <span class="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded shadow-sm mx-1">[เช่น พิธีมอบประกาศนียบัตรเชิดชูคนเก่ง]</span>
+- รูปแบบความถี่คอนเทนต์: โพสต์สัปดาห์ละ 3 ครั้ง (จันทร์: ประกาศวิชาการทางการ, พุธ: คลิปสั้นความรู้/ชีวิตนักเรียน, ศุกร์: กิจกรรมจิตสาธารณะ CSR หรือแกลเลอรี)
+
+ช่วยแสดงผลลัพธ์เป็นตารางแผนงานที่ชัดเจน เพื่อให้นำไปปฏิบัติงานต่อได้จริงทันที</pre></div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Calendar Visual Table -->
+                        <h4 class="font-bold text-slate-900 text-sm mb-2"><i class="fa-solid fa-eye text-indigo-500 mr-1.5"></i> ตารางตัวอย่างแผนประชาสัมพันธ์ฉบับโมเดล (6 สัปดาห์ครอบคลุมกิจกรรมโรงเรียน)</h4>
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
+                            <table class="min-w-full text-xs text-slate-700 bg-white">
+                                <thead>
+                                    <tr class="bg-indigo-950 text-white">
+                                        <th class="p-3 border border-slate-200 text-left font-semibold">สัปดาห์ที่</th>
+                                        <th class="p-3 border border-slate-200 text-left font-semibold">ประเภทเนื้อหาหลัก</th>
+                                        <th class="p-3 border border-slate-200 text-left font-semibold">หัวข้อข่าวที่โพสต์ลงเพจ</th>
+                                        <th class="p-3 border border-slate-200 text-left font-semibold">แนวทางการจัดทำภาพและคลิปประชาสัมพันธ์</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <!-- Week 1 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 1</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-indigo-100 text-indigo-800 text-[10px] px-2 py-0.5 rounded font-bold">Pride (วิชาการ)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">ประกาศข่าวความสำเร็จรางวัลคุณครูดีเด่นระดับภาคเรียน</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">ภาพกราฟิกขอบน้ำเงินทองสง่างาม วางรูปครูกึ่งกลางเด่นชัด</td>
+                                    </tr>
+                                    <!-- Week 2 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 2</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-bold">Life (ชีวิตโรงเรียน)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">ภาพบรรยากาศเปิดประตูรั้วสระมงคลต้อนรับนักเรียนเปิดเทอมวันแรก</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">อัลบั้มภาพแกลเลอรีความน่ารักของครู รปภ. และน้องๆ ถือกระเป๋าเข้าโดม</td>
+                                    </tr>
+                                    <!-- Week 3 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 3</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">Edutainment (สาระดี)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">แนะนำเคล็ดลับลัด "สมาธิอ่านจำเก่งข้ามวิชา" เพื่อเตรียมตัวสอบปลายภาค</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">อินโฟกราฟิกภาพประกอบแบบสะอาดตา สีพาสเทลพรีเมียม สไตล์มินิมอล</td>
+                                    </tr>
+                                    <!-- Week 4 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 4</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-indigo-100 text-indigo-800 text-[10px] px-2 py-0.5 rounded font-bold">Pride (วิชาการ)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">รายงานสรุปอินโฟกราฟิกความสำเร็จของการประดิษฐ์ตู้อัจฉริยะประหยัดไฟ</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">ภาพสถิติอินโฟกราฟิกตัวเลขขนาดใหญ่ และภาพน้องๆ ตรวจสอบหุ่นยนต์</td>
+                                    </tr>
+                                    <!-- Week 5 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 5</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-bold">Life (ชีวิตโรงเรียน)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">ฟุตเทจภาพการฝึกซ้อมกีฬาสีของสโมสรโรงเรียนและพรอพเชียร์ขนาดใหญ่</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">วิดีโอสั้น TikTok 45 วินาที ที่เน้นจับจังหวะเสียงเชียร์พากย์ไทย</td>
+                                    </tr>
+                                    <!-- Week 6 -->
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-3 border border-slate-200 font-bold text-indigo-950">สัปดาห์ที่ 6</td>
+                                        <td class="p-3 border border-slate-200"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">Edutainment (สาระดี)</span></td>
+                                        <td class="p-3 border border-slate-200 font-medium">แนะแนว "เส้นทางสู่อนาคตวิศวกรและนักการตลาดดิจิทัลปัญญาประดิษฐ์"</td>
+                                        <td class="p-3 border border-slate-200 text-slate-500">ภาพกราฟิกไอคอนสมองเชื่อมโยงข่าย คมชัดพร้อมสแกนคิวอาร์โค้ดลงชื่อ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </template>
+
+                <!-- Section 8: AI Safety -->
+                <section id="ai-safety" class="bg-white rounded-xl shadow-md border border-red-200 p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-red-100 text-red-700 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold font-kanit text-slate-900">8. ข้อควรระวังในการใช้ AI ในงานประชาสัมพันธ์</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">AI ช่วยร่างและจัดโครงสร้างได้ แต่ความถูกต้อง ความเหมาะสม และการอนุมัติยังเป็นหน้าที่ของผู้ปฏิบัติงาน</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4 mb-6 font-kanit">
+                        <div class="p-4 rounded-xl border border-red-200 bg-red-50"><h3 class="font-bold text-red-950 mb-2">ข้อมูลส่วนบุคคลและข้อมูลอ่อนไหว</h3><p class="text-xs text-slate-700 leading-relaxed">ไม่ป้อนเลขประจำตัว เบอร์โทรส่วนตัว ที่อยู่ สุขภาพ ผลการเรียน เอกสารภายใน หรือข้อมูลผู้เยาว์ลงในระบบ AI ที่ไม่ได้รับอนุญาต ปกปิดหรือทำข้อมูลให้ไม่สามารถระบุตัวบุคคลก่อนใช้งาน</p></div>
+                        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50"><h3 class="font-bold text-amber-950 mb-2">ข้อเท็จจริงและการหลอนของ AI</h3><p class="text-xs text-slate-700 leading-relaxed">ตรวจชื่อ–ตำแหน่ง วันเวลา สถานที่ ตัวเลข กฎหมาย ลิงก์ และคำกล่าวกับเอกสารต้นทางเสมอ ถ้าไม่พบหลักฐานให้ระบุ [รอยืนยัน] และไม่เผยแพร่</p></div>
+                        <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50"><h3 class="font-bold text-indigo-950 mb-2">ลิขสิทธิ์ สิทธิ์ภาพ และภาพสังเคราะห์</h3><p class="text-xs text-slate-700 leading-relaxed">ใช้ภาพ เพลง แบบอักษร และแม่แบบที่มีสิทธิ์ใช้งาน ขออนุญาตเจ้าของภาพและบุคคลในภาพ ระบุภาพที่สร้างด้วย AI และห้ามสร้างภาพเลียนแบบบุคคลจริงหรือเหตุการณ์ที่ไม่เกิดขึ้น</p></div>
+                        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50"><h3 class="font-bold text-emerald-950 mb-2">อคติ ภาษา และชื่อเสียงหน่วยงาน</h3><p class="text-xs text-slate-700 leading-relaxed">ตรวจถ้อยคำที่อาจตีตรา เลือกปฏิบัติ หรือกล่าวอ้างเกินจริง รักษาความเป็นกลาง ความสุภาพ การเข้าถึงของผู้พิการ และไม่ใช้ AI ตัดสินบุคคลหรือสถานศึกษา</p></div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm mb-6">
+                        <div class="bg-slate-100 px-4 py-2.5 flex justify-between items-center border-b border-slate-200">
+                            <span class="text-xs font-bold text-slate-800 font-kanit">พรอมต์ตรวจความเสี่ยงก่อนเผยแพร่</span>
+                            <button id="btn-safe1" onclick="copyPrompt('btn-safe1', 'safe1-text')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md font-kanit flex items-center gap-1"><i class="fa-solid fa-copy text-[10px]"></i> คัดลอก</button>
+                        </div>
+                        <div class="p-4 bg-slate-950"><pre id="safe1-text" class="readable-prompt font-mono whitespace-pre-wrap">ช่วยตรวจร่างสื่อประชาสัมพันธ์ต่อไปนี้ก่อนเผยแพร่: [วางข้อความโดยลบข้อมูลส่วนบุคคลแล้ว]
+
+วิเคราะห์เป็นตาราง: ประเด็นที่พบ | ระดับความเสี่ยง (สูง/กลาง/ต่ำ) | เหตุผล | สิ่งที่ต้องตรวจจากต้นทาง | ข้อเสนอแก้ไข ครอบคลุม 1) ข้อเท็จจริงและคำกล่าวอ้าง 2) ชื่อ–ตำแหน่ง/วันเวลา/ตัวเลข 3) ข้อมูลส่วนบุคคลและผู้เยาว์ 4) ลิขสิทธิ์และสิทธิ์ภาพ 5) อคติหรือภาษาที่อาจกระทบสิทธิ 6) ความชัดเจนและการเข้าถึง 7) CTA/ลิงก์/QR Code
+
+ห้ามรับรองว่าข้อมูลถูกต้องแทนมนุษย์ ให้ระบุรายการที่เจ้าของเรื่องและผู้อนุมัติต้องยืนยันก่อนเผยแพร่</pre></div>
+                    </div>
+
+                    <div class="rounded-xl border-2 border-red-300 bg-white p-5 font-kanit">
+                        <h3 class="font-bold text-red-900 mb-3">เช็กลิสต์ “หยุด–ตรวจ–อนุมัติ”</h3>
+                        <ol class="grid sm:grid-cols-3 gap-3 text-xs text-slate-700">
+                            <li class="p-3 bg-red-50 rounded-lg"><strong>หยุด:</strong> ลบข้อมูลอ่อนไหวและแยกข้อเท็จจริงออกจากข้อความที่ AI เสนอ</li>
+                            <li class="p-3 bg-amber-50 rounded-lg"><strong>ตรวจ:</strong> เทียบเอกสารต้นทาง ทดสอบลิงก์/QR Code และตรวจสิทธิ์สื่อทุกชิ้น</li>
+                            <li class="p-3 bg-emerald-50 rounded-lg"><strong>อนุมัติ:</strong> ส่งเจ้าของเรื่อง ผู้ตรวจภาษา และผู้มีอำนาจอนุมัติตามขั้นตอนก่อนโพสต์</li>
+                        </ol>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Sticky Bottom Footer Panel -->
+    <footer class="bg-slate-900 text-white border-t border-slate-800 py-10 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-base sm:text-lg font-bold font-kanit text-white">
+                คู่มือปฏิบัติการ AI PR &amp; Digital Media สำหรับ สพม.บุรีรัมย์
+            </p>
+            <p class="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-xs sm:text-sm font-kanit text-amber-200">
+                <i class="fa-solid fa-person-chalkboard"></i>
+                วิทยากรการอบรม นายธนกฤชช์ โยมไธสง ครู โรงเรียนบุรีรัมย์พิทยาคม
+            </p>
+        </div>
+    </footer>
+
+    <!-- Javascript Logical Code -->
+    <script>
+        // Toggle Sidebar view state
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-container');
+            const mainContent = document.getElementById('main-content-container');
+            const toggleBtnIcon = document.getElementById('toggle-sidebar-icon');
+            const toggleBtnText = document.getElementById('toggle-sidebar-text');
+            
+            if (sidebar.classList.contains('hidden')) {
+                // Show sidebar
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('block');
+                mainContent.classList.remove('col-span-12');
+                mainContent.classList.add('col-span-12', 'md:col-span-8', 'lg:col-span-9');
+                if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-indent';
+                if (toggleBtnText) toggleBtnText.innerText = 'ซ่อนสารบัญ';
+            } else {
+                // Hide sidebar
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('block');
+                mainContent.classList.remove('col-span-12', 'md:col-span-8', 'lg:col-span-9');
+                mainContent.classList.add('col-span-12');
+                if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-outdent';
+                if (toggleBtnText) toggleBtnText.innerText = 'แสดงสารบัญ';
+            }
+        }
+
+        // Copy function with instant visual feedback
+        function copyPrompt(buttonId, textId) {
+            const targetText = document.getElementById(textId).innerText;
+            const buttonElement = document.getElementById(buttonId);
+            
+            // Safe fallback implementation for iframe copying
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = targetText;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                
+                if (successful) {
+                    const originalText = buttonElement.innerHTML;
+                    buttonElement.innerHTML = '<i class="fa-solid fa-check"></i> คัดลอกสำเร็จ!';
+                    buttonElement.className = "px-2.5 py-1 bg-emerald-600 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1 shadow-sm";
+                    
+                    setTimeout(() => {
+                        buttonElement.innerHTML = originalText;
+                        buttonElement.className = "px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md transition-colors font-kanit flex items-center gap-1 shadow-sm";
+                    }, 2000);
+                } else {
+                    throw new Error('execCommand failed');
+                }
+            } catch (err) {
+                console.error('คัดลอกข้อความผิดพลาด: ', err);
+            }
+        }
+
+        // Tab switching logic
+        function switchTab(showId, hideId, activeBtn) {
+            document.getElementById(showId).classList.remove('hidden');
+            document.getElementById(showId).classList.add('block');
+            document.getElementById(hideId).classList.remove('block');
+            document.getElementById(hideId).classList.add('hidden');
+            
+            const parent = activeBtn.parentNode;
+            Array.from(parent.children).forEach(btn => {
+                btn.className = "px-4 py-2 text-slate-400 hover:text-white focus:outline-none transition-colors";
+            });
+            
+            activeBtn.className = "px-4 py-2 bg-slate-800 text-white border-b-2 border-indigo-500 focus:outline-none tab-btn-active transition-colors";
+        }
+
+        // Realtime search / Filter functionality
+        function searchPrompts() {
+            const query = document.getElementById('prompt-search').value.toLowerCase();
+            const sections = document.querySelectorAll('main > section');
+            
+            sections.forEach(section => {
+                const text = section.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        }
+
+        // Custom Prompt Generator App Logic
+        function generateCustomPrompt() {
+            const title = document.getElementById('gen-title').value;
+            const president = document.getElementById('gen-president').value;
+            const location = document.getElementById('gen-location').value;
+            const attendees = document.getElementById('gen-attendees').value;
+            const highlights = document.getElementById('gen-highlights').value;
+
+            const promptText = `จงสวมบทบาทเป็น "นักประชาสัมพันธ์ภาครัฐของ สพม.บุรีรัมย์" 
+ช่วยร่างข่าวประชาสัมพันธ์โดยใช้เฉพาะข้อมูลที่ให้มา เขียนถูกต้อง เป็นกลาง กระชับ และไม่กล่าวอ้างเกินจริง หากข้อมูลใดไม่ครบให้ใส่ [รอยืนยัน] ห้ามเดา:
+
+[ข้อมูลดิบเพื่อการร่างข่าว]:
+- ชื่อโครงการ/งานหลัก: ${title}
+- ประธานเปิดงาน/บุคคลสำคัญ: ${president}
+- สถานที่จัดกิจกรรม: ${location}
+- คณะผู้เข้ารับการร่วมงาน: ${attendees}
+- ไฮไลท์ผลงานหรือกิจกรรมปฏิบัติงาน: ${highlights}
+
+ข้อกำหนดและผลลัพธ์:
+1. พาดหัว 3 ตัวเลือก โดยเน้นผลที่เกิดกับผู้เรียน ครู หรือสถานศึกษา
+2. โปรยข่าว 1 ย่อหน้า และข่าวเว็บไซต์ 3-5 ย่อหน้า ตามลำดับ ใคร–ทำอะไร–ที่ไหน–เมื่อไร–อย่างไร–เกิดผลอะไร
+3. แคปชัน Facebook แบบกระชับ พร้อม CTA และแฮชแท็กเท่าที่จำเป็น
+4. Alt Text อธิบายภาพสำหรับผู้ใช้โปรแกรมอ่านหน้าจอ
+5. เช็กลิสต์ก่อนเผยแพร่: ชื่อ–ตำแหน่ง วันเวลา สถานที่ ตัวเลข แหล่งอ้างอิง สิทธิ์ภาพ/ข้อมูลส่วนบุคคล และผู้อนุมัติ
+6. ห้ามสร้างคำกล่าวอ้างหรือ Quote แทนบุคคล หากไม่มีคำพูดต้นฉบับให้เสนอเพียงคำถามสัมภาษณ์`;
+
+            const customPromptTarget = document.getElementById('custom-prompt-text');
+            customPromptTarget.innerText = promptText;
+            if (window.promptOriginals) {
+                window.promptOriginals.set('custom-prompt-text', customPromptTarget.innerHTML);
+            }
+            document.getElementById('builder-result-box').classList.remove('hidden');
+            document.getElementById('builder-result-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Add image-prompt examples 11–20 to section 3 before editor controls initialize.
+        function addAdditionalImagePrompts() {
+            const container = document.querySelector('#image-gen > .space-y-8');
+            if (!container || document.getElementById('img11-en')) return;
+
+            const prompts = [
+                { icon:'🧑‍🏫', title:'11. การอบรมพัฒนาครูเชิงปฏิบัติการ', en:'Documentary-style photo of Thai secondary school teachers actively collaborating in a hands-on professional development workshop, laptops and learning materials on tables, warm natural light, authentic educational atmosphere, photorealistic, 4k, no text, no logo, no watermark.', th:'ภาพถ่ายเชิงสารคดีของครูโรงเรียนมัธยมไทยกำลังร่วมกิจกรรมอบรมเชิงปฏิบัติการอย่างกระตือรือร้น มีแล็ปท็อปและสื่อการเรียนรู้บนโต๊ะ แสงธรรมชาติอบอุ่น บรรยากาศการพัฒนาวิชาชีพที่สมจริง ภาพถ่ายสมจริง 4k ไม่มีข้อความ ไม่มีโลโก้ ไม่มีลายน้ำ' },
+                { icon:'📢', title:'12. การประชุมชี้แจงนโยบายการศึกษา', en:'Professional wide-angle photograph of an education policy briefing in a modern conference room, Thai educators listening attentively to a presentation, clean projection screen without readable text, formal yet approachable atmosphere, photorealistic, 4k, no logo, no watermark.', th:'ภาพถ่ายมุมกว้างแบบมืออาชีพของการประชุมชี้แจงนโยบายการศึกษาในห้องประชุมสมัยใหม่ บุคลากรทางการศึกษาไทยรับฟังอย่างตั้งใจ จอฉายสะอาดโดยไม่มีข้อความที่อ่านได้ บรรยากาศเป็นทางการแต่เข้าถึงง่าย ภาพถ่ายสมจริง 4k ไม่มีโลโก้ ไม่มีลายน้ำ' },
+                { icon:'🔎', title:'13. การนิเทศ ติดตาม และเยี่ยมชั้นเรียน', en:'Candid documentary photograph of an educational supervision visit in a Thai secondary classroom, teachers observing student-centered learning from the back of the room, respectful and supportive atmosphere, natural daylight, photorealistic, 4k, no text, no logo.', th:'ภาพถ่ายเชิงสารคดีขณะนิเทศและเยี่ยมชั้นเรียนในโรงเรียนมัธยมไทย คณะครูสังเกตการเรียนรู้ที่เน้นผู้เรียนจากด้านหลังห้อง บรรยากาศสนับสนุนและเป็นมิตร แสงธรรมชาติ ภาพถ่ายสมจริง 4k ไม่มีข้อความ ไม่มีโลโก้' },
+                { icon:'🏆', title:'14. พิธีมอบรางวัลและเชิดชูเกียรติ', en:'Elegant education award ceremony, anonymous Thai educator receiving a certificate on stage, warm burgundy and gold lighting, dignified official atmosphere, balanced composition with copy space, photorealistic, 4k, no readable text, no logo, no watermark.', th:'ภาพพิธีมอบรางวัลทางการศึกษาอย่างสง่างาม บุคลากรทางการศึกษาไทยที่ไม่ระบุตัวบุคคลรับเกียรติบัตรบนเวที แสงโทนแดงเลือดหมูและทอง บรรยากาศเป็นทางการ มีพื้นที่ว่างสำหรับวางข้อความ ภาพถ่ายสมจริง 4k ไม่มีข้อความที่อ่านได้ ไม่มีโลโก้ ไม่มีลายน้ำ' },
+                { icon:'🛡️', title:'15. โรงเรียนปลอดภัยและการเตรียมพร้อมฉุกเฉิน', en:'Educational safety drill at a Thai secondary school, students and teachers calmly following an organized evacuation route with staff guidance, clear safe movement, documentary photography, daylight, photorealistic, 4k, no disaster imagery, no text, no logo.', th:'ภาพกิจกรรมฝึกซ้อมความปลอดภัยในโรงเรียนมัธยมไทย นักเรียนและครูปฏิบัติตามเส้นทางอพยพอย่างเป็นระเบียบโดยมีเจ้าหน้าที่ให้คำแนะนำ แสดงการเคลื่อนย้ายที่ปลอดภัย ภาพถ่ายเชิงสารคดี แสงกลางวัน 4k ไม่มีภาพภัยพิบัติ ไม่มีข้อความ ไม่มีโลโก้' },
+                { icon:'♿', title:'16. การศึกษาแบบเรียนรวมและความเท่าเทียม', en:'Inclusive Thai classroom with diverse secondary students learning together, accessible desk arrangement, supportive teacher facilitating group work, positive respectful atmosphere, soft natural light, authentic documentary photography, 4k, no stereotypes, no text, no logo.', th:'ภาพห้องเรียนไทยแบบเรียนรวม นักเรียนมัธยมที่มีความหลากหลายเรียนรู้ร่วมกัน โต๊ะเรียนจัดให้เข้าถึงสะดวก ครูสนับสนุนกิจกรรมกลุ่มอย่างเป็นธรรมชาติ บรรยากาศเคารพและเป็นบวก แสงธรรมชาตินุ่ม ภาพถ่ายเชิงสารคดี 4k ไม่สร้างภาพเหมารวม ไม่มีข้อความ ไม่มีโลโก้' },
+                { icon:'🧺', title:'17. ภูมิปัญญาท้องถิ่นและอัตลักษณ์บุรีรัมย์', en:'Thai secondary students learning local Buriram cultural craftsmanship from community elders, hands-on workshop with natural materials and traditional patterns, respectful intergenerational exchange, warm documentary photography, 4k, no text, no logo, no watermark.', th:'ภาพนักเรียนมัธยมเรียนรู้ภูมิปัญญาและงานหัตถกรรมท้องถิ่นบุรีรัมย์จากปราชญ์ชุมชน กิจกรรมลงมือทำด้วยวัสดุธรรมชาติและลวดลายพื้นถิ่น ถ่ายทอดความรู้ระหว่างวัยอย่างเคารพ ภาพถ่ายเชิงสารคดีโทนอุ่น 4k ไม่มีข้อความ ไม่มีโลโก้ ไม่มีลายน้ำ' },
+                { icon:'🧭', title:'18. การแนะแนวการศึกษาและอาชีพ', en:'Modern career guidance activity for Thai secondary students, small groups exploring career pathways with tablets, career cards and mentor support, optimistic future-focused atmosphere, clean bright composition, photorealistic, 4k, no readable text, no logo.', th:'ภาพกิจกรรมแนะแนวการศึกษาและอาชีพสำหรับนักเรียนมัธยมไทย แบ่งกลุ่มเล็กสำรวจเส้นทางอาชีพด้วยแท็บเล็ต การ์ดอาชีพ และคำแนะนำจากครู บรรยากาศมองอนาคตอย่างมีความหวัง องค์ประกอบสว่างสะอาด ภาพถ่ายสมจริง 4k ไม่มีข้อความที่อ่านได้ ไม่มีโลโก้' },
+                { icon:'🤲', title:'19. ความร่วมมือโรงเรียน บ้าน ชุมชน', en:'Community partnership meeting at a Thai school, educators, parents and local representatives collaborating around a table, open discussion and shared planning, welcoming civic atmosphere, documentary photography, natural light, 4k, no text, no logo.', th:'ภาพการประชุมความร่วมมือระหว่างสถานศึกษา ผู้ปกครอง และตัวแทนชุมชนในโรงเรียนไทย ทุกฝ่ายร่วมวางแผนรอบโต๊ะและสนทนาอย่างเปิดกว้าง บรรยากาศความร่วมมือที่เป็นมิตร ภาพถ่ายเชิงสารคดี แสงธรรมชาติ 4k ไม่มีข้อความ ไม่มีโลโก้' },
+                { icon:'📊', title:'20. ศูนย์ข้อมูลและบริการการศึกษาดิจิทัล', en:'Conceptual modern education data center for a regional school office, anonymous Thai staff reviewing clean dashboard visualizations on large screens, burgundy and blue interface glow, professional digital-service atmosphere, photorealistic, 4k, no readable data, no personal information, no logo.', th:'ภาพเชิงแนวคิดของศูนย์ข้อมูลการศึกษาสมัยใหม่สำหรับสำนักงานเขตพื้นที่ บุคลากรไทยที่ไม่ระบุตัวบุคคลกำลังตรวจสอบแดชบอร์ดบนจอขนาดใหญ่ แสงหน้าจอโทนแดงเลือดหมูและน้ำเงิน บรรยากาศบริการดิจิทัลแบบมืออาชีพ ภาพถ่ายสมจริง 4k ไม่มีข้อมูลที่อ่านได้ ไม่มีข้อมูลส่วนบุคคล ไม่มีโลโก้' }
+            ];
+
+            prompts.forEach((item, index) => {
+                const number = index + 11;
+                const card = document.createElement('div');
+                card.className = 'p-5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-400 transition-all shadow-sm';
+                card.innerHTML = `
+                    <h3 class="font-bold font-kanit text-indigo-950 text-base mb-2 flex items-center"><span class="mr-2 text-xl">${item.icon}</span>${item.title}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-2"><span class="text-xs font-semibold text-indigo-300">ภาษาอังกฤษ</span><button id="btn-img${number}-en" onclick="copyPrompt('btn-img${number}-en','img${number}-en')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] rounded font-kanit flex items-center gap-1"><i class="fa-solid fa-copy"></i> คัดลอกอังกฤษ</button></div>
+                            <code id="img${number}-en" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">${item.en}</code>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-2"><span class="text-xs font-semibold text-amber-300">ภาษาไทย</span><button id="btn-img${number}-th" onclick="copyPrompt('btn-img${number}-th','img${number}-th')" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-slate-950 text-[11px] font-bold rounded font-kanit flex items-center gap-1"><i class="fa-solid fa-copy"></i> คัดลอกไทย</button></div>
+                            <code id="img${number}-th" class="block text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap">${item.th}</code>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // Keep brackets/highlighting only for fields users must replace in copied prompts.
+        function markEditableFields() {
+            document.querySelectorAll('span.bg-amber-400').forEach(span => {
+                if (!span.closest('pre, code')) {
+                    span.replaceWith(document.createTextNode(span.textContent.replace(/^\[|\]$/g, '')));
+                }
+            });
+
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                if (/\[[^\]\n]+\]/.test(node.nodeValue) &&
+                    !node.parentElement.closest('script, style, button, .editable-field, .bg-amber-400')) {
+                    nodes.push(node);
+                }
+            }
+            nodes.forEach(node => {
+                const fragment = document.createDocumentFragment();
+                const parts = node.nodeValue.split(/(\[[^\]\n]+\])/g);
+                parts.forEach(part => {
+                    if (/^\[[^\]\n]+\]$/.test(part)) {
+                        const content = part.slice(1, -1);
+                        const inPrompt = Boolean(node.parentElement.closest('pre, code'));
+                        const isLabel = /^(ข้อมูล|เงื่อนไข|เนื้อหา|ผลผลิต|รายละเอียด|ไฮไลท์|3 สถานที่|รอยืนยัน|\s*\.\.\.\s*$)/.test(content);
+                        if (inPrompt && !isLabel) {
+                            const mark = document.createElement('span');
+                            mark.className = 'editable-field';
+                            mark.textContent = part;
+                            fragment.appendChild(mark);
+                        } else {
+                            fragment.appendChild(document.createTextNode(content));
+                        }
+                    } else {
+                        fragment.appendChild(document.createTextNode(part));
+                    }
+                });
+                node.replaceWith(fragment);
+            });
+        }
+
+        // Add edit/reset controls to every prompt that already has a copy button.
+        function initializePromptEditors() {
+            window.promptOriginals = window.promptOriginals || new Map();
+            const promptOriginals = window.promptOriginals;
+            const copyButtons = document.querySelectorAll('button[onclick^="copyPrompt("]');
+
+            copyButtons.forEach(copyButton => {
+                const command = copyButton.getAttribute('onclick') || '';
+                const match = command.match(/copyPrompt\(\s*['"][^'"]+['"]\s*,\s*['"]([^'"]+)['"]\s*\)/);
+                if (!match) return;
+
+                const target = document.getElementById(match[1]);
+                if (!target || copyButton.dataset.editorReady === 'true') return;
+
+                promptOriginals.set(target.id, target.innerHTML);
+                copyButton.dataset.editorReady = 'true';
+
+                const group = document.createElement('div');
+                group.className = 'prompt-action-group';
+                copyButton.parentNode.insertBefore(group, copyButton);
+                group.appendChild(copyButton);
+
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = 'prompt-edit-btn';
+                editButton.innerHTML = '<i class="fa-solid fa-pen"></i><span>แก้ไข</span>';
+                editButton.setAttribute('aria-label', 'แก้ไขพรอมต์');
+
+                const resetButton = document.createElement('button');
+                resetButton.type = 'button';
+                resetButton.className = 'prompt-reset-btn';
+                resetButton.innerHTML = '<i class="fa-solid fa-rotate-left"></i><span>รีเซ็ต</span>';
+                resetButton.setAttribute('aria-label', 'คืนค่าพรอมต์เริ่มต้น');
+
+                editButton.addEventListener('click', () => {
+                    const isEditing = target.getAttribute('contenteditable') === 'true';
+                    if (isEditing) {
+                        target.removeAttribute('contenteditable');
+                        target.classList.remove('prompt-editing');
+                        editButton.classList.remove('is-editing');
+                        editButton.innerHTML = '<i class="fa-solid fa-pen"></i><span>แก้ไข</span>';
+                    } else {
+                        target.setAttribute('contenteditable', 'true');
+                        target.setAttribute('spellcheck', 'true');
+                        target.classList.add('prompt-editing');
+                        editButton.classList.add('is-editing');
+                        editButton.innerHTML = '<i class="fa-solid fa-check"></i><span>เสร็จสิ้น</span>';
+                        target.focus();
+                    }
+                });
+
+                resetButton.addEventListener('click', () => {
+                    target.innerHTML = promptOriginals.get(target.id);
+                    target.removeAttribute('contenteditable');
+                    target.classList.remove('prompt-editing');
+                    editButton.classList.remove('is-editing');
+                    editButton.innerHTML = '<i class="fa-solid fa-pen"></i><span>แก้ไข</span>';
+                });
+
+                group.appendChild(editButton);
+                group.appendChild(resetButton);
+            });
+        }
+
+        // Track active section and update right sidebar active state dynamically
+        window.addEventListener('DOMContentLoaded', () => {
+            addAdditionalImagePrompts();
+            const canvaWorkflow = document.getElementById('canva-practical-workflow');
+            const canvaSection = document.getElementById('canva-workshop');
+            if (canvaWorkflow && canvaSection) canvaSection.appendChild(canvaWorkflow);
+
+            // Apply the revised section order and remove the former calendar section.
+            const mainContent = document.getElementById('main-content-container');
+            const calendarSection = document.getElementById('pr-calendar');
+            if (calendarSection) calendarSection.remove();
+            ['infographic-ai', 'poster-ai', 'canva-workshop', 'video-ai', 'ai-safety'].forEach(id => {
+                const section = document.getElementById(id);
+                if (mainContent && section) mainContent.appendChild(section);
+            });
+            markEditableFields();
+            initializePromptEditors();
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    if (sidebarVisible() && entry.intersectionRatio > 0.25) {
+                        document.querySelectorAll('.toc-link').forEach(link => {
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.className = "toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-lg text-indigo-700 bg-indigo-50/80 border-l-4 border-indigo-600 smooth-transition";
+                            } else {
+                                link.className = "toc-link flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-4 border-transparent smooth-transition";
+                            }
+                        });
+                    }
+                });
+            }, { threshold: [0.1, 0.25, 0.5] });
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        function sidebarVisible() {
+            return !document.getElementById('sidebar-container').classList.contains('hidden');
+        }
+    </script>
+</body>
+</html>
